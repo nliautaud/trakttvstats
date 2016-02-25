@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "Trakt stats",
+  "description": "Add stats to Trakt.tv",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": ["*://*.trakt.tv/*"],
+      "css": ["chartist.min.css", "statify.css"],
+      "js": ["chartist.min.js", "statify.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
