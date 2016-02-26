@@ -67,15 +67,13 @@ var seenPercent = function (arr) {
     var seen = arr.filter(f.seen);
     return (seen.length / arr.length * 100).toFixed(0)
 }
-var ratingsDistr = function (movies) {
-    movies = movies.filter(f.rated);
-    var me = [0,0,0,0,0,0,0,0,0,0],
-        ttv= [0,0,0,0,0,0,0,0,0,0];
-    for (var i = 0; i < movies.length; i++) {
-        me[movies[i].rated-1]++;
-        ttv[movies[i].ttvrating-1]++;
-    }
-    return [ttv, me];
+var normalize = function (arr) {
+    var sum = arr.reduce(function(pv, cv) {
+        return pv + cv;
+    }, 0);
+    return arr.map(function(v, i, a) {
+        return v / sum;
+    });
 }
 var yearsDistr = function (movies) {
     var years = listAttr(movies, 'year').sort(),
@@ -235,9 +233,20 @@ var addRatingsChart = function(parent, movies) {
     });
 }
 var ratingsChartData = function(movies) {
+
+    var me = [0,0,0,0,0,0,0,0,0,0],
+        ttv= [0,0,0,0,0,0,0,0,0,0],
+        lab= [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    for (var i = 0; i < movies.length; i++) {
+        if(movies[i].rated)
+            me[movies[i].rated-1]++;
+        ttv[movies[i].ttvrating-1]++;
+    }
+
     return {
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        series: ratingsDistr(movies)
+        labels: lab,
+        series: [normalize(ttv), normalize(me)]
     };
 }
 var addYearsChart = function(parent, movies) {
@@ -424,7 +433,6 @@ main = function(argument) {
             g_donuts[i+1] = addDonut(e_views, cat, data);
         }
     }
-    console.log(g_donuts);
     updateDonutsCharts();
 
     // graphs
