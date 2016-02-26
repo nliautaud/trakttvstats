@@ -1,3 +1,10 @@
+// get options
+options = {};
+chrome.storage.sync.get({
+    ratingsfilter: [],
+}, function(items) {
+    options.ratingsfilter = items.ratingsfilter;
+});
 
 var processMovies = function (parent) {
     var e_movies = parent.querySelectorAll('div[data-type="movie"],div[data-type="show"]'),
@@ -242,6 +249,16 @@ var ratingsChartData = function(movies) {
         if(movies[i].rated)
             me[movies[i].rated-1]++;
         ttv[movies[i].ttvrating-1]++;
+    }
+
+    if(options.ratingsfilter) {
+        for (var i = 0; i < options.ratingsfilter.length; i++) {
+            var r = parseInt(options.ratingsfilter[i]);
+            if(!Number.isInteger(r) || r < 0) continue;
+            me.splice(r-1, 1);
+            ttv.splice(r-1, 1);
+            lab.splice(r-1, 1);
+        }
     }
 
     return {

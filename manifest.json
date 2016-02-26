@@ -4,6 +4,9 @@
   "name": "Trakt stats",
   "description": "Add stats to Trakt.tv",
   "version": "0.1",
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [
     {
       "matches": ["*://*.trakt.tv/*"],
@@ -11,5 +14,9 @@
       "js": ["chartist.min.js", "statify.js"],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  }
 }
