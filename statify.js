@@ -443,12 +443,10 @@ main = function(argument) {
 
     var data = { series: [] };
     g_donuts = [addDonut(e_views, undefined, data, 'total')];
-    if (movies_categories.length > 1) {
-        for (var i = 0; i < movies_categories.length; i++) {
-            var cat = movies_categories[i];
-            var catmovies = movies.filter(f.category(cat));
-            g_donuts[i+1] = addDonut(e_views, cat, data);
-        }
+    for (var i = 0; i < movies_categories.length; i++) {
+        var cat = movies_categories[i];
+        var catmovies = movies.filter(f.category(cat));
+        g_donuts[i+1] = addDonut(e_views, cat, data);
     }
     updateDonutsCharts();
 

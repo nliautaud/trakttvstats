@@ -9,7 +9,7 @@
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.trakt.tv/*"],
+      "matches": ["*://*.trakt.tv/people/*"],
       "css": ["chartist.min.css", "statify.css"],
       "js": ["chartist.min.js", "statify.js"],
       "run_at": "document_end"
