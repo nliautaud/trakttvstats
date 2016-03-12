@@ -7,7 +7,7 @@ Works on people page, ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/pe
 - Ratings distribution (personal ratings & trackt.tv ratings).
 - Movies seen or not by decade.
 
-![screen_01](screen_01.png)
+![screen_01](img/screen_01.png)
 
 Donuts and years charts are clickable and acts as filters to combine statistics and filter in realtime the movies below.
 
@@ -19,4 +19,4 @@ The charts and the results below will reflect your combinations (ex. only the mo
 
 When filtering, a summary sentence appears below. It may be helpful for sharing ! Ex: *There is 2 movies written by Steven Spielberg in the 1970's that I didn't see*.
 
-![screen_02](screen_02.png)
+![screen_02](img/screen_02.png)
