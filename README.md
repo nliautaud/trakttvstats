@@ -32,9 +32,9 @@ When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 ## Translation
 
-Trakt.tv is in English only for now. It may be difficult sometimes to find This extension will translate movies titles, informations (ex. overview) and posters in any wanted language, if these informations are available on TMDb.
+For now Trakt.tv only support titles and other data in English, which can make recognizing movies difficult. The extension translate on the fly movies titles, informations (ex. overview) and posters in any wanted language, if these informations are available on TMDb.
 
-To avoid too big loads, on search results, lists, etc. the translation occur by hovering a poster.
+On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
 
 The following options are available :
 
