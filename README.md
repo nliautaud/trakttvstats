@@ -1,22 +1,44 @@
 # trakttvstats
-A chrome extension adding personal statistics & filtering to [trakt.tv](https://trakt.tv) website.
+A chrome extension adding various improvements to [trakt.tv](https://trakt.tv).
 
-Works on people page, ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg).
+## People statistics & filtering
 
-- Movies seen or not, in total and by job categories (direction, production...).
+Personnal statistics & filters are added to people pages (ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg)) :
+
+- Movies I've seen or not of this person, in total and by job categories (direction, production...).
 - Ratings distribution (personal ratings & trackt.tv ratings).
-- Movies seen or not by decade.
+- Movies I've seen or not by decade.
+
+All these stats are combinable by clicking on the charts. Ex : Films directed by X in the 90's that I didn't see.
+
+- Select a donut chart to focus on specific job categories.
+- Select a donut slice to focus on movies 'seen' or 'not seen'.
+- Select a decade bar to focus on specific decades.
 
 ![screen_01](img/screen_01.png)
 
-Donuts and years charts are clickable and acts as filters to combine statistics and filter in realtime the movies below.
+**Filtering**
 
-- Select a donut chart to filter by job categories.
-- Select a donut slice to focus on movies 'seen' or 'not seen'.
-- Select a decade bar to filter by years.
+The charts acts also as filters to the movies list below.
+So it's not just statistics, it's especially a way to navigate into someone filmography trough your personnal history. Not only how many but "**which films** written by X in the 70's I haven't seen ?".
 
-The charts and the results below will reflect your combinations (ex. only the movies in the writing category, that you didn't see, in the 1970's).
-
-When filtering, a summary sentence appears below. It may be helpful for sharing ! Ex: *There is 2 movies written by Steven Spielberg in the 1970's that I didn't see*.
+When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 ![screen_02](img/screen_02.png)
+
+**Options :**
+
+- Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
+
+## Translation
+
+Trakt.tv is in English only for now. It may be difficult sometimes to find This extension will translate movies titles, informations (ex. overview) and posters in any wanted language, if these informations are available on TMDb.
+
+To avoid too big loads, on search results, lists, etc. the translation occur by hovering a poster.
+
+The following options are available :
+
+- ISO 639-1 language code (required)
+- Custom TMDb API Key
+- Always switch languages on mouse hover : by default the translations replace the english ones. With this option the translations are visible only when hovering a poster.
+    - Display the translation first on shows pages : if the previous option is active, display anyway the ranslated data of a show page first, and show the english data on hover.

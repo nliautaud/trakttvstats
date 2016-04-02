@@ -1,21 +1,29 @@
 {
   "manifest_version": 2,
 
-  "name": "Trakt stats",
+  "name": "Trakt improver",
   "short_name" : "trakttvstats",
-  "description": "Add stats to Trakt.tv",
+  "description": "Add various improvements to Trakt.tv",
   "version": "0.1",
   "permissions": [
-    "storage"
+    "storage",
+    "tabs",
+    "webNavigation",
+    "https://trakt.tv/*"
   ],
-  "content_scripts": [
-    {
+  "content_scripts": [ {
       "matches": ["*://*.trakt.tv/people/*"],
       "css": ["lib/chartist.min.css", "statify.css"],
-      "js": ["lib/chartist.min.js", "statify.js"],
-      "run_at": "document_end"
+      "js": ["lib/chartist.min.js", "statify.js"]
+    }, {
+      "matches": ["*://*.trakt.tv/*"],
+      "css": ["translate.css"]
     }
   ],
+  "background": {
+      "scripts": ["background.js"],
+      "persistent": false
+  },
   "options_ui": {
     "page": "options.html",
     "chrome_style": true
