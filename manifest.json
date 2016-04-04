@@ -11,17 +11,8 @@
     "webNavigation",
     "https://trakt.tv/*"
   ],
-  "content_scripts": [ {
-      "matches": ["*://*.trakt.tv/people/*"],
-      "css": ["lib/chartist.min.css", "statify.css"],
-      "js": ["lib/chartist.min.js", "statify.js"]
-    }, {
-      "matches": ["*://*.trakt.tv/*"],
-      "css": ["translate.css"]
-    }
-  ],
   "background": {
-      "scripts": ["background.js"],
+      "scripts": ["js/background.js"],
       "persistent": false
   },
   "options_ui": {

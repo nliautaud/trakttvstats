@@ -1,17 +1,11 @@
 function save_options() {
-  var ratingsfilter = document.getElementById('ratingsfilter').value,
-      tmdbApiKey = document.getElementById('tmdbApiKey').value,
-      i18nLanguage = document.getElementById('i18nLanguage').value,
-      i18nByDefault = document.getElementById('i18nByDefault').checked;
-      i18nAlwaysSwitch = document.getElementById('i18nAlwaysSwitch').checked;
   chrome.storage.sync.set({
-    ratingsfilter: ratingsfilter,
-    tmdbApiKey: tmdbApiKey,
-    i18nLanguage: i18nLanguage,
-    i18nByDefault: i18nByDefault,
-    i18nAlwaysSwitch: i18nAlwaysSwitch,
+    ratingsfilter:    document.getElementById('ratingsfilter').value,
+    tmdbApiKey:       document.getElementById('tmdbApiKey').value,
+    i18nLanguage:     document.getElementById('i18nLanguage').value,
+    i18nByDefault:    document.getElementById('i18nByDefault').checked,
+    i18nAlwaysSwitch: document.getElementById('i18nAlwaysSwitch').checked,
   }, function() {
-    // Update status to let user know options were saved.
     var status = document.getElementById('status');
     status.textContent = 'Options saved.';
     setTimeout(function() {

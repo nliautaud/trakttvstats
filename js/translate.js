@@ -1,55 +1,4 @@
-api_uri = 'https://api.themoviedb.org/3';
-options = {};
-
-chrome.storage.sync.get({
-    tmdbApiKey: null,
-    tmdbConfig: null,
-    tmdbConfigDate: null,
-    i18nLanguage: null,
-    i18nByDefault: null,
-    i18nAlwaysSwitch: null,
-}, function(items) {
-    if ( !items.tmdbApiKey || !items.i18nLanguage )
-        return;
-    options.tmdbApiKey = items.tmdbApiKey;
-    options.tmdbConfig = items.tmdbConfig;
-    if ( options.tmdbConfig )
-        options.tmdbConfigDate = new Date(items.tmdbConfigDate);
-    options.i18nLanguage = items.i18nLanguage;
-    options.i18nByDefault = items.i18nByDefault;
-    options.i18nAlwaysSwitch = items.i18nAlwaysSwitch;
-    config();
-});
-
-config = function() {
-
-    if( options.i18nByDefault )
-        document.body.classList.add('i18nByDefault');
-    if( options.i18nAlwaysSwitch )
-        document.body.classList.add('i18nAlwaysSwitch');
-
-    var now = new Date(),
-        ageConfig = daydiff(now, options.tmdbConfigDate);
-    if ( options.tmdbConfig !== null && ageConfig < 1 ) {
-        console.log('get tmdb configuration from cache');
-        return main();
-    }
-
-    console.log('call tmdb configuration');
-    chrome.runtime.sendMessage({
-        action: 'xhttp',
-        url: api_request_uri('configuration')
-    }, function(msg) {
-        if (!msg) return;
-        options.tmdbConfig = JSON.parse(msg.response);
-        options.tmdbConfigDate = now;
-        chrome.storage.sync.set({
-          tmdbConfig: options.tmdbConfig,
-          tmdbConfigDate: options.tmdbConfigDate,
-        }, main);
-    });
-}
-main = function() {
+translate = function() {
     document.onmouseover = function (event) {
         var target = event.target || event.toElement,
             is_movie = target.getAttribute('data-type') == 'movie',
@@ -80,7 +29,8 @@ tmdbImageUrl = function(endpath, type, width) {
 }
 
 api_request_uri = function(path, args) {
-    var args_str = ''
+    var api_uri = 'https://api.themoviedb.org/3',
+        args_str = ''
     for (var i in args)
         args_str += '&' + i + '=' + args[i]
     return api_uri + '/' + path + '?api_key=' + options.tmdbApiKey + encodeURI(args_str)
@@ -137,27 +87,15 @@ function i18nMovieThumb (el) {
             year: infos.year,
             language: options.i18nLanguage
         };
-    request = api_request_uri('search/movie', msg);
-    console.log('call tmdb on', infos.name);
-    chrome.runtime.sendMessage({
-        action: 'xhttp',
-        url: request
-    }, function(msg) {
-        if (!msg) return;
-        var response = JSON.parse(msg.response);
-        if( !response || !response.results || !response.results.length ) return;
 
-        var result = response.results[0];
-
+    callTMDb( 'search/movie', msg, function(result) {
         insertI18nImage(el, '', result, function() {
             insertI18nContent(el, '.titles h3', result.title, infos.name );
             el.classList.remove('translate');
             el.classList.add('translated');
         });
-
     });
 }
-
 function i18nShow (el) {
     var infos = getShowInfos( el ),
         msg = {
@@ -165,35 +103,32 @@ function i18nShow (el) {
             year: infos.year,
             language: options.i18nLanguage
         };
-    request = api_request_uri('search/movie', msg);
-    console.log('call tmdb on', infos.name);
-    chrome.runtime.sendMessage({
-        action: 'xhttp',
-        url: request
-    }, function(msg) {
-        if (!msg) return;
-        var response = JSON.parse(msg.response);
-        if( !response || !response.results || !response.results.length ) return;
 
-        var result = response.results[0];
-
+    callTMDb( 'search/movie', msg, function(result) {
         insertI18nImage(el, '.sidebar', result, function() {
             insertI18nContent(el, 'h1', result.title, infos.name );
             insertI18nContent(el, '.info [itemprop=description]', result.overview);
             el.classList.add('translated');
         });
-
         // document.getElementById('summary-wrapper').style.backgroundImage = 'url('
         //     + tmdbImageUrl(result.backdrop_path, '', 'w1920') + ')';
     });
 }
+function callTMDb( path, msg , callback) {
 
-function closest( el, sel, stop ) {
-    for ( ; el && el !== document && !el.matches(stop); el = el.parentNode )
-        if ( el.matches(sel) )
-            return el;
-    return false;
-};
-function daydiff(a, b) {
-    return ( a.getTime() - b.getTime() ) / ( 1000*60*60*24 );
+    log('TMDb', path, msg.query);
+
+    chrome.runtime.sendMessage({
+        action: 'xhttp',
+        url: api_request_uri( path, msg )
+    }, function(msg) {
+        if ( !msg ) return warn('empty message returned for', msg.query);
+
+        var response = JSON.parse(msg.response);
+
+        if( !response || !response.results || !response.results.length )
+            return warn('empty results returned for', infos.name);
+
+        callback( response.results[0] );
+    });
 }
