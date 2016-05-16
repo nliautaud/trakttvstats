@@ -1,11 +1,14 @@
 # trakttvstats
-A chrome extension adding various improvements to [trakt.tv](https://trakt.tv).
+A chrome extension adding various improvements to [trakt.tv](https://trakt.tv). Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce).
 
-- [Features](#translation)
+-------------
+- Features
     - [People statistics & filtering](#people-statistics--filtering)
     - [Custom external links](#custom-external-links)
-    - [Translation](#translation)
+    - [Translation & posters localization](#translation--posters-localization)
 - [Options](#translation)
+
+-------------
 
 ## People statistics & filtering
 
@@ -38,9 +41,9 @@ Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of 
 
 ![links](img/links.png)
 
-## Translation
+## Translation & posters localization
 
-The extension may translate on the fly movies titles, informations (ex. overview) and images, in any language available on TMDb.
+The extension will translate on the fly movies titles, informations (ex. overview) and localize posters and backdrops in the desired language if the informations are available on TMDb.
 
 On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
 
