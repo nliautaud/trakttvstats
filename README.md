@@ -1,6 +1,12 @@
 # trakttvstats
 A chrome extension adding various improvements to [trakt.tv](https://trakt.tv).
 
+- [Features](#translation)
+    - [People statistics & filtering](#people-statistics--filtering)
+    - [Custom external links](#custom-external-links)
+    - [Translation](#translation)
+- [Options](#translation)
+
 ## People statistics & filtering
 
 Personnal statistics & filters are added to people pages (ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg)) :
@@ -26,13 +32,11 @@ When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 ![screen_02](img/screen_02.png)
 
-**Options :**
-
-- Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
-
 ## Custom external links
 
-Add links to any other website than IMDb, TMDb and Wikipedia on people & shows pages. Ex: ``allocine,criticker...``.
+Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``allocine,criticker...``.
+
+![links](img/links.png)
 
 ## Translation
 
@@ -40,10 +44,20 @@ The extension may translate on the fly movies titles, informations (ex. overview
 
 On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
 
-The following options are available :
+## Options
 
-- ISO 639-1 language code (required)
+Stats options :
+
+- Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
+
+Additional links :
+
+Website names separated by commas (ex. allocine,criticker)
+
+Translation options :
+
 - TMDb API Key (required)
+- ISO 639-1 language code (required)
 - Always switch languages on mouse hover : by default the translations replace the english ones. With this option the translations are visible only when hovering a poster.
     - Display the translation first on shows pages : if the previous option is active, display anyway the ranslated data of a show page first, and show the english data on hover.
 - Localize backdrops : display localized background images on show pages
