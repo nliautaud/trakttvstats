@@ -46,13 +46,15 @@ On search results, lists, etc. the translation occur only when hovering the post
 
 ## Options
 
+![options](img/options.png)
+
 Stats options :
 
 - Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
 
-Additional links :
+Additional links options :
 
-Website names separated by commas (ex. allocine,criticker)
+- Website names separated by commas (ex. allocine,criticker).
 
 Translation options :
 
