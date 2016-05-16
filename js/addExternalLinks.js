@@ -12,7 +12,7 @@ addExternalLinks = function() {
 	options.externalLinks.split(',').forEach(function(domain) {
 		new_el = list.firstChild.cloneNode(true)
 		new_el.firstChild.href = goourl + title + ' ' + domain
-		new_el.firstChild.innerHTML = new_el.firstChild.innerHTML.replace(/\w+/, domain)
+		new_el.firstChild.innerHTML = new_el.firstChild.innerHTML.replace(/[^<]+/, domain)
 		list.appendChild(new_el)
 	})
 }
