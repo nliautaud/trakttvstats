@@ -1,9 +1,13 @@
 options = {}
 VERBOSE = true
 
-config = function( items ) {
+init = function( items ) {
 
     options = items
+
+    statify()
+
+    if ( !options.tmdbApiKey ) return
 
     if( options.i18nByDefault )
         document.body.classList.add('i18nByDefault')
@@ -13,12 +17,15 @@ config = function( items ) {
     if ( options.tmdbConfig )
         options.tmdbConfigDate = new Date(options.tmdbConfigDate)
 
-    var now = new Date(),
-        ageConfig = daydiff(now, options.tmdbConfigDate)
+    var now = new Date()
 
-    if ( options.tmdbConfig !== null && ageConfig < 3 ) {
+    if ( options.tmdbConfig
+        && options.tmdbConfig.images != null
+        && options.tmdbConfigDate
+        && daydiff(now, options.tmdbConfigDate) < 3
+    ) {
         log('get tmdb configuration from cache')
-        return init()
+        return translate()
     }
 
     log('call tmdb configuration')
@@ -27,19 +34,15 @@ config = function( items ) {
         url: api_request_uri('configuration')
     }, function(msg) {
         if (!msg) return
+
         options.tmdbConfig = JSON.parse(msg.response)
         options.tmdbConfigDate = now
         chrome.storage.sync.set({
             tmdbConfig: options.tmdbConfig,
             tmdbConfigDate: options.tmdbConfigDate.getTime(),
-        }, init)
-        init()
+        }, translate)
+        translate()
     })
-}
-
-init = function() {
-    translate()
-    statify()
 }
 
 chrome.storage.sync.get({
@@ -50,7 +53,9 @@ chrome.storage.sync.get({
     i18nLanguage: null,
     i18nByDefault: null,
     i18nAlwaysSwitch: null,
-}, config)
+    i18nBackdrop: null,
+    externalLinks: 'allocine.fr',
+}, init)
 
 
 

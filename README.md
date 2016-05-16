@@ -32,13 +32,14 @@ When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 ## Translation
 
-For now Trakt.tv only support titles and other data in English, which can make recognizing movies difficult. The extension translate on the fly movies titles, informations (ex. overview) and posters in any wanted language, if these informations are available on TMDb.
+The extension may translate on the fly movies titles, informations (ex. overview) and images, in any language available on TMDb.
 
 On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
 
 The following options are available :
 
 - ISO 639-1 language code (required)
-- Custom TMDb API Key
+- TMDb API Key (required)
 - Always switch languages on mouse hover : by default the translations replace the english ones. With this option the translations are visible only when hovering a poster.
     - Display the translation first on shows pages : if the previous option is active, display anyway the ranslated data of a show page first, and show the english data on hover.
+- Localize backdrops : display localized background images on show pages

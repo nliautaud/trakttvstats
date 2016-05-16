@@ -98,37 +98,43 @@ function i18nMovieThumb (el) {
 }
 function i18nShow (el) {
     var infos = getShowInfos( el ),
-        msg = {
+        args = {
             query: infos.name,
             year: infos.year,
             language: options.i18nLanguage
         };
 
-    callTMDb( 'search/movie', msg, function(result) {
-        insertI18nImage(el, '.sidebar', result, function() {
+    callTMDb( 'search/movie', args, function(result) {
+        insertI18nImage(el, 'body', result, function() {
             insertI18nContent(el, 'h1', result.title, infos.name );
             insertI18nContent(el, '.info [itemprop=description]', result.overview);
             el.classList.add('translated');
         });
-        // document.getElementById('summary-wrapper').style.backgroundImage = 'url('
-        //     + tmdbImageUrl(result.backdrop_path, '', 'w1920') + ')';
+        if( options.i18nBackdrop ) {
+            var wrapper = document.getElementById('summary-wrapper'),
+                original = document.createElement('div'),
+                backdrop = tmdbImageUrl(result.backdrop_path, '', 'w1920')
+            original.style.backgroundImage = wrapper.style.backgroundImage
+            original.className = 'i18n_original backdrop_i18n'
+            wrapper.style.backgroundImage = 'url('  + backdrop + ')'
+            wrapper.insertBefore(original, wrapper.firstChild)
+        }
     });
 }
-function callTMDb( path, msg , callback) {
-
-    log('TMDb', path, msg.query);
-
+function callTMDb( path, args , callback) {
     chrome.runtime.sendMessage({
         action: 'xhttp',
-        url: api_request_uri( path, msg )
+        url: api_request_uri( path, args )
     }, function(msg) {
-        if ( !msg ) return warn('empty message returned for', msg.query);
 
-        var response = JSON.parse(msg.response);
+        if ( !msg.response ) return warn('TMDb : no response for', args.query)
+
+        var response = JSON.parse(msg.response)
 
         if( !response || !response.results || !response.results.length )
-            return warn('empty results returned for', infos.name);
+            return warn('TMDb : no results for', args.query)
 
-        callback( response.results[0] );
+         log( 'TMDb :', path, args.query, response.results[0] )
+        callback( response.results[0] )
     });
 }

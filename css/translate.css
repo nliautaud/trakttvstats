@@ -1,23 +1,32 @@
 
-body.i18nAlwaysSwitch div[data-type]:hover .i18n_original,
-body:not(.i18nAlwaysSwitch) div[data-type].translated .i18n_original,
-body.i18nAlwaysSwitch div[data-type].translated:not(:hover) .i18n {
+body.i18nAlwaysSwitch div[data-type].translated:hover .i18n_original,
+body.i18nAlwaysSwitch div[data-type].translated:not(:hover) .i18n,
+body:not(.i18nAlwaysSwitch) div[data-type].translated .i18n_original
+{
 	display: none !important;
 }
 
 
-body.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) .i18n_original,
-body.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover .i18n,
-body.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) .i18n_original,
-body.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover + section .i18n,
+.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) .i18n_original,
+.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) + section .i18n_original,
+.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover .i18n,
+.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover + section .i18n,
 
-body:not(.i18nAlwaysSwitch) #summary-wrapper .i18n_original,
-body:not(.i18nAlwaysSwitch) #summary-wrapper + section .i18n_original,
+.movies:not(.i18nAlwaysSwitch) #summary-wrapper .i18n_original,
+.movies:not(.i18nAlwaysSwitch) #summary-wrapper + section .i18n_original,
 
-body.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover .i18n_original,
-body.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) .i18n,
-body.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover + section .i18n_original,
-body.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) + section .i18n
+.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover .i18n_original,
+.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) .i18n,
+.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover + section .i18n_original,
+.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) + section .i18n
 {
 	display: none !important;
+}
+
+
+.backdrop_i18n {
+	position: absolute;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+	background-size: cover;
 }
