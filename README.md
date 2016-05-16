@@ -30,6 +30,10 @@ When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 - Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
 
+## Custom external links
+
+Add links to any other website than IMDb, TMDb and Wikipedia on people & shows pages. Ex: ``allocine,criticker...``.
+
 ## Translation
 
 The extension may translate on the fly movies titles, informations (ex. overview) and images, in any language available on TMDb.

@@ -6,6 +6,7 @@ function save_options() {
     i18nByDefault:    document.getElementById('i18nByDefault').checked,
     i18nAlwaysSwitch: document.getElementById('i18nAlwaysSwitch').checked,
     i18nBackdrop:     document.getElementById('i18nBackdrop').checked,
+    externalLinks:    document.getElementById('externalLinks').value,
   }, function() {
     var status = document.getElementById('status')
     status.textContent = 'Options saved.'
@@ -23,6 +24,7 @@ function restore_options() {
     document.getElementById('i18nByDefault').checked = items.i18nByDefault
     document.getElementById('i18nAlwaysSwitch').checked = items.i18nAlwaysSwitch
     document.getElementById('i18nBackdrop').checked = items.i18nBackdrop
+    document.getElementById('externalLinks').value = items.externalLinks
   })
 }
 document.addEventListener('DOMContentLoaded', restore_options)

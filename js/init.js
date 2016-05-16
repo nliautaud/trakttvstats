@@ -6,6 +6,7 @@ init = function( items ) {
     options = items
 
     statify()
+    addExternalLinks()
 
     if ( !options.tmdbApiKey ) return
 

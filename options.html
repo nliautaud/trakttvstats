@@ -7,6 +7,7 @@
         label, div { display: block; margin: 0 0 1em; }
         button { padding: .5em 2em !important; }
         input { vertical-align: baseline !important; }
+        textarea { width: 100%; }
         .save { margin-top: 2em !important; }
         .tab { margin-left: 2em !important; }
     </style>
@@ -17,6 +18,11 @@
     <label>
         <input id="ratingsfilter" type="text">
         Ratings to hide from charts (ex. 1,2)
+    </label>
+    <div><strong>Custom external links : </strong></div>
+    <label>
+        Website names separated by commas (ex. allocine,criticker)
+        <textarea id="externalLinks"></textarea>
     </label>
     <div><strong>Translation options : </strong></div>
     <label>
