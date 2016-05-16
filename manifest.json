@@ -4,7 +4,7 @@
   "name": "Trakt improver",
   "short_name" : "trakttvstats",
   "description": "Add various improvements to Trakt.tv",
-  "version": "0.1",
+  "version": "0.2",
   "permissions": [
     "storage",
     "tabs",
