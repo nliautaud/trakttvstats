@@ -1,22 +1,68 @@
 # trakttvstats
-A chrome extension adding personal statistics & filtering to [trakt.tv](https://trakt.tv) website.
+A chrome extension adding various improvements to [trakt.tv](https://trakt.tv). Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce).
 
-Works on people page, ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg).
+-------------
+- Features
+    - [People statistics & filtering](#people-statistics--filtering)
+    - [Custom external links](#custom-external-links)
+    - [Translation & posters localization](#translation--posters-localization)
+- [Options](#translation)
 
-- Movies seen or not, in total and by job categories (direction, production...).
+-------------
+
+## People statistics & filtering
+
+Personnal statistics & filters are added to people pages (ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg)) :
+
+- Movies I've seen or not of this person, in total and by job categories (direction, production...).
 - Ratings distribution (personal ratings & trackt.tv ratings).
-- Movies seen or not by decade.
+- Movies I've seen or not by decade.
+
+All these stats are combinable by clicking on the charts. Ex : Films directed by X in the 90's that I didn't see.
+
+- Select a donut chart to focus on specific job categories.
+- Select a donut slice to focus on movies 'seen' or 'not seen'.
+- Select a decade bar to focus on specific decades.
 
 ![screen_01](img/screen_01.png)
 
-Donuts and years charts are clickable and acts as filters to combine statistics and filter in realtime the movies below.
+**Filtering**
 
-- Select a donut chart to filter by job categories.
-- Select a donut slice to focus on movies 'seen' or 'not seen'.
-- Select a decade bar to filter by years.
+The charts acts also as filters to the movies list below.
+So it's not just statistics, it's especially a way to navigate into someone filmography trough your personnal history. Not only how many but "**which films** written by X in the 70's I haven't seen ?".
 
-The charts and the results below will reflect your combinations (ex. only the movies in the writing category, that you didn't see, in the 1970's).
-
-When filtering, a summary sentence appears below. It may be helpful for sharing ! Ex: *There is 2 movies written by Steven Spielberg in the 1970's that I didn't see*.
+When filtering, a summary sentence appears below. It may be helpful for sharing.
 
 ![screen_02](img/screen_02.png)
+
+## Custom external links
+
+Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``allocine,criticker...``.
+
+![links](img/links.png)
+
+## Translation & posters localization
+
+The extension will translate on the fly movies titles, informations (ex. overview) and localize posters and backdrops in the desired language if the informations are available on TMDb.
+
+On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
+
+## Options
+
+![options](img/options.png)
+
+Stats options :
+
+- Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
+
+Additional links options :
+
+- Website names separated by commas (ex. allocine,criticker).
+
+Translation options :
+
+- TMDb API Key (required)
+- ISO 639-1 language code (required)
+- Always switch languages on mouse hover : by default the translations replace the english ones. With this option the translations are visible only when hovering a poster.
+    - Display the translation first on shows pages : if the previous option is active, display anyway the ranslated data of a show page first, and show the english data on hover.
+- Localize backdrops : display localized background images on show pages
