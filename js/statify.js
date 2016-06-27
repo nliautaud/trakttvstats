@@ -159,9 +159,7 @@ var yearsDistr_old = function (movies) {
 
 var addDonut = function(parent, role, data, label) {
     var e = document.createElement('div');
-    if(role) e.dataset.category = role;
-    if (!role) role = 'all';
-    if (!label) label = role;
+    e.dataset.category = role;
     e.className = role + ' ttvstats_donut ';
     e.innerHTML = '<div class="catinfos">'
                 + '<div class="catname">' + label + '</div>'
@@ -346,7 +344,7 @@ var updateDataset = function() {
     // update donuts (before filtering)
     updateDonutsCharts();
 
-    if (filters.category) {
+    if (filters.category && filters.category != 'all') {
         filters.dataset = filters.dataset.filter(f.attr('category', filters.category));
     }
 
@@ -366,7 +364,7 @@ var updateDataset = function() {
     if (filters.seen === false)
         filters.dataset = filters.dataset.filter(f.notseen);
 
-    if (!filters.category && filters.year) {
+    if (filters.category == 'all') {
         filters.dataset = filters.dataset.filter(f.noduplicate);
     }
 
@@ -403,7 +401,7 @@ var updateWords = function() {
         actor: 'starring',
         crew: 'with',
     };
-    if (filters.category) w += catw[filters.category];
+    if (filters.category && filters.category != 'all') w += catw[filters.category];
     else w += 'in the CV of'
 
     w += ' ';
@@ -516,7 +514,7 @@ statify = function() {
     // donuts
 
     var data = { series: [] };
-    g_donuts = [addDonut(e_views, undefined, data, 'total')];
+    g_donuts = [addDonut(e_views, 'all', data, 'total')];
     for (var i = 0; i < movies_categories.length; i++) {
         var cat = movies_categories[i];
         var catmovies = movies
