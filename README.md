@@ -2,67 +2,64 @@
 A chrome extension adding various improvements to [trakt.tv](https://trakt.tv). Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce).
 
 -------------
-- Features
+- [Features](#features)
     - [People statistics & filtering](#people-statistics--filtering)
-    - [Custom external links](#custom-external-links)
-    - [Translation & posters localization](#translation--posters-localization)
-- [Options](#translation)
+    - [Layout improvements](#layout-improvements)
+    - [Titles, summaries & posters localization](#translation--posters-localization)
 
 -------------
+## Features
 
-## People statistics & filtering
+Filmography charts|Filmography filtering
+:--:|:--:
+![screen_01](img/screen_01.png) | ![screen_02](img/screen_02.png)
 
-Personnal statistics & filters are added to people pages (ex. [trakt.tv/people/steven-spielberg](https://trakt.tv/people/steven-spielberg)) :
+External links|Translations|Options
+:--:|:--:|:--:
+![links](img/links.png) | ![options](img/translation2.png) | ![options](img/options.png)
 
-- Movies I've seen or not of this person, in total and by job categories (direction, production...).
-- Ratings distribution (personal ratings & trackt.tv ratings).
-- Movies I've seen or not by decade.
+### Filmography statistics & filtering
 
-All these stats are combinable by clicking on the charts. Ex : Films directed by X in the 90's that I didn't see.
+A way to navigate into someone filmography trough your personnal history.
+
+> *What are the films directed by Paul-Thomas Anderson in the 90's that I didn't see ?*
+
+The extension add several charts to the people pages (ex. [Steven Spielberg](https://trakt.tv/people/steven-spielberg)) :
+
+- The number/percentage of his movies I've seen, in total and by job categories (direction, production...).
+- The distribution of the ratings for his filmography, by me and the trackt.tv users.
+- The distribution of his movies by decade, and the proportion that I've seen.
+
+All these stats are combinable by clicking on the charts.
 
 - Select a donut chart to focus on specific job categories.
 - Select a donut slice to focus on movies 'seen' or 'not seen'.
 - Select a decade bar to focus on specific decades.
 
-![screen_01](img/screen_01.png)
+By clicking on charts, the movies list below is neatly organized and filtered, and a summary sentence appears below.
 
-**Filtering**
 
-The charts acts also as filters to the movies list below.
-So it's not just statistics, it's especially a way to navigate into someone filmography trough your personnal history. Not only how many but "**which films** written by X in the 70's I haven't seen ?".
+An option allow to skip specific ratings from the related chart. It may be useful if some of your ratings aren't reliable and distort the chart (ex. too many 5's ?).
 
-When filtering, a summary sentence appears below. It may be helpful for sharing.
+### Layout improvements
 
-![screen_02](img/screen_02.png)
+The extension add several features to the site layout and navuigation that can be setup in the option page.
 
-## Custom external links
+- Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``Allociné, Criticker, SensCritique...``. (List website names or addresses in options, separated by commas)
+- Enable multiline titles, to display movies informations in full length in listed views. The title will be on several lines instead of cropped on a single line.
 
-Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``allocine,criticker...``.
+### Translation & posters localization
 
-![links](img/links.png)
+The extension can translate on the fly movies titles, overviews and localize posters in any language by using the TMDb data. You have to specify a language in the options.
 
-## Translation & posters localization
+Modes :
+- *On mouse hover* : the translation of listed movies is done when an item is hovered. Reduce the number of calls to TMDb.
+- *On load* : translate every listed movies of the pages on load. Create numerous calls to TMDb.
 
-The extension will translate on the fly movies titles, informations (ex. overview) and localize posters and backdrops in the desired language if the informations are available on TMDb.
+Display :
+- *Show original & translation* : adds the localized titles or summaries next to the originals.
+- *Show translation only* : replace the title and summaries by their localized version.
 
-On search results, lists, etc. the translation occur only when hovering the posters, to minimize loads.
+*Localize posters* replace poster images by their localized version.
 
-## Options
-
-![options](img/options.png)
-
-Stats options :
-
-- Ratings to hide from chart : a comma separated list of ratings (from 1 to 10) to hide from the related chart. May be useful if some of your ratings aren't reliable (ex. too many 5's ?).
-
-Additional links options :
-
-- Website names separated by commas (ex. allocine,criticker).
-
-Translation options :
-
-- TMDb API Key (required)
-- ISO 639-1 language code (required)
-- Always switch languages on mouse hover : by default the translations replace the english ones. With this option the translations are visible only when hovering a poster.
-    - Display the translation first on shows pages : if the previous option is active, display anyway the ranslated data of a show page first, and show the english data on hover.
-- Localize backdrops : display localized background images on show pages
+You can also specify a custom API Key if you want to use your own or if the default one is down.

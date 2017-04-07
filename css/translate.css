@@ -1,32 +1,53 @@
-
-body.i18nAlwaysSwitch div[data-type].translated:hover .i18n_original,
-body.i18nAlwaysSwitch div[data-type].translated:not(:hover) .i18n,
-body:not(.i18nAlwaysSwitch) div[data-type].translated .i18n_original
-{
-	display: none !important;
+/* listed shows */
+.i18nShowBoth .posters .titles>h3 {
+	height: 2.2em;
+}
+.i18nShowBoth .posters .titles .i18n {
+	display: block;
+	font-size: 0.8em;
+	font-style: italic;
+	margin-top: .2em;
+	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+}
+.i18nShowReplace .posters .titles>h3 .i18n_original {
+	display: none;
 }
 
-
-.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) .i18n_original,
-.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:not(:hover) + section .i18n_original,
-.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover .i18n,
-.movies.i18nByDefault.i18nAlwaysSwitch #summary-wrapper:hover + section .i18n,
-
-.movies:not(.i18nAlwaysSwitch) #summary-wrapper .i18n_original,
-.movies:not(.i18nAlwaysSwitch) #summary-wrapper + section .i18n_original,
-
-.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover .i18n_original,
-.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) .i18n,
-.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:hover + section .i18n_original,
-.movies.i18nAlwaysSwitch:not(.i18nByDefault) #summary-wrapper:not(:hover) + section .i18n
-{
-	display: none !important;
+/* poster images */
+.real.i18n_original {
+	opacity: 0;
+	transition: opacity .5s;
+}
+.real.i18n {
+    opacity: 1;
+    animation: fade .5s;
+}
+@keyframes fade {
+    from {opacity: 0}
+    to {opacity: 1}
 }
 
-
-.backdrop_i18n {
-	position: absolute;
-	top: 0; bottom: 0;
-	left: 0; right: 0;
-	background-size: cover;
+/* show page title & overwiew */
+.i18nShowBoth .summary .i18n,
+.i18nShowBoth #overview .i18n {
+	font-style: italic;
 }
+.i18nShowBoth #overview .i18n {
+	display: block;
+	margin-top: 1em;
+}
+.i18nShowBoth .summary .i18n::before {
+	font-style: normal;
+	content: ' (';
+}
+.i18nShowBoth .summary .i18n::after {
+	font-style: normal;
+	content: ')';
+}
+.i18nShowReplace .summary .i18n_original,
+.i18nShowReplace #overview .i18n_original {
+	display: none;
+}
+

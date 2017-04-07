@@ -1,19 +1,23 @@
 options = {}
-VERBOSE = true
+VERBOSE = false
+defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
+
+    // wait until page is fully dynamically loaded
+    if(document.querySelector('.turbolinks-progress-bar')
+     || document.querySelector('#loading-bg').style.display == 'block') {
+        setTimeout(function() { init(items); }, 500);
+        return;
+    }
 
     options = items
 
     statify()
-    addExternalLinks()
+    layout()
 
-    if ( !options.tmdbApiKey ) return
-
-    if( options.i18nByDefault )
-        document.body.classList.add('i18nByDefault')
-    if( options.i18nAlwaysSwitch )
-        document.body.classList.add('i18nAlwaysSwitch')
+    if ( !options.tmdbApiKey )
+        options.tmdbApiKey = defaultK
 
     if ( options.tmdbConfig )
         options.tmdbConfigDate = new Date(options.tmdbConfigDate)
@@ -25,11 +29,11 @@ init = function( items ) {
         && options.tmdbConfigDate
         && daydiff(now, options.tmdbConfigDate) < 3
     ) {
-        log('get tmdb configuration from cache')
+        log('Trakttvstats : get tmdb configuration from cache')
         return translate()
     }
 
-    log('call tmdb configuration')
+    log('Trakttvstats : call tmdb configuration')
     chrome.runtime.sendMessage({
         action: 'xhttp',
         url: api_request_uri('configuration')
@@ -51,11 +55,12 @@ chrome.storage.sync.get({
     tmdbApiKey: null,
     tmdbConfig: null,
     tmdbConfigDate: null,
-    i18nLanguage: null,
-    i18nByDefault: null,
-    i18nAlwaysSwitch: null,
-    i18nBackdrop: null,
-    externalLinks: 'allocine.fr',
+    i18nLang: null,
+    i18nMode: 'Hover',
+    i18nShow: 'Both',
+    i18nBack: false,
+    layoutExternalLinks: null,
+    layoutMultilineTitles: false,
 }, init)
 
 

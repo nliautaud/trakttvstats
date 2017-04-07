@@ -1,22 +1,28 @@
 translate = function() {
-    document.onmouseover = function (event) {
-        var target = event.target || event.toElement,
-            is_movie = target.getAttribute('data-type') == 'movie',
-            movie = is_movie ? target : closest(target, '[data-type=movie]', '.row')
 
-        if ( movie && !isTranslated(movie) ) {
-            movie.classList.add('translate');
-            i18nMovieThumb(movie);
-            return;
-        }
-    };
+    if( options.i18nMode )
+        document.body.classList.add('i18nMode'+options.i18nMode)
+    if( options.i18nShow )
+        document.body.classList.add('i18nShow'+options.i18nShow)
 
+    if( options.i18nMode == 'Load') {
+        log('Trakttvstats : translate all...');
+        [...document.querySelectorAll('.posters [data-type=movie]')].forEach(i18nMovieThumb);
+    }
+    else document.onmouseover = translateOnMouseOver;
 
     var show_page = document.body.matches('.movies.show');
     if ( show_page && !isTranslated(document.body) ) {
         i18nShow(document.body);
         return;
     }
+}
+translateOnMouseOver = function (event) {
+    var target = event.target || event.toElement,
+        is_movie = target.getAttribute('data-type') == 'movie',
+        movie = is_movie ? target : closest(target, '[data-type=movie]', '.row')
+
+    if( movie ) i18nMovieThumb(movie);
 }
 isTranslated = function( el ) {
     return el.matches('.translate, .translated');
@@ -44,17 +50,19 @@ getShowInfos = function ( el ) {
     };
 
     var yearinname = /(.+?) \((\d{4})\)/.exec(infos.name);
-    if ( yearinname )
+    if ( yearinname ) {
         infos.name = yearinname[1];
-
+        infos.year = yearinname[2];
+    }
     var year = el.querySelector('.year');
-    infos.year = year ? year.innerHTML : yearinname[2];
+    infos.year = year ? year.innerHTML : infos.year;
 
     return infos;
 }
 insertI18nContent = function ( parent, sel, replace, find ) {
     var el = parent.querySelector( sel );
     find = find || el.innerHTML;
+    if(find == replace) return;
     el.innerHTML = el.innerHTML.replace( find,
         '<span class="i18n_original">' + find + '</span>' +
         '<span class="i18n">' + replace + '</span>'
@@ -80,20 +88,24 @@ insertI18nImage = function ( parent, sel, showInfo, callback ) {
     };
 }
 function i18nMovieThumb (el) {
+    if( isTranslated(el) ) return;
+    el.classList.add('translate');
     var infos = getShowInfos( el );
     if( !infos ) return;
-    var msg = {
+    var args = {
             query: infos.name,
             year: infos.year,
-            language: options.i18nLanguage
+            language: options.i18nLang
         };
 
-    callTMDb( 'search/movie', msg, function(result) {
-        insertI18nImage(el, '', result, function() {
+    callTMDb( 'search/movie', args, function(result) {
+        var translateContent = function() {
             insertI18nContent(el, '.titles h3', result.title, infos.name );
             el.classList.remove('translate');
             el.classList.add('translated');
-        });
+        };
+        if( !options.i18nBack ) translateContent();
+        else insertI18nImage(el, '', result, translateContent);
     });
 }
 function i18nShow (el) {
@@ -101,24 +113,17 @@ function i18nShow (el) {
         args = {
             query: infos.name,
             year: infos.year,
-            language: options.i18nLanguage
+            language: options.i18nLang
         };
 
     callTMDb( 'search/movie', args, function(result) {
-        insertI18nImage(el, 'body', result, function() {
+        var translateContent = function() {
             insertI18nContent(el, 'h1', result.title, infos.name );
             insertI18nContent(el, '.info [itemprop=description]', result.overview);
             el.classList.add('translated');
-        });
-        if( options.i18nBackdrop ) {
-            var wrapper = document.getElementById('summary-wrapper'),
-                original = document.createElement('div'),
-                backdrop = tmdbImageUrl(result.backdrop_path, '', 'w1920')
-            original.style.backgroundImage = wrapper.style.backgroundImage
-            original.className = 'i18n_original backdrop_i18n'
-            wrapper.style.backgroundImage = 'url('  + backdrop + ')'
-            wrapper.insertBefore(original, wrapper.firstChild)
-        }
+        };
+        if( !options.i18nBack ) translateContent();
+        else insertI18nImage(el, '#info-wrapper', result, translateContent);
     });
 }
 function callTMDb( path, args , callback) {
@@ -134,7 +139,7 @@ function callTMDb( path, args , callback) {
         if( !response || !response.results || !response.results.length )
             return warn('TMDb : no results for', args.query)
 
-         log( 'TMDb :', path, args.query, response.results[0] )
+        log( 'Trakttvstats : TMDb', path, args.query )
         callback( response.results[0] )
     });
 }

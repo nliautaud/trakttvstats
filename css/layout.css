@@ -1,0 +1,8 @@
+.layoutMultilineTitles .posters {
+	display: flex;
+	flex-flow: row wrap;
+}
+.layoutMultilineTitles .posters .titles * {
+	height: auto !important;
+	white-space: normal !important;
+}
