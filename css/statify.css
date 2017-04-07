@@ -68,7 +68,7 @@
 
 
 .ttvstats_donut .ct-label {
-    opacity: 0;
+    opacity: .5;
     font-size: .85em;
     transform: translate(0, .4em);
 }
@@ -77,22 +77,30 @@
 }
 .ttvstats-filtered .ttvstats_donut.is-selected,
 .ttvstats-filtered .ttvstats_donut.all.is-selected ~ *,
-.ttvstats_donut.is-selected .ct-label,
 .ttvstats_donut .ct-series:hover .ct-label {
     opacity: 1;
 }
 .ttvstats_donut,
 .ttvstats_donut .ct-label {
-    transition: opacity .5s ease;
+    transition: opacity .1s ease;
 }
 
 .ttvstats_donut .ct-slice-donut {
-	transition: stroke-width .2s ease;
+	transition: stroke-width .05s ease;
+}
+.ttvstats_donut .ct-slice-donut {
+    stroke-width: 25px !important;
 }
 .ttvstats_donut:not(.is-null).slice-seen .ct-series-a .ct-slice-donut,
 .ttvstats_donut:not(.is-null).slice-notseen .ct-series-b .ct-slice-donut,
 .ttvstats_donut:not(.is-null) .ct-series:hover .ct-slice-donut {
-	stroke-width: 32px !important;
+    stroke-width: 27px !important;
+}
+.ttvstats_donut .catinfos {
+    opacity: .8;
+}
+.ttvstats_donut:not(.is-null):hover .catinfos {
+    opacity: 1;
 }
 
 
