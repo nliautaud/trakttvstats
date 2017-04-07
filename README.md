@@ -50,9 +50,7 @@ The extension add several features to the site layout and navuigation that can b
 
 ### Translation & posters localization
 
-The extension can translate on the fly movies titles, overviews and localize posters in any language by using the TMDb data.
-
-A TMDb API key is required.
+The extension can translate on the fly movies titles, overviews and localize posters in any language by using the TMDb data. You have to specify a language in the options.
 
 Modes :
 - *On mouse hover* : the translation of listed movies is done when an item is hovered. Reduce the number of calls to TMDb.
@@ -63,3 +61,5 @@ Display :
 - *Show translation only* : replace the title and summaries by their localized version.
 
 *Localize posters* replace poster images by their localized version.
+
+You can also specify a custom API Key if you want to use your own or if the default one is down.
