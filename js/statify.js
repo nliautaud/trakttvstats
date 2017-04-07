@@ -159,6 +159,7 @@ var yearsDistr_old = function (movies) {
 
 var addDonut = function(parent, role, data, label) {
     var e = document.createElement('div');
+    label = label || role;
     e.dataset.category = role;
     e.className = role + ' ttvstats_donut ';
     e.innerHTML = '<div class="catinfos">'
