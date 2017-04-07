@@ -2,7 +2,7 @@
 	display: flex;
 	flex-flow: row wrap;
 }
-.layoutMultilineTitles .posters .titles>* {
+.layoutMultilineTitles .posters .titles * {
 	height: auto !important;
-	white-space: normal;
+	white-space: normal !important;
 }
