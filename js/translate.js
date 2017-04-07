@@ -6,7 +6,7 @@ translate = function() {
         document.body.classList.add('i18nShow'+options.i18nShow)
 
     if( options.i18nMode == 'Load') {
-        log('Trakttvstats : translate all');
+        log('Trakttvstats : translate all...');
         [...document.querySelectorAll('.posters [data-type=movie]')].forEach(i18nMovieThumb);
     }
     else document.onmouseover = translateOnMouseOver;
@@ -82,7 +82,6 @@ insertI18nImage = function ( parent, sel, showInfo, callback ) {
     img_i18n.className = 'real i18n';
     img_i18n.src = tmdbImageUrl(img_path, img_type);
     img_i18n.onload = function() {
-        log(img)
         img.classList.add('i18n_original');
         img.parentNode.insertBefore(img_i18n, img);
         if( callback ) callback();
@@ -140,7 +139,7 @@ function callTMDb( path, args , callback) {
         if( !response || !response.results || !response.results.length )
             return warn('TMDb : no results for', args.query)
 
-         log( 'TMDb :', path, args.query, response.results[0] )
+        log( 'Trakttvstats : TMDb', path, args.query )
         callback( response.results[0] )
     });
 }

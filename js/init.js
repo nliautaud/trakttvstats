@@ -1,5 +1,6 @@
 options = {}
-VERBOSE = true
+VERBOSE = false
+defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
 
@@ -15,7 +16,8 @@ init = function( items ) {
     statify()
     layout()
 
-    if ( !options.tmdbApiKey ) return
+    if ( !options.tmdbApiKey )
+        options.tmdbApiKey = defaultK
 
     if ( options.tmdbConfig )
         options.tmdbConfigDate = new Date(options.tmdbConfigDate)
@@ -27,11 +29,11 @@ init = function( items ) {
         && options.tmdbConfigDate
         && daydiff(now, options.tmdbConfigDate) < 3
     ) {
-        log('get tmdb configuration from cache')
+        log('Trakttvstats : get tmdb configuration from cache')
         return translate()
     }
 
-    log('call tmdb configuration')
+    log('Trakttvstats : call tmdb configuration')
     chrome.runtime.sendMessage({
         action: 'xhttp',
         url: api_request_uri('configuration')
