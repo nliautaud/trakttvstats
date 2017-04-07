@@ -21,20 +21,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 
-    // var manifest = chrome.runtime.getManifest();
-
     queueExecution(details.tabId, chrome.tabs.executeScript, [
             { file: 'lib/chartist.min.js' },
             { file: 'js/translate.js' },
             { file: 'js/statify.js' },
-            { file: 'js/addExternalLinks.js' },
+            { file: 'js/layout.js' },
             { file: 'js/init.js' }
         ]);
     queueExecution(details.tabId, chrome.tabs.insertCSS, [
             { file: 'lib/chartist.min.css' },
             { file: 'css/translate.css' },
             { file: 'css/statify.css' },
-            { file: 'js/addExternalLinks.css' },
+            { file: 'css/layout.css' },
         ]);
 })
 
