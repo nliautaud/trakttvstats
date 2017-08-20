@@ -8,7 +8,7 @@ layout = function() {
 
 addExternalLinks = function() {
 	var list = document.querySelector('.sidebar .external')
-	if(!list) return
+	if(!list || !options.layoutExternalLinks) return
 
 	var title = document.querySelector('h1').innerText
 
@@ -18,9 +18,10 @@ addExternalLinks = function() {
 
 	options.layoutExternalLinks.split(',').forEach(function(domain) {
 		var goourl = 'http://www.google.com/search?btnI&q='
-		var new_el = list.firstChild.cloneNode(true)
-		new_el.firstChild.href = goourl + title + ' ' + domain
-		new_el.firstChild.innerHTML = new_el.firstChild.innerHTML.replace(/[^<]+/, domain)
-		list.appendChild(new_el)
+		var firstlink = list.querySelector('a')
+		var new_el = firstlink.cloneNode(true)
+		new_el.href = goourl + title + ' ' + domain
+		new_el.innerHTML = domain
+		firstlink.parentElement.appendChild(new_el)
 	})
 }
