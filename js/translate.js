@@ -42,6 +42,11 @@ api_request_uri = function(path, args) {
     return api_uri + '/' + path + '?api_key=' + options.tmdbApiKey + encodeURI(args_str)
 }
 
+getIMDbID = function ( el ) {
+    var imdbID = el.querySelector('.external a[href*="imdb.com/title/"]');
+    if( !imdbID ) return;
+    return imdbID.href.substr(imdbID.href.lastIndexOf('/') + 1);
+}
 getShowInfos = function ( el ) {
     var metaname = el.querySelector('meta[itemprop=name]');
     if ( !metaname ) return;
@@ -93,10 +98,10 @@ function i18nMovieThumb (el) {
     var infos = getShowInfos( el );
     if( !infos ) return;
     var args = {
-            query: infos.name,
-            year: infos.year,
-            language: options.i18nLang
-        };
+        query: infos.name,
+        year: infos.year,
+        language: options.i18nLang.toLowerCase()
+    };
 
     callTMDb( 'search/movie', args, function(result) {
         var translateContent = function() {
@@ -109,16 +114,16 @@ function i18nMovieThumb (el) {
     });
 }
 function i18nShow (el) {
-    var infos = getShowInfos( el ),
-        args = {
-            query: infos.name,
-            year: infos.year,
-            language: options.i18nLang
-        };
+    var imdbID = getIMDbID( el );
+    if( !imdbID ) return;
+    var args  = {
+        language: options.i18nLang.toLowerCase(),
+        append_to_response: 'releases'
+    }
 
-    callTMDb( 'search/movie', args, function(result) {
+    callTMDb( 'movie/'+imdbID, args, function(result) {
         var translateContent = function() {
-            insertI18nContent(el, 'h1', result.title, infos.name );
+            insertI18nContent(el, 'h1', result.title );
             insertI18nContent(el, '.info [itemprop=description]', result.overview);
             el.classList.add('translated');
         };
@@ -126,20 +131,30 @@ function i18nShow (el) {
         else insertI18nImage(el, '#info-wrapper', result, translateContent);
     });
 }
-function callTMDb( path, args , callback) {
-    chrome.runtime.sendMessage({
+function callTMDb( path, args, callback) {
+    var message = {
         action: 'xhttp',
         url: api_request_uri( path, args )
-    }, function(msg) {
+    };
+    chrome.runtime.sendMessage( message, function(msg) {
 
-        if ( !msg.response ) return warn('TMDb : no response for', args.query)
+        if ( !msg.response ) return warn('TMDb : no response for', message.url)
 
         var response = JSON.parse(msg.response)
 
-        if( !response || !response.results || !response.results.length )
-            return warn('TMDb : no results for', args.query)
+        if( !response )
+            return warn('TMDb : response object error for', message.url)
 
-        log( 'Trakttvstats : TMDb', path, args.query )
-        callback( response.results[0] )
+        if( response.status_message )
+            return warn('TMDb :', path, response.status_message, message.url)
+
+        if( response.total_results ) {
+            if( response.total_results == 0 )
+                return warn('TMDb : no search results for', args.query, message.url)
+            response = response.results[0]
+        }
+
+        log( 'Trakttvstats : TMDb', path, response.title, message.url )
+        callback( response )
     });
 }
