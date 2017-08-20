@@ -92,6 +92,40 @@ insertI18nImage = function ( parent, sel, showInfo, callback ) {
         if( callback ) callback();
     };
 }
+countryCodeEmoji = function ( countryCode ) {
+    if (typeof countryCode !== 'string')
+        throw new TypeError('argument must be a string');
+    const cc = countryCode.toUpperCase();
+    return (/^[A-Z]{2}$/.test(cc))
+        ? String.fromCodePoint(...[...cc].map(c => c.charCodeAt() + 127397))
+        : null;
+}
+renderReleasesDates = function ( el, releases ) {
+    var releasedEl = Array.prototype.filter.call(
+        document.querySelectorAll('.additional-stats li label'), function(x) {
+        return x.textContent == 'Released';
+    });
+    if( !releasedEl ) return;
+    var parent = releasedEl[0].parentNode;
+    var selectList = document.createElement('select');
+    selectList.classList.add('releasesDatesList');
+    parent.innerHTML = releasedEl[0].outerHTML;
+    parent.appendChild(selectList);
+
+    var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    releases.countries.sort((a, b) => a.release_date.localeCompare(b.release_date));
+    releases.countries.forEach(function (country) {
+        var option = document.createElement('option');
+        selectList.appendChild(option);
+
+        var d = new Date(country.release_date);
+        option.text = d.toLocaleDateString(options.i18nLang, dateOptions);
+        option.text += ' (' + countryCodeEmoji(country.iso_3166_1) + ')';
+
+        if( country.iso_3166_1.toUpperCase() == options.i18nLang.toUpperCase() )
+            option.selected = true;
+    });
+}
 function i18nMovieThumb (el) {
     if( isTranslated(el) ) return;
     el.classList.add('translate');
@@ -125,6 +159,7 @@ function i18nShow (el) {
         var translateContent = function() {
             insertI18nContent(el, 'h1', result.title );
             insertI18nContent(el, '.info [itemprop=description]', result.overview);
+            renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
         if( !options.i18nBack ) translateContent();
