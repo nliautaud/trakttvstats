@@ -6,103 +6,128 @@
 	text-align: center;
 }
 
+
 /*
-** Donuts
+** Categories graphs
 */
 
-.ttvstats_donut {
-	display: inline-block;
-	position: relative;
-	cursor: pointer;
-	width: 25%;
-	min-width: 10em;
-	max-width: 25em;
+.ttvstats_catsgraphs {
+    display: table;
+    width: 100%;
+    margin: .5em 0;
 }
-
-.ttvstats_donut.is-null {
+.ttvstats_catsgraphs .graph {
+    display: table-row;
+}
+.ttvstats_catsgraphs.filtered .graph:not(.selected) {
     opacity: .5;
-    cursor: default;
 }
-.catinfos {
-    margin: auto;
+.ttvstats_catsgraphs .graph > * {
+    display: table-cell;
+    height: 2.5em;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.ttvstats_catsgraphs .category {
+    padding: 0 .5em;
+    text-transform: capitalize;
+}
+.ttvstats_catsgraphs .databar {
+    width: 100%;
+    padding: 0 1em;
+}
+.ttvstats_catsgraphs .databar i {
+    float: left;
+}
+.ttvstats_catsgraphs .databar i:before {
+    vertical-align: middle;
+}
+.ttvstats_catsgraphs .bar {
+    display: block;
+    height: 1.5em;
+    position: relative;
+    background: #ccc;
+    border-radius: 1em;
+    margin-left: 1.5em;
+}
+.ttvstats_catsgraphs .percentage,
+.ttvstats_catsgraphs .rest,
+.ttvstats_catsgraphs .value {
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    height: 3em;
+    font-size: .75em;
+    color: white;
+    padding: .25em .5em;
+
+    display: flex;
+    align-items: center;
+}
+.ttvstats_catsgraphs .value {
+    pointer-events: none;
+}
+.ttvstats_catsgraphs .percentage,
+.ttvstats_catsgraphs .rest {
+    left: 0; top: 0; bottom: 0;
+    background: #999;
+    border-radius: 1em 2px 2px 1em;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+.ttvstats_catsgraphs .rest {
+    left: auto; right: 0;
+    background: #ccc;
+    border-radius: 2px 1em 1em 2px;
+}
+.ttvstats_catsgraphs .percentage:hover,
+.ttvstats_catsgraphs .rest:hover {
+    height: 2.2em;
+    margin-top: -.1em;
+}
+.ttvstats_catsgraphs .completed .percentage {
+    border-radius: 1em;
     text-align: center;
-    pointer-events:none;
-    color: #333;
 }
-.ttvstats_donut .ct-label {
-    pointer-events:none;
-    fill: #fff;
+.ttvstats_catsgraphs .graph.all .percentage { background: #8e44ad; }
+.ttvstats_catsgraphs .graph.directing .percentage { background: #D17905; }
+.ttvstats_catsgraphs .graph.writing .percentage { background: #16a085; }
+.ttvstats_catsgraphs .graph.actor .percentage { background: #2b678f; }
+.ttvstats_catsgraphs .bar[data-value="0"] .percentage {
+    background: transparent;
 }
-/* not-viewed slice */
-.ttvstats_donut .ct-series:first-child .ct-slice-donut {
-    stroke: #333;
+.ttvstats_catsgraphs .databar[data-value="0"] .value {
+    display: none;
 }
-/* viewed slices */
-.ttvstats_donut .ct-series-a .ct-slice-donut {
-    stroke: #999;
+
+.ttvstats_catsgraphs .info {
+    padding: 0 .6em 0 .4em;
 }
-.ttvstats_donut.all .ct-series-a .ct-slice-donut {
-    stroke: #8e44ad;
+.ttvstats_catsgraphs i {
+    display: inline-block;
+    margin-right: .25em;
 }
-.ttvstats_donut.directing .ct-series-a .ct-slice-donut {
-    stroke: #D17905;
-}
-.ttvstats_donut.writing .ct-series-a .ct-slice-donut {
-    stroke: #16a085;
-}
-.ttvstats_donut.actor .ct-series-a .ct-slice-donut {
-    stroke: #2b678f;
-}
-/* not-viewed slice */
-.ttvstats_donut.is-null .ct-series .ct-slice-donut {
-    stroke: #ccc;
+.ttvstats_catsgraphs .trakt-icon-check-thick { color: #8e44ad; }
+.ttvstats_catsgraphs .fa-heart { color: #C91D24; }
+.ttvstats_catsgraphs .trakt-icon-collection-thick { color: #16a085; }
+.ttvstats_catsgraphs .trakt-icon-list-thick { color: #2b678f; }
+.ttvstats_catsgraphs .info[data-value="0"],
+.ttvstats_catsgraphs .info[data-value="0"] i {
+    color: #ccc;
 }
 
 
-
-
-.ttvstats_donut .ct-label {
-    opacity: .5;
-    font-size: .85em;
-    transform: translate(0, .4em);
+.ttvstats_catsgraphs .category,
+.ttvstats_catsgraphs .info {
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 5px;
 }
-.ttvstats-filtered .ttvstats_donut {
-    opacity: .5;
+.ttvstats_catsgraphs .category:hover,
+.ttvstats_catsgraphs .info:hover .text {
+    text-decoration: underline;
 }
-.ttvstats-filtered .ttvstats_donut.is-selected,
-.ttvstats-filtered .ttvstats_donut.all.is-selected ~ *,
-.ttvstats_donut .ct-series:hover .ct-label {
-    opacity: 1;
+.ttvstats_catsgraphs .graph .info.selected {
+    border-color: #ccc white white #ccc;
+    box-shadow: inset 0 0 .5em 0 rgba(0,0,0,.1);
 }
-.ttvstats_donut,
-.ttvstats_donut .ct-label {
-    transition: opacity .1s ease;
-}
-
-.ttvstats_donut .ct-slice-donut {
-	transition: stroke-width .05s ease;
-}
-.ttvstats_donut .ct-slice-donut {
-    stroke-width: 25px !important;
-}
-.ttvstats_donut:not(.is-null).slice-seen .ct-series-a .ct-slice-donut,
-.ttvstats_donut:not(.is-null).slice-notseen .ct-series-b .ct-slice-donut,
-.ttvstats_donut:not(.is-null) .ct-series:hover .ct-slice-donut {
-    stroke-width: 27px !important;
-}
-.ttvstats_donut .catinfos {
-    opacity: .8;
-}
-.ttvstats_donut:not(.is-null):hover .catinfos {
-    opacity: 1;
-}
-
 
 
 /*
@@ -112,7 +137,8 @@
 
 .ttvstats_graph {
 	display: inline-block;
-	width: 50%;
+    width: 50%;
+    padding: 1em;
 }
 @media (max-width: 1000px) {
 	.ttvstats_graph {
@@ -121,12 +147,58 @@
 	}
 }
 
-.ttvstats_graph_ratings .ct-series-b .ct-line {
-    stroke: #d0131a;
+.ttvstats_graph_ratings svg {
+    overflow: visible !important;
 }
-.ttvstats_graph_ratings .ct-series-a .ct-line {
+.ttvstats_graph_ratings .ct-series-b .ct-line, 
+.ttvstats_graph_ratings .ct-series-b .ct-point {
+    stroke: #d0131a;
+    stroke-width: 3px;
+}
+.ttvstats_graph_ratings .ct-series-a .ct-line,
+.ttvstats_graph_ratings .ct-series-a .ct-point {
     stroke: #ccc;
     stroke-width: 1px;
+}
+.ttvstats_graph_ratings .ct-point {
+    cursor: pointer;
+	transition: stroke-width .05s ease;
+}
+.ttvstats_graph_ratings .ct-label{
+	font-size: 0.75em;
+}
+.ttvstats_graph_ratings:hover .ct-series-a .ct-point {
+    stroke-width: 7px;
+}
+.ttvstats_graph_ratings:hover .ct-series-b .ct-point {
+    stroke-width: 10px;
+}
+.ttvstats_graph_ratings .ct-series-a .ct-point:hover,
+.ttvstats_graph_ratings .ct-series-b .ct-point:hover {
+    stroke-width: 15px;
+}
+.ttvstats_graph_ratings.selected-a-1 .ct-series-a .ct-point:nth-of-type(1),
+.ttvstats_graph_ratings.selected-a-2 .ct-series-a .ct-point:nth-of-type(2),
+.ttvstats_graph_ratings.selected-a-3 .ct-series-a .ct-point:nth-of-type(3),
+.ttvstats_graph_ratings.selected-a-4 .ct-series-a .ct-point:nth-of-type(4),
+.ttvstats_graph_ratings.selected-a-5 .ct-series-a .ct-point:nth-of-type(5),
+.ttvstats_graph_ratings.selected-a-6 .ct-series-a .ct-point:nth-of-type(6),
+.ttvstats_graph_ratings.selected-a-7 .ct-series-a .ct-point:nth-of-type(7),
+.ttvstats_graph_ratings.selected-a-8 .ct-series-a .ct-point:nth-of-type(8),
+.ttvstats_graph_ratings.selected-a-9 .ct-series-a .ct-point:nth-of-type(9),
+.ttvstats_graph_ratings.selected-a-10 .ct-series-a .ct-point:nth-of-type(10),
+.ttvstats_graph_ratings.selected-b-1 .ct-series-b .ct-point:nth-of-type(1),
+.ttvstats_graph_ratings.selected-b-2 .ct-series-b .ct-point:nth-of-type(2),
+.ttvstats_graph_ratings.selected-b-3 .ct-series-b .ct-point:nth-of-type(3),
+.ttvstats_graph_ratings.selected-b-4 .ct-series-b .ct-point:nth-of-type(4),
+.ttvstats_graph_ratings.selected-b-5 .ct-series-b .ct-point:nth-of-type(5),
+.ttvstats_graph_ratings.selected-b-6 .ct-series-b .ct-point:nth-of-type(6),
+.ttvstats_graph_ratings.selected-b-7 .ct-series-b .ct-point:nth-of-type(7),
+.ttvstats_graph_ratings.selected-b-8 .ct-series-b .ct-point:nth-of-type(8),
+.ttvstats_graph_ratings.selected-b-9 .ct-series-b .ct-point:nth-of-type(9),
+.ttvstats_graph_ratings.selected-b-10 .ct-series-b .ct-point:nth-of-type(10) {
+    stroke-width: 17px;
+    stroke: #FF7413;
 }
 
 
@@ -150,6 +222,9 @@
 .ttvstats_graph_years.is-filtered .is-selected {
 	opacity: 1;
 }
+.ttvstats_graph_years .ct-label{
+	font-size: 0.75em;
+}
 .ttvstats_graph_years .is-selected .ct-label{
 	color: black;
 	font-size: 0.9em;
@@ -171,11 +246,11 @@
 ** Words
 */
 
-.ttvstats_words:not(:empty) {
-	margin: 3em 0;
-	padding: 1em;
-	color: #fff;
-	background: #1D1D1D;
+.ttvstats > h2:first-child {
+	margin: 1em 0;
+}
+.ttvstats > h2 {
+	margin: 2em 0;
 	text-align: center;
 }
 
@@ -183,6 +258,18 @@
 /*
 ** Posters
 */
+
+.ttvposters {
+    display: none;
+}
+.ttvposters-sortable {
+    display: flex;
+    flex-flow: row wrap;
+}
+.ttvposters-sortable .titles h4 {
+    height: auto;
+    white-space: normal;
+}
 
 .ttvposters-filtered {
     display: none;

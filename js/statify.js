@@ -1,65 +1,85 @@
 var processMovies = function (parent) {
     var e_movies = parent.querySelectorAll('div[data-type="movie"],div[data-type="show"]'),
-        movies = [];
+        movies = []
+        categories = [];
     for (var i = 0; i < e_movies.length; i++) {
         var m = e_movies[i],
             id = m.dataset.movieId || m.dataset.showId,
             cat = m.parentNode.previousSibling.id,
             el_infos = m.querySelector('.titles'),
-            year = parseInt(el_infos.children[1].innerText),
             el_job = el_infos.children[2],
             job = el_job.innerText,
             jobs = cat == 'actor' ? 'Actor' : job,
             e_rating = m.querySelector('.corner-rating > .text'),
-            rating =  e_rating ? parseInt(e_rating.innerText) : undefined,
             percent = m.querySelector('.percentage').innerText,
             ttvrating = Math.round(parseInt(percent.slice(0, -1)) * .1); // '87%' to 9
+
+        categories.push(cat)
 
         // find if movie exists in another or same category
         var sames = movies.filter(f.attr('id', id)),
             sames_cat = sames.filter(f.category(cat))
         if(sames_cat.length) {
-            sames_cat[0].job += ', ' + job
-            m.classList.add('poster-hidden')
+            sames[0].categories[cat].push(job)
             continue
         }
-        if(sames.length) sames[0].jobs += ', ' + jobs
-
+        if(sames.length) {
+            sames[0].jobs += ', ' + jobs
+            sames[0].categories[cat] = [job]
+            continue
+        }
+            
         // register movie
-        movies.push({
+        var movie = {
             el: m,
             el_first: sames[0],
             el_job: el_job,
-            category: cat,
             name: el_infos.children[0].innerText,
-            year: year,
+            year: parseInt(el_infos.children[1].innerText),
+            categories: {},
             job: job,
             jobs: jobs,
             seen: m.querySelector('.watch.selected') !== null,
-            rated: rating,
+            rated: e_rating ? parseInt(e_rating.innerText) : false,
+            collected: m.querySelector('.collect.selected') !== null,
+            listed: m.querySelector('.list.selected') !== null,
             ttvpercent: percent,
             ttvrating: ttvrating,
             id: id,
-        });
+        };
+        movie.categories[cat] = [job];
+        movies.push(movie);
     }
-    return movies;
+    return {
+        cats: categories.filter(f.unique),
+        all: movies
+    };
 }
 // filters
 var f = {
-    seen : function (el) {
-        return el.seen;
-    },
-    notseen : function (el) {
-        return !el.seen;
-    },
-    rated : function (el) {
-        return el.rated !== undefined;
+    seen : function (el) { return el.seen },
+    notseen : function (el) { return !el.seen },
+    rated : function (el) { return el.rated !== false },
+    notrated : function (el) { return el.rated === false },
+    collected : function (el) { return el.collected },
+    notcollected : function (el) { return !el.collected },
+    listed : function (el) { return el.listed },
+    notlisted : function (el) { return !el.listed },
+    ratings : function (ratings) {
+        return function (el) {
+            return el.rated !== false && ratings.indexOf(el.rated) !== -1;
+        };
     },
     attr : function (key, val) {
         var isarr = Object.prototype.toString.call( val ) === '[object Array]';
         return function (el) {
             var isinarr = isarr && val.indexOf(el[key]) != -1;
             return key in el && (el[key] == val || isinarr);
+        };
+    },
+    attrContains : function (key, val) {
+        return function (el) {
+            return el[key] !== undefined && el[key].indexOf(val) !== -1;
         };
     },
     year : function (year) {
@@ -69,7 +89,9 @@ var f = {
         return f.attr('year', decadeYears(year))
     },
     category : function (category) {
-        return f.attr('category', category)
+        return function (el) {
+            return el.categories[category] !== undefined;
+        };
     },
     unique : function (val, id, self) {
         return self.indexOf(val) === id
@@ -88,8 +110,11 @@ var listAttr = function (arr, key) {
     return list.filter(f.unique);
 }
 var seenPercent = function (arr) {
-    var seen = arr.filter(f.seen);
-    return (seen.length / arr.length * 100).toFixed(0)
+    return percentOf(arr, f.seen);
+}
+var percentOf = function (arr, filter) {
+    var seen = arr.filter(filter);
+    return (seen.length / arr.length * 100).toFixed(0);
 }
 var normalize = function (arr) {
     var sum = arr.reduce(function(pv, cv) {
@@ -157,81 +182,58 @@ var yearsDistr_old = function (movies) {
     };
 }
 
-var addDonut = function(parent, role, data, label) {
-    var e = document.createElement('div');
-    label = label || role;
-    e.dataset.category = role;
-    e.className = role + ' ttvstats_donut ';
-    e.innerHTML = '<div class="catinfos">'
-                + '<div class="catname">' + label + '</div>'
-                + '<div class="catviewedPercent"></div>'
-                + '</div>';
-    e.style.width = Math.round(100 / (e_categories.length+1) - 0.5)+'%';
-    parent.appendChild(e);
-    return Chartist.Pie(e, data, {
-      labelInterpolationFnc: function(value) {
-        return value;
-      },
-      donut: true,
-      donutWidth: 25,
-      ignoreEmptyValues: true
-    });
-}
-var donutChartData = function (movies) {
-    var distr = yearsDistr(movies);
-    return {
-      labels: distr.list,
-      series: [
-        distr.seen,
-        distr.notseen
-      ]
-    }
-}
-var updateDonutsCharts = function () {
-    var data = { series: [] },
-        dataset = filters.dataset
+var updateCategoryGraphs = function () {
+    var dataset = filters.dataset
 
     if (filters.year) dataset = dataset.filter(f.decade(filters.year))
 
-    // total donut
-    var uniqueset = dataset.filter(f.noduplicate)
-    data.series.push( uniqueset.filter(f.seen).length )
-    data.series.push( uniqueset.filter(f.notseen).length )
-    g_donuts[0].update(data)
-    g_donuts[0].container.firstChild.lastChild.innerText = seenPercent(uniqueset) + '%'
+    var updateCatGraph = function (cat) {
+        var graph = g_cats[cat];
+        if (graph == undefined) return;
 
-    // categories donuts
-    var cat, catmovies, percent;
-    for (var i = 0; i < movies_categories.length; i++) {
-        cat = movies_categories[i];
-        catmovies = dataset.filter(f.category(cat))
-        if(!catmovies.length) data = {series:[1]}
-        else data = {
-            series: [
-                catmovies.filter(f.seen).length,
-                catmovies.filter(f.notseen).length
-            ]
-        };
-        g_donuts[i+1].update(data);
+        var catset = dataset;
+        if (cat != 'all') catset = dataset.filter(f.category(cat))
 
-        percent = seenPercent(catmovies);
+        var seen = catset.filter(f.seen);
+        var restpercent = percentOf(catset, f.notseen);
+        var seenpercent = percentOf(catset, f.seen);
+        if (!catset.length) seenpercent = 0;
 
-        if (isNaN(percent)) {
-            percent = 'N/A';
-            g_donuts[i+1].container.classList.add('is-null');
-        } else {
-            percent += '%';
-            g_donuts[i+1].container.classList.remove('is-null');
-        }
-        g_donuts[i+1].container.firstChild.lastChild.innerText = percent;
+        graph.el_percentage.style.width = seenpercent + '%';
+        graph.el_percentage.parentNode.setAttribute('data-value', seenpercent);
+        graph.el_percentage.innerText = catset.length ? seenpercent + '%' : '';
+
+        graph.el_rest.style.width = restpercent + '%';
+        graph.el_rest.innerText = catset.length - seen.length;
+
+        if (seenpercent == 100)
+            graph.el.classList.add('completed');
+        else graph.el.classList.remove('completed');
+
+        graph.el_value.innerText = seen.length;
+        
+        graph.el_total.innerText = catset.length;
+        graph.el_percentage.parentNode.setAttribute('data-total', catset.length);
+
+        graph.el_coll.innerText = catset.filter(f.collected).length;
+        graph.el_coll.parentNode.setAttribute('data-value', graph.el_coll.innerText);
+
+        graph.el_list.innerText = catset.filter(f.listed).length;
+        graph.el_list.parentNode.setAttribute('data-value', graph.el_list.innerText);
+
+        graph.el_rate.innerText = catset.filter(f.rated).length;
+        graph.el_rate.parentNode.setAttribute('data-value', graph.el_rate.innerText);
+
     }
+    updateCatGraph('all');
+    movies.cats.forEach(updateCatGraph);
 }
 var addRatingsChart = function(parent, movies) {
     var e = document.createElement('div');
     e.className = 'ttvstats_graph ttvstats_graph_ratings';
     parent.appendChild(e);
     return new Chartist.Line(e, ratingsChartData(movies), {
-        showPoint: false,
+        showPoint: true,
         axisX: {
             offset: 30,
             labelOffset: {
@@ -340,14 +342,20 @@ var yearsChartSelection = function () {
 }
 
 var updateDataset = function() {
-    filters.dataset = movies;
-
-    // update donuts (before filtering)
-    updateDonutsCharts();
+    filters.dataset = movies.all;
 
     if (filters.category && filters.category != 'all') {
-        filters.dataset = filters.dataset.filter(f.attr('category', filters.category));
+        filters.dataset = filters.dataset.filter(f.category(filters.category));
     }
+    if (filters.collected === true)
+        filters.dataset = filters.dataset.filter(f.collected);
+    if (filters.collected === false)
+        filters.dataset = filters.dataset.filter(f.notcollected);
+
+    if (filters.listed === true)
+        filters.dataset = filters.dataset.filter(f.listed);
+    if (filters.listed === false)
+        filters.dataset = filters.dataset.filter(f.notlisted);
 
     // update years (before filtering years & seen)
     g_years.update(yearsChartData(filters.dataset.filter(f.noduplicate)));
@@ -356,117 +364,106 @@ var updateDataset = function() {
     if (filters.year)
         filters.dataset = filters.dataset.filter(f.decade(filters.year));
 
+    updateCategoryGraphs();
+
     // update ratings (before filtering seen)
     g_ratings.update(ratingsChartData(filters.dataset));
-
+    
+    if ( filters.ratings.length )
+        filters.dataset = filters.dataset.filter(f.ratings(filters.ratings));
 
     if (filters.seen === true)
         filters.dataset = filters.dataset.filter(f.seen);
     if (filters.seen === false)
         filters.dataset = filters.dataset.filter(f.notseen);
 
+    if (filters.rated === true)
+        filters.dataset = filters.dataset.filter(f.rated);
+    if (filters.rated === false)
+        filters.dataset = filters.dataset.filter(f.notrated);
+
     if (filters.category == 'all') {
         filters.dataset = filters.dataset.filter(f.noduplicate);
     }
 
     updateWords();
+    filterPosters();
 }
 
 var updateWords = function() {
 
-    if(!filters.category && !filters.year)
-        return e_ttvstatswords.innerHTML = '';
-
     var count = filters.dataset.length;
     var seen = filters.dataset.filter(f.seen).length;
+    var title = document.querySelector('h1').innerText;
     var w = '';
 
-    if(count == 0) w += 'There isn\'t';
-    else if (seen && filters.seen !== false) {
-        w += 'I\'ve seen ';
-        if (filters.seen == undefined) {
-            if(seen == count) w += 'all the ';
-            else w += seen + '/';
-        }
-    } else w += 'There is ';
-
-    w += count == 0 ? ' any ' : count;
-    w += count > 1 ? ' movies ' : ' movie ';
-
+    if(count == 0) w += 'There isn\'t any movie ';
+    else w += count > 1 ? 'Movies ' : 'Movie ';
+    
     // category
     var catw = {
-        directing: 'directed by',
-        writing: 'written by',
-        production: 'produced by',
-        editing: 'edited by',
-        actor: 'starring',
-        crew: 'with',
+        directing: 'directed by ',
+        writing: 'written by ',
+        production: 'produced by ',
+        editing: 'edited by ',
+        actor: 'starring ',
+        crew: 'with ',
     };
-    if (filters.category && filters.category != 'all') w += catw[filters.category];
-    else w += 'in the CV of'
-
-    w += ' ';
-
-    // people
-    w += document.querySelector('h1').innerText;
-
-    if (filters.category == 'crew') w += ' in the crew ';
+    if (filters.category && filters.category != 'all') {
+        w += catw[filters.category];
+        w += title;
+        if (filters.category == 'crew') w += ' in the crew';        
+    }
+    else w += ' on which worked ' + title;
 
     // decade
     if (filters.year) {
         w += ' in the ' + yearDecade(filters.year) + '\'s';
     }
 
+    // seen, rated, collected, listed
+    var perso_filters = [];
+    if (filters.seen) perso_filters.push('seen');
+    if (filters.rated) perso_filters.push('rated');
+    if (filters.collected) perso_filters.push('collected');
+    if (filters.listed) perso_filters.push('listed');
 
-    if (!seen && filters.seen === false)
-        w += ' that I didn\'t see :';
+    if (perso_filters.length) w += ' that I\'ve ';
+
+    w += perso_filters.slice(0, -1).join(', ');
+    if (perso_filters.length > 1)
+        w += ' or ';
+    w += perso_filters.slice(-1);
+    
+    // rating
+    if (filters.ratings.length) {
+        if (perso_filters.length) w += ' and';
+        filters.ratings.sort();
+        w += ' that I rated ';
+        w += filters.ratings.slice(0, -1).join(', ');
+        if( filters.ratings.length > 1) w += ' or ';
+        w += filters.ratings.slice(-1);
+    }
 
     e_ttvstatswords.innerHTML = w;
 }
 var filterPosters = function () {
 
-    var filtered = filters.category || filters.year;
-
-    for (var i = 0; i < movies.length; i++) {
-        movies[i].el.classList.add('poster-hidden')
-        movies[i].el_job.innerHTML = movies[i].job;
+    for (var i = 0; i < movies.all.length; i++) {
+        movies.all[i].el.classList.add('poster-hidden')
     }
-    for (var i = 0; i < filters.dataset.length; i++) {
-        filters.dataset[i].el.classList.remove('poster-hidden')
-        if(filtered)
-            filters.dataset[i].el_job.innerHTML = filters.dataset[i].jobs;
-    }
-
-    if(filtered) {
-        e_posters.classList.add('ttvposters-filtered');
-        sortPosters();
-    } else {
-        e_posters.classList.remove('ttvposters-filtered');
-        unsortPosters();
-    }
+    filters.dataset.forEach(function(movie) {
+        movie.el.classList.remove('poster-hidden')
+        if(filters.category && filters.category != 'all')
+            movie.el_job.innerHTML = movie.categories[filters.category].join(', ');
+        else
+            movie.el_job.innerHTML = movie.jobs;
+    });
 
     // fire scroll to lazyload images
     var e = document.createEvent('Event')
     e.initEvent('scroll', true, true)
     window.document.dispatchEvent(e)
-}
-var sortPosters = function () {
-
-    movies.sort(function(a,b) { return b.year - a.year });
-
-    for (var i = 0; i < movies.length; i++) {
-        e_sortablePosters.appendChild(movies[i].el);
-    }
-
-}
-var unsortPosters = function () {
-
-    if(e_sortablePosters.innerHTML === "")
-        return;
-
-    for (var i = 0; i < movies.length; i++) {
-        e_posters.querySelector(".row."+movies[i].category).appendChild(movies[i].el);
-    }
 }
 
 
@@ -480,10 +477,11 @@ statify = function() {
 
 
     movies = processMovies(e_ttv);
-    filters = { dataset: movies };
-    movies_categories = listAttr(movies, 'category');
-
-    if ( !movies_categories ) return;
+    if ( !movies.cats ) return;
+    filters = {
+        dataset: movies.all,
+        ratings: []
+    };
 
     e_categories = e_ttv.querySelectorAll('h2[id]');
     for (var i = 0; i < e_categories.length; i++) {
@@ -512,17 +510,116 @@ statify = function() {
     e_sortablePosters.className = 'ttvposters-sortable '+ postersRowClassName
     e_ttv.insertBefore(e_sortablePosters, e_posters)
 
-    // donuts
+    movies.all.sort(function(a,b) { return b.year - a.year });
+    movies.all.forEach(function(movie) {
+        e_sortablePosters.appendChild(movie.el);
+    });
 
-    var data = { series: [] };
-    g_donuts = [addDonut(e_views, 'all', data, 'total')];
-    for (var i = 0; i < movies_categories.length; i++) {
-        var cat = movies_categories[i];
-        var catmovies = movies
-            .filter(f.category(cat))
-            .filter(f.noduplicate);
-        g_donuts[i+1] = addDonut(e_views, cat, data);
-    }
+    // Category Graphs
+
+    e_catsgraphs = document.createElement('div');
+    e_catsgraphs.className = 'ttvstats_catsgraphs';
+    e_ttvstats.appendChild(e_catsgraphs);
+    g_cats = {};
+    chrome.runtime.sendMessage({
+        action: 'template',
+        selector: '.catgraph'
+    }, function(response) {
+        var makeBar = function(cat) {
+            e_graph = document.createElement('div');
+            e_graph.className = 'graph ' + cat;
+            e_graph.innerHTML = response;
+            e_catsgraphs.appendChild(e_graph);
+            el_cat = e_graph.querySelector('.category');
+            g_cats[cat] = {
+                el: e_graph,
+                el_cat: el_cat,
+                el_seen: e_graph.querySelector('.seen'),
+                el_value: e_graph.querySelector('.value'),
+                el_percentage: e_graph.querySelector('.percentage'),
+                el_rest: e_graph.querySelector('.rest'),
+                el_total: e_graph.querySelector('.total'),
+                el_coll: e_graph.querySelector('.collected .text'),
+                el_list: e_graph.querySelector('.listed .text'),
+                el_rate: e_graph.querySelector('.rated .text'),
+            };
+            el_cat.innerText = cat;
+
+            var selectCategory = function (el_graph) {
+                filters.category = cat;
+                el_graph.parentNode.classList.add('filtered');
+                el_graph.classList.add('selected');
+                
+                if (filters.seen) g_cats[cat].el_seen.classList.add('selected');
+                if (filters.rated) g_cats[cat].el_rate.parentNode.classList.add('selected');
+                if (filters.collected) g_cats[cat].el_coll.parentNode.classList.add('selected');
+                if (filters.listed) g_cats[cat].el_list.parentNode.classList.add('selected');
+            }
+            var unselectCategory = function (el_graph) {
+                filters.category = undefined;
+                filters.seen = undefined;
+                filters.rated = undefined;
+                filters.collected = undefined;
+                filters.listed = undefined;
+            }
+            var clearSelected = function (el_graph) {
+                el_graph.parentNode.childNodes.forEach(function(el) {
+                    el.classList.remove('selected');
+                    el.childNodes.forEach(function(el) {
+                        if (el.classList) el.classList.remove('selected');
+                    });
+                });
+                el_graph.parentNode.classList.remove('filtered');
+            }
+            el_cat.addEventListener('click', function(e) {
+                if (this.classList.contains('selected')) {
+                    clearSelected(this.parentNode);
+                    unselectCategory(this.parentNode);
+                    updateDataset();
+                    return;
+                }
+                if (this.parentNode.classList.contains('selected')) {
+                    filters.seen = undefined;
+                    filters.rated = undefined;
+                    filters.collected = undefined;
+                    filters.listed = undefined;
+                }
+                clearSelected(this.parentNode);
+                this.classList.add('selected');
+                selectCategory(this.parentNode);
+                updateDataset();
+            }, this);
+            g_cats[cat].el_seen.addEventListener('click', function(e) {
+                var target = e.target || e.srcElement || e.originalTarget;
+                if (!target.matches('.percentage, .rest')) return;
+                clearSelected(this.parentNode);
+                
+                var was_selected = filters.seen;
+                if (!target.matches('.rest')) was_selected = !filters.seen;
+                was_selected &= this.classList.contains('selected');
+
+                filters.seen = !was_selected;
+
+                if (was_selected) unselectCategory(this.parentNode);
+                else selectCategory(this.parentNode);
+                updateDataset();
+            }, this);
+            Array.prototype.forEach.call(e_graph.querySelectorAll('.info'), function (el) {
+                el.addEventListener('click', function (e) {
+                    var infotype = this.classList[1],
+                        was_selected = filters[infotype] && this.parentNode.classList.contains('selected');
+                    clearSelected(this.parentNode);
+                    filters[infotype] = !was_selected;
+                    if (was_selected) unselectCategory(this.parentNode);
+                    else selectCategory(this.parentNode);
+                    updateDataset();
+                }, this);
+            });
+        };
+        makeBar('all');
+        movies.cats.forEach(makeBar);
+        updateCategoryGraphs();
+    });
 
     // graphs
 
@@ -530,14 +627,13 @@ statify = function() {
     e_ratings.className = 'ttvstats_row ratings';
     e_ttvstats.appendChild(e_ratings);
 
-    g_ratings = addRatingsChart(e_ratings, movies);
-    g_years = addYearsChart(e_ratings, movies);
+    g_ratings = addRatingsChart(e_ratings, movies.all);
+    g_years = addYearsChart(e_ratings, movies.all);
     e_yearsChart = document.querySelector('.ttvstats_graph_years');
 
     // words
 
-    e_ttvstatswords = document.createElement('div');
-    e_ttvstatswords.className = 'ttvstats_words';
+    e_ttvstatswords = document.createElement('h2');
     e_ttvstats.appendChild(e_ttvstatswords);
 
     //
@@ -545,59 +641,33 @@ statify = function() {
     //
 
     updateDataset();
-    filterPosters();
 
-    // donuts
+    // ratings
 
-    e_views.addEventListener('click', function(e) {
+    e_ratings.addEventListener('click', function(e) {
         e = e || window.event;
         var targ = ini_targ = e.target || e.srcElement;
-        while (targ && !targ.matches('.ttvstats_donut')) {
+        if( !targ.matches('.ct-point') ) return;
+
+        while (targ && !targ.matches('.ttvstats_graph_ratings')) {
             targ = targ.parentNode;
             if (targ == e_ttvstats) return;
         }
         if(targ.matches('.is-null')) return;
 
-        var touchedSelected = targ.matches('.is-selected'),
-            touchedSlice = ini_targ.matches('.ct-slice-donut'),
-            touchedSelectedSlice = targ.matches('.slice');
+        var rating = Array.prototype.indexOf.call(ini_targ.parentElement.children, ini_targ),
+            serie = ini_targ.parentElement.classList[1].slice(-1),
+            existing = filters.ratings.indexOf(rating);
 
-        // unselect all
-        filters.category = undefined;
-        filters.seen = undefined;
-        var selection = e_views.querySelectorAll('.is-selected,.slice');
-        for (var i = 0; i < selection.length; i++) {
-            selection[i].classList.remove('is-selected')
-            selection[i].classList.remove('slice')
-            selection[i].classList.remove('slice-seen')
-            selection[i].classList.remove('slice-notseen')
+        if( existing !== -1 ) {
+            filters.ratings.splice(existing, 1);
+        } else {
+            filters.ratings.push(rating);
         }
 
-        // clicked on slice
-        if (touchedSlice) {
-            if (!touchedSelectedSlice) {
-                var seen = !ini_targ.parentNode.matches(':first-child');
-                filters.seen = seen;
-                targ.className += ' slice slice-' + (seen ? 'seen' : 'notseen');
-            }
-            targ.classList.add('is-selected');
-            filters.category = targ.dataset.category;
-        }
-        // clicked on active
-        else if (touchedSelected) {
-            e_ttvstats.classList.remove('ttvstats-filtered');
-        }
-
-        // clicked on other
-        if (!touchedSelected) {
-            filters.category = targ.dataset.category;
-            targ.classList.add('is-selected');
-            e_ttvstats.classList.add('ttvstats-filtered');
-        }
-
+        targ.classList.toggle('selected-'+serie+'-'+rating);
+        
         updateDataset();
-        filterPosters();
-
     });
 
     // years

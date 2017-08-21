@@ -1,5 +1,9 @@
 chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 
+    if( request.action == "template") {
+        callback(document.querySelector(request.selector).innerHTML);
+        return true;
+    }
     if (request.action == "xhttp") {
         var xhr = new XMLHttpRequest();
         var method = request.method ? request.method.toUpperCase() : 'GET';

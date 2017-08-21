@@ -12,7 +12,7 @@
     "https://trakt.tv/*"
   ],
   "background": {
-      "scripts": ["js/background.js"],
+      "page": "background.html",
       "persistent": false
   },
   "options_ui": {
