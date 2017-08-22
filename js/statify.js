@@ -492,33 +492,35 @@ statify = function() {
             el_cat.innerText = cat;
 
             var selectCategory = function (el_graph) {
+                clearSelected(el_graph.parentNode);
                 filters.category = cat;
                 el_graph.parentNode.classList.add('filtered');
                 el_graph.classList.add('selected');
+                el_cat.classList.add('selected');
                 
-                if (filters.seen !== undefined) g_cats[cat].el_seenbar.classList.add('selected');
+                if (filters.seen === true) g_cats[cat].el_valbar.classList.add('selected');
+                if (filters.seen === false) g_cats[cat].el_restbar.classList.add('selected');
                 if (filters.rated) g_cats[cat].el_rate.parentNode.classList.add('selected');
                 if (filters.collected) g_cats[cat].el_coll.parentNode.classList.add('selected');
                 if (filters.listed) g_cats[cat].el_list.parentNode.classList.add('selected');
             }
-            var unselectCategory = function (el_graph) {
+            var unselectCategory = function (el) {
                 filters.category = undefined;
                 filters.seen = undefined;
                 filters.rated = undefined;
                 filters.collected = undefined;
                 filters.listed = undefined;
+                el.parentNode.classList.remove('filtered');
+                clearSelected(el);
             }
-            var clearSelected = function (el_graph) {
-                Array.prototype.forEach.call(
-                    el_graph.parentNode.querySelectorAll('.selected'),
-                    function(el) {
-                        el.classList.remove('selected');
-                    });
-                el_graph.parentNode.classList.remove('filtered');
+            var clearSelected = function (el) {
+                el.classList.remove('selected');
+                Array.prototype.forEach.call(el.querySelectorAll('.selected'), function(el) {
+                    el.classList.remove('selected');
+                });
             }
             el_cat.addEventListener('click', function(e) {
                 if (this.classList.contains('selected')) {
-                    clearSelected(this.parentNode);
                     unselectCategory(this.parentNode);
                     updateDataset();
                     return;
@@ -544,22 +546,19 @@ statify = function() {
 
                 filters.seen = was_selected ? undefined : !rest;
 
-                clearSelected(this.parentNode);
-                if (was_selected) unselectCategory(this.parentNode);
-                else {
-                    selectCategory(this.parentNode);
-                    target.classList.add('selected');
-                }
+                clearSelected(this);
+                if (!was_selected) selectCategory(this.parentNode);
                 updateDataset();
             }, this);
             Array.prototype.forEach.call(e_graph.querySelectorAll('.databar:not(.expanded)'), function (el) {
                 el.addEventListener('click', function (e) {
                     var infotype = this.classList[2],
-                        was_selected = filters[infotype] && this.parentNode.classList.contains('selected');
-                    clearSelected(this.parentNode);
-                    filters[infotype] = !was_selected;
-                    if (was_selected) unselectCategory(this.parentNode);
-                    else selectCategory(this.parentNode);
+                        was_selected = filters[infotype] && this.classList.contains('selected');
+                    
+                    filters[infotype] = was_selected ? undefined : !was_selected;
+                    
+                    clearSelected(this);
+                    if (!was_selected) selectCategory(this.parentNode);
                     updateDataset();
                 }, this);
             });

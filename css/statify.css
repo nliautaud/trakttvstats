@@ -26,6 +26,9 @@
     .ttvstats_catsgraphs.filtered .graph:not(.selected) {
         opacity: .5;
     }
+        .ttvstats_catsgraphs.filtered .graph.all.selected ~ .graph {
+            opacity: 1;
+        }
     .ttvstats_catsgraphs .graph > * {
         white-space: nowrap;
     }
@@ -37,8 +40,6 @@
     }
     .ttvstats_catsgraphs .graph.all .category {
         padding-left: 0;
-        cursor: inherit;
-        text-decoration: none;
     }
     .ttvstats_catsgraphs .total {
         min-width: 3rem;
