@@ -314,7 +314,7 @@ var updateDataset = function() {
 
     var data = yearsChartData(baseFilteredSet);
     g_years.update(data, {
-        high: Math.max.apply(Math, data.series[0])
+        high: Math.max.apply(Math, data.series[0]) + Number.EPSILON
     }, true);
     updateYearsSelection(baseFilteredSet);
 
