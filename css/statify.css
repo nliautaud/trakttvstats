@@ -12,119 +12,170 @@
 */
 
 .ttvstats_catsgraphs {
-    display: table;
-    width: 100%;
     margin: .5em 0;
 }
 .ttvstats_catsgraphs .graph {
-    display: table-row;
-}
-.ttvstats_catsgraphs.filtered .graph:not(.selected) {
-    opacity: .5;
-}
-.ttvstats_catsgraphs .graph > * {
-    display: table-cell;
-    height: 2.5em;
-    vertical-align: middle;
-    white-space: nowrap;
-}
-.ttvstats_catsgraphs .category {
-    padding: 0 .5em;
-    text-transform: capitalize;
-}
-.ttvstats_catsgraphs .databar {
-    width: 100%;
-    padding: 0 1em;
-}
-.ttvstats_catsgraphs .databar i {
-    float: left;
-}
-.ttvstats_catsgraphs .databar i:before {
-    vertical-align: middle;
-}
-.ttvstats_catsgraphs .bar {
-    display: block;
-    height: 1.5em;
-    position: relative;
-    background: #ccc;
-    border-radius: 1em;
-    margin-left: 1.5em;
-}
-.ttvstats_catsgraphs .percentage,
-.ttvstats_catsgraphs .rest,
-.ttvstats_catsgraphs .value {
-    position: absolute;
-    font-size: .75em;
-    color: white;
-    padding: .25em .5em;
-
     display: flex;
-    align-items: center;
+    align-items: baseline;
+    margin: auto;
 }
-.ttvstats_catsgraphs .value {
-    pointer-events: none;
+.ttvstats_catsgraphs .graph.all .category,
+.ttvstats_catsgraphs .graph.all .total {
+    font-size: 1.2em;
 }
-.ttvstats_catsgraphs .percentage,
-.ttvstats_catsgraphs .rest {
-    left: 0; top: 0; bottom: 0;
-    background: #999;
-    border-radius: 1em 2px 2px 1em;
-    justify-content: flex-end;
-    cursor: pointer;
-}
-.ttvstats_catsgraphs .rest {
-    left: auto; right: 0;
-    background: #ccc;
-    border-radius: 2px 1em 1em 2px;
-}
-.ttvstats_catsgraphs .percentage:hover,
-.ttvstats_catsgraphs .rest:hover {
-    height: 2.2em;
-    margin-top: -.1em;
-}
-.ttvstats_catsgraphs .completed .percentage {
-    border-radius: 1em;
-    text-align: center;
-}
-.ttvstats_catsgraphs .graph.all .percentage { background: #8e44ad; }
-.ttvstats_catsgraphs .graph.directing .percentage { background: #D17905; }
-.ttvstats_catsgraphs .graph.writing .percentage { background: #16a085; }
-.ttvstats_catsgraphs .graph.actor .percentage { background: #2b678f; }
-.ttvstats_catsgraphs .bar[data-value="0"] .percentage {
-    background: transparent;
-}
-.ttvstats_catsgraphs .databar[data-value="0"] .value {
-    display: none;
-}
+    .ttvstats_catsgraphs.filtered .graph:not(.selected) {
+        opacity: .5;
+    }
+    .ttvstats_catsgraphs .graph > * {
+        white-space: nowrap;
+    }
+    .ttvstats_catsgraphs .category {
+        min-width: 10rem;
+        text-transform: capitalize;
+        padding-left: 1rem;
+        cursor: pointer;
+    }
+    .ttvstats_catsgraphs .graph.all .category {
+        padding-left: 0;
+        cursor: inherit;
+        text-decoration: none;
+    }
+    .ttvstats_catsgraphs .total {
+        min-width: 3rem;
+        margin: 0 2rem;
+    }
+    .ttvstats_catsgraphs .databar {
+        padding: .25rem .6rem .25rem .4rem;
+    }
+        .ttvstats_catsgraphs .databar.expanded {
+            width: 100%;
+            padding: .25rem 1rem;
+        }
+        .ttvstats_catsgraphs .databar.expanded .bar {
+            flex: 1;
+        }
+            .ttvstats_catsgraphs .bar_wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
 
-.ttvstats_catsgraphs .info {
-    padding: 0 .6em 0 .4em;
-}
-.ttvstats_catsgraphs i {
-    display: inline-block;
-    margin-right: .25em;
-}
-.ttvstats_catsgraphs .trakt-icon-check-thick { color: #8e44ad; }
-.ttvstats_catsgraphs .fa-heart { color: #C91D24; }
-.ttvstats_catsgraphs .trakt-icon-collection-thick { color: #16a085; }
-.ttvstats_catsgraphs .trakt-icon-list-thick { color: #2b678f; }
-.ttvstats_catsgraphs .info[data-value="0"],
-.ttvstats_catsgraphs .info[data-value="0"] i {
-    color: #ccc;
-}
+                max-width: 30rem;
+                margin: auto;
+            }
+            .ttvstats_catsgraphs .databar i {
+                vertical-align: top;
+                display: inline-block;
+                margin-right: .25rem;
+            }
+            .ttvstats_catsgraphs .trakt-icon-check-thick { color: #8e44ad; }
+            .ttvstats_catsgraphs .fa-heart { color: #C91D24; }
+            .ttvstats_catsgraphs .trakt-icon-collection-thick { color: #16a085; }
+            .ttvstats_catsgraphs .trakt-icon-list-thick { color: #2b678f; }
+            .ttvstats_catsgraphs .databar i:before {
+                vertical-align: middle;
+            }
+                .ttvstats_catsgraphs .bar {
+                    display: flex;
+                    height: 1.5em;
+                    position: relative;
+                    background: #ccc;
+                    border-radius: 1em;
+                }
+                    .ttvstats_catsgraphs .bar_part {
+                        font-size: .75em;
+                        color: white;
+                        background: #555;
+                        padding: .25em .5em;
+
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        cursor: pointer;
+                    }
+                    .ttvstats_catsgraphs .bar_part:hover,
+                    .ttvstats_catsgraphs .bar_part.selected {
+                        height: 2.2em;
+                        margin-top: -.1em;
+                    }
+                    .ttvstats_catsgraphs .bar_part > * {
+                        pointer-events: none;
+                        transition: all .2s ease;
+                    }
+                    .ttvstats_catsgraphs .valbar {
+                        border-radius: 1em 2px 2px 1em;
+                    }
+                    .ttvstats_catsgraphs .restbar {
+                        flex: 1;
+                        background: #ccc;
+                        border-radius: 2px 1em 1em 2px;
+                    }
+                    .ttvstats_catsgraphs .graph.all .valbar { background: #8e44ad; }
+                    .ttvstats_catsgraphs .graph.directing .valbar { background: #D17905; }
+                    .ttvstats_catsgraphs .graph.writing .valbar { background: #16a085; }
+                    .ttvstats_catsgraphs .graph.actor .valbar { background: #2b678f; }
+                        .ttvstats_catsgraphs .valbar .value {
+                            margin-right: 1em;
+                        }
+                        .ttvstats_catsgraphs .graph:not(.selected) .value {
+                            opacity: 0;
+                        }
+                        .ttvstats_catsgraphs:hover .graph .value {
+                            opacity: 1;
+                        }
+                        .ttvstats_catsgraphs .percentage {
+                            opacity: 0;
+                        }
+                            .ttvstats_catsgraphs .bar_part.selected .percentage,
+                            .ttvstats_catsgraphs .bar_part:hover .percentage {
+                                opacity: 1;
+                            }
+                            .ttvstats_catsgraphs .completed .percentage {
+                                opacity: 1;
+                                border-radius: 1em;
+                                text-align: center;
+                            }
+            .ttvstats_catsgraphs .databar[data-value="100"] .restbar,
+            .ttvstats_catsgraphs .databar[data-value="100"] .value {
+                display: none;
+            }
+            .ttvstats_catsgraphs .databar[data-value="100"] .valbar {
+                border-radius: 1em;
+                justify-content: center;
+            }
+            .ttvstats_catsgraphs .databar[data-value="100"] .percentage:before {
+                content: '★';
+                color: gold;
+                font-size: 1.5em;
+                margin-right: .25em;
+            }
+            .ttvstats_catsgraphs .databar[data-value="0"] .valbar {
+                background: #ccc;
+            }
+            .ttvstats_catsgraphs .graph[data-total="0"] {
+                opacity: .5;
+            }
+            .ttvstats_catsgraphs .graph[data-total="0"] .bar_part {
+                display: none;
+            }
+            .ttvstats_catsgraphs .graph[data-total="0"] i {
+                color: #ccc;
+            }
+
+
 
 
 .ttvstats_catsgraphs .category,
-.ttvstats_catsgraphs .info {
+.ttvstats_catsgraphs .databar.closed {
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 5px;
 }
 .ttvstats_catsgraphs .category:hover,
-.ttvstats_catsgraphs .info:hover .text {
+.ttvstats_catsgraphs .databar:hover .text {
     text-decoration: underline;
 }
-.ttvstats_catsgraphs .graph .info.selected {
+.ttvstats_catsgraphs .graph .databar.selected:not(.expanded) {
     border-color: #ccc white white #ccc;
     box-shadow: inset 0 0 .5em 0 rgba(0,0,0,.1);
 }
@@ -154,11 +205,13 @@
 .ttvstats_graph_ratings .ct-series-b .ct-point {
     stroke: #d0131a;
     stroke-width: 3px;
+    -pointer-events: all;
 }
 .ttvstats_graph_ratings .ct-series-a .ct-line,
 .ttvstats_graph_ratings .ct-series-a .ct-point {
     stroke: #ccc;
     stroke-width: 1px;
+    -pointer-events: all;
 }
 .ttvstats_graph_ratings .ct-point {
     cursor: pointer;
@@ -166,6 +219,9 @@
 }
 .ttvstats_graph_ratings .ct-label{
 	font-size: 0.75em;
+}
+.ttvstats_graph_ratings .ct-series .ct-point:not(:hover) {
+    transition: all .3s .3s ease;
 }
 .ttvstats_graph_ratings:hover .ct-series-a .ct-point {
     stroke-width: 7px;
@@ -176,6 +232,7 @@
 .ttvstats_graph_ratings .ct-series-a .ct-point:hover,
 .ttvstats_graph_ratings .ct-series-b .ct-point:hover {
     stroke-width: 15px;
+    transition: all .2s ease;
 }
 .ttvstats_graph_ratings.selected-a-1 .ct-series-a .ct-point:nth-of-type(1),
 .ttvstats_graph_ratings.selected-a-2 .ct-series-a .ct-point:nth-of-type(2),
@@ -206,21 +263,22 @@
 .ttvstats_graph_years .ct-labels {
     cursor: pointer;
 }
-.ttvstats_graph_years .ct-series-a .ct-bar {
-    stroke: #8e44ad;
-}
-.ttvstats_graph_years .ct-series-b .ct-bar {
-    stroke: #ccc;
-}
-.ttvstats_graph_years .ct-series-b .ct-bar.is-selected {
-    stroke: #999;
-}
+.ttvstats_graph_years .ct-series-a .ct-bar { stroke: #cccccc; }
+.ttvstats_graph_years .ct-series-b .ct-bar { stroke: #8e44ad; }
+.ttvstats_graph_years .ct-series-c .ct-bar { stroke: #C91D24; }
+.ttvstats_graph_years .ct-series-d .ct-bar { stroke: #16a085; }
+.ttvstats_graph_years .ct-series-e .ct-bar { stroke: #2b678f; }
+
 .ttvstats_graph_years.is-filtered .ct-bar,
 .ttvstats_graph_years.is-filtered .ct-labels {
-	opacity: .5;
+    opacity: .5;
+    transition: all .2s ease;
+}
+.ttvstats_graph_years.is-filtered .ct-bar.is-selected {
+	stroke-width: 2em;
 }
 .ttvstats_graph_years.is-filtered .is-selected {
-	opacity: 1;
+	opacity: 1 !important;
 }
 .ttvstats_graph_years .ct-label{
 	font-size: 0.75em;
@@ -231,16 +289,7 @@
 	font-weight: bold;
 }
 
-.ttvstats_graph_years .ct-bar { stroke-width: 50%; }
-.ttvstats_graph_years.series-3 .ct-bar { stroke-width: 40%; }
-.ttvstats_graph_years.series-4 .ct-bar { stroke-width: 30%; }
-.ttvstats_graph_years.series-5 .ct-bar { stroke-width: 25%; }
-.ttvstats_graph_years.series-6 .ct-bar { stroke-width: 20%; }
-.ttvstats_graph_years.series-7 .ct-bar { stroke-width: 16%; }
-.ttvstats_graph_years.series-8 .ct-bar { stroke-width: 14%; }
-.ttvstats_graph_years.series-9 .ct-bar { stroke-width: 12%; }
-.ttvstats_graph_years.series-10 .ct-bar{ stroke-width: 11%; }
-
+.ttvstats_graph_years .ct-bar { stroke-width: 1.5em }
 
 /*
 ** Words
@@ -252,6 +301,10 @@
 .ttvstats > h2 {
 	margin: 2em 0;
 	text-align: center;
+}
+.ttvstats h2 .filter {
+    font-style: italic;
+    font-weight: bold;
 }
 
 
