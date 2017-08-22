@@ -9,7 +9,7 @@ translate = function() {
         log('Trakttvstats : translate all...');
         [...document.querySelectorAll('.posters [data-type=movie]')].forEach(i18nMovieThumb);
     }
-    else document.onmouseover = translateOnMouseOver;
+    else document.body.onmouseover = translateOnMouseOver;
 
     var show_page = document.body.matches('.movies.show');
     if ( show_page && !isTranslated(document.body) ) {
@@ -18,10 +18,9 @@ translate = function() {
     }
 }
 translateOnMouseOver = function (event) {
-    var target = event.target || event.toElement,
+    var target = event.target || event.srcElement || event.originalTarget,
         is_movie = target.getAttribute('data-type') == 'movie',
         movie = is_movie ? target : closest(target, '[data-type=movie]', '.row')
-
     if( movie ) i18nMovieThumb(movie);
 }
 isTranslated = function( el ) {
