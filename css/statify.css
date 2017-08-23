@@ -93,8 +93,8 @@
                         justify-content: space-between;
 
                         cursor: pointer;
+                        transition: min-width .2s ease;
                     }
-                    .ttvstats_catsgraphs .bar_part:hover,
                     .ttvstats_catsgraphs .bar_part.selected {
                         height: 2.2em;
                         margin-top: -.1em;
@@ -114,7 +114,7 @@
                     .ttvstats_catsgraphs .graph.all .valbar { background: #8e44ad; }
                     .ttvstats_catsgraphs .graph.directing .valbar { background: #D17905; }
                     .ttvstats_catsgraphs .graph.writing .valbar { background: #16a085; }
-                    .ttvstats_catsgraphs .graph.actor .valbar { background: #2b678f; }
+                    .ttvstats_catsgraphs .graph.actor .valbar { background: #2b678f; } 
                         .ttvstats_catsgraphs .valbar .value {
                             margin-right: 1em;
                         }
@@ -153,13 +153,15 @@
             .ttvstats_catsgraphs .databar[data-value="0"] .valbar {
                 background: #ccc;
             }
+            .ttvstats_catsgraphs .databar[data-value="0"],
             .ttvstats_catsgraphs .graph[data-total="0"] {
                 opacity: .5;
             }
             .ttvstats_catsgraphs .graph[data-total="0"] .bar_part {
                 display: none;
             }
-            .ttvstats_catsgraphs .graph[data-total="0"] i {
+            .ttvstats_catsgraphs .graph[data-total="0"] i,
+            .ttvstats_catsgraphs .databar[data-value="0"] i {
                 color: #ccc;
             }
 
@@ -173,6 +175,7 @@
     border-radius: 5px;
 }
 .ttvstats_catsgraphs .category:hover,
+.ttvstats_catsgraphs .graph.selected .category,
 .ttvstats_catsgraphs .databar:hover .text {
     text-decoration: underline;
 }
