@@ -76,6 +76,8 @@ insertI18nContent = function ( parent, sel, replace, find ) {
     );
 }
 insertI18nImage = function ( parent, sel, showInfo, callback ) {
+    if (!showInfo) return callback();
+    
     var img = parent.querySelector( sel + ' img.real'),
         img_type = img.parentNode.className == 'poster' ? 'poster' : 'backdrop',
         img_path = showInfo[img_type+'_path'];
@@ -147,7 +149,8 @@ function i18nItemThumb (el) {
 
     callTMDb( 'search/'+infos.type, args, function(result) {
         var translateContent = function() {
-            insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
+            if( result )
+                insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
             el.classList.remove('translate');
             el.classList.add('translated');
         };
@@ -194,11 +197,12 @@ function callTMDb( path, args, callback) {
         if( response.status_message )
             return warn('TMDb :', path, response.status_message, message.url)
 
-        if( response.total_results ) {
-            if( response.total_results == 0 )
-                return warn('TMDb : no search results for', args.query, message.url)
-            response = response.results[0]
+        if( response.total_results == 0 ) {
+            warn('TMDb : no search results for', args.query, message.url)
+            return callback();
         }
+        if( response.total_results )
+            response = response.results[0]
 
         log( 'Trakttvstats : TMDb', path, response.title || response.name, message.url )
         callback( response )
