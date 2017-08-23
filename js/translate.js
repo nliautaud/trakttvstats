@@ -11,9 +11,9 @@ translate = function() {
     }
     else document.body.onmouseover = translateOnMouseOver;
 
-    var show_page = document.body.matches('.movies.show');
-    if ( show_page && !isTranslated(document.body) ) {
-        i18nShow(document.body);
+    tmdbPath = getTMDbPath(document.body);
+    if ( tmdbPath && !isTranslated(document.body) ) {
+        i18nItemPage(document.body, tmdbPath);
         return;
     }
 }
@@ -41,10 +41,10 @@ api_request_uri = function(path, args) {
     return api_uri + '/' + path + '?api_key=' + options.tmdbApiKey + encodeURI(args_str)
 }
 
-getIMDbID = function ( el ) {
-    var imdbID = el.querySelector('.external a[href*="imdb.com/title/"]');
-    if( !imdbID ) return;
-    return imdbID.href.substr(imdbID.href.lastIndexOf('/') + 1);
+getTMDbPath = function ( el ) {
+    var tmdbID = el.querySelector('.sidebar .external a[href*="themoviedb.org/"]');
+    if( !tmdbID ) return;
+    return tmdbID.href.substr(tmdbID.href.indexOf('.org/') + 5);
 }
 getShowInfos = function ( el ) {
     var metaname = el.querySelector('meta[itemprop=name]');
@@ -152,20 +152,22 @@ function i18nMovieThumb (el) {
         else insertI18nImage(el, '', result, translateContent);
     });
 }
-function i18nShow (el) {
-    var imdbID = getIMDbID( el );
-    if( !imdbID ) return;
+function i18nItemPage (el, tmdbPath) {
     var args  = {
         language: options.i18nLang.toLowerCase(),
         append_to_response: 'releases'
     }
-
-    callTMDb( 'movie/'+imdbID, args, function(result) {
+    callTMDb( tmdbPath, args, function(result) {
         var translateContent = function() {
-            insertI18nContent(el, 'h1', result.title, result.original_title );
+            insertI18nContent(el, 'h1',
+                result.title || result.name,
+                result.original_title || result.original_name );
             if (result.overview)
-                insertI18nContent(el, '.info [itemprop=description]', result.overview);
-            renderReleasesDates(el, result.releases);
+                insertI18nContent(el, '.info #overview', result.overview);
+            if (result.biography)
+                insertI18nContent(el, '.info #biography + p', result.biography);
+            if (result.releases && result.releases.length)
+                renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
         if( !options.i18nBack ) translateContent();
