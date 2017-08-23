@@ -163,7 +163,8 @@ function i18nShow (el) {
     callTMDb( 'movie/'+imdbID, args, function(result) {
         var translateContent = function() {
             insertI18nContent(el, 'h1', result.title, result.original_title );
-            insertI18nContent(el, '.info [itemprop=description]', result.overview);
+            if (result.overview)
+                insertI18nContent(el, '.info [itemprop=description]', result.overview);
             renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
