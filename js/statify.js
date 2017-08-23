@@ -288,7 +288,7 @@ var filterBy = function(arr) {
                     arr = arr.filter(x => yearDecade(x.year) == filters.decade);
                 break;
             case 'ratings':
-                if ( filters.ratings && filters.ratings.length )
+                if (filters.ratings)
                     arr = arr.filter(f.ratings(filters.ratings));
                 break;
             default:
@@ -327,13 +327,21 @@ var updateWords = function(count) {
 
     var name = document.querySelector('h1').innerText;
     var w = '', cat;
+    var perso_filters = [];
+    ['seen', 'rated', 'collected', 'listed'].forEach(function(x) {
+        var span = `<span class="filter ${x}">`;
+        if (filters[x] === true)
+            perso_filters.push(`${span}${x == 'seen' ? 'saw' : x}</span>`);
+        else if (filters[x] === false)
+            perso_filters.push(`${span}didn't ${x == 'seen' ? 'see' : x}</span>`);
+    }, this);
     
-    if (count == 0) w += 'There isn\'t any movie ';
+    if (count == 0) w += 'There isn\'t any movie';
+    else if (count == 1) w += 'The only movie';
     else {
-        if (!filters.category || filters.category == 'all')
-            w += 'All the '
+        if (!perso_filters.length) w += 'All the '
         else w += 'The ';
-        w += count > 1 ? count + ' movies' : ' the only movie ';
+        w += count + ' movies';
     }
     
     // category
@@ -358,15 +366,6 @@ var updateWords = function(count) {
     }
     
     // seen, rated, collected, listed
-    var perso_filters = [];
-    ['seen', 'rated', 'collected', 'listed'].forEach(function(x) {
-        var span = `<span class="filter ${x}">`;
-        if (filters[x] === true)
-            perso_filters.push(`${span}${x == 'seen' ? 'saw' : x}</span>`);
-        else if (filters[x] === false)
-            perso_filters.push(`${span}didn't ${x == 'seen' ? 'see' : x}</span>`);
-    }, this);
-
     if (perso_filters.length) {
         w += ' that I ';
         w += perso_filters.slice(0, -1).join(', ');
@@ -375,7 +374,7 @@ var updateWords = function(count) {
         w += perso_filters.slice(-1);
     }
     // rating
-    if (filters.ratings.length) {
+    if (filters.ratings) {
         if (perso_filters.length) w += ' and';
         filters.ratings.sort();
         w += ' that <span class="filter">I rated ';
@@ -418,9 +417,7 @@ statify = function() {
 
     movies = processMovies(e_ttv);
     if ( !movies.cats ) return;
-    filters = {
-        ratings: []
-    };
+    filters = {};
 
     e_categories = e_ttv.querySelectorAll('h2[id]');
     for (var i = 0; i < e_categories.length; i++) {
@@ -505,11 +502,7 @@ statify = function() {
                 if (filters.listed) g_cats[cat].el_list.parentNode.classList.add('selected');
             }
             var unselectCategory = function (el) {
-                filters.category = undefined;
-                filters.seen = undefined;
-                filters.rated = undefined;
-                filters.collected = undefined;
-                filters.listed = undefined;
+                filters = {};
                 el.parentNode.classList.remove('filtered');
                 clearSelected(el);
             }
@@ -526,10 +519,10 @@ statify = function() {
                     return;
                 }
                 if (this.parentNode.classList.contains('selected')) {
-                    filters.seen = undefined;
-                    filters.rated = undefined;
-                    filters.collected = undefined;
-                    filters.listed = undefined;
+                    delete filters.seen;
+                    delete filters.rated;
+                    delete filters.collected;
+                    delete filters.listed;
                 }
                 clearSelected(this.parentNode);
                 this.classList.add('selected');
@@ -544,7 +537,8 @@ statify = function() {
                 var was_selected = rest ? filters.seen === false : filters.seen === true;
                 was_selected = was_selected && target.classList.contains('selected');
 
-                filters.seen = was_selected ? undefined : !rest;
+                if (was_selected) delete filters.seen;
+                else filters.seen = !rest;
 
                 clearSelected(this);
                 if (!was_selected) selectCategory(this.parentNode);
@@ -555,7 +549,8 @@ statify = function() {
                     var infotype = this.classList[2],
                         was_selected = filters[infotype] && this.classList.contains('selected');
                     
-                    filters[infotype] = was_selected ? undefined : !was_selected;
+                    if (was_selected) delete filters[infotype];
+                    else filters[infotype] = true;
                     
                     clearSelected(this);
                     if (!was_selected) selectCategory(this.parentNode);
@@ -603,13 +598,19 @@ statify = function() {
         if(targ.matches('.is-null')) return;
 
         var rating = Array.prototype.indexOf.call(ini_targ.parentElement.children, ini_targ),
-            serie = ini_targ.parentElement.classList[1].slice(-1),
-            existing = filters.ratings.indexOf(rating);
+            serie = ini_targ.parentElement.classList[1].slice(-1);
 
-        if( existing !== -1 ) {
-            filters.ratings.splice(existing, 1);
+        if (!filters.ratings) {
+            filters.ratings = [rating];
         } else {
-            filters.ratings.push(rating);
+            var existing = filters.ratings.indexOf(rating);
+            if( existing !== -1 ) {
+                if (filters.ratings.length == 1)
+                    delete filters.ratings;
+                else filters.ratings.splice(existing, 1);
+            } else {
+                filters.ratings.push(rating);
+            }
         }
 
         targ.classList.toggle('selected-'+serie+'-'+rating);
@@ -633,7 +634,7 @@ statify = function() {
                 if (!yearID)
                     yearID = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
 
-                if (filters.decade == year) filters.decade = undefined;
+                if (filters.decade == year) delete filters.decade;
                 else filters.decade = year;
                 updateDataset();
             }
