@@ -417,6 +417,78 @@ var filterPosters = function (movieset) {
     window.document.dispatchEvent(e)
 }
 
+var categoryFilter = function (name) {
+    var g_cat = g_cats[name];
+    if (g_cat.el_cat.classList.contains('selected')) {
+        unselectCategory(g_cat.el);
+        updateDataset();
+        return;
+    }
+    if (g_cat.el.classList.contains('selected')) {
+        delete filters.seen;
+        delete filters.rated;
+        delete filters.collected;
+        delete filters.listed;
+    }
+    selectCategory(g_cat.name);
+    updateDataset();
+}
+var selectCategory = function (name) {
+    var g_cat = g_cats[name];
+    clearSelected(e_catsgraphs);
+    filters.category = g_cat.name;
+    e_catsgraphs.classList.add('filtered');
+    g_cat.el.classList.add('selected');
+    g_cat.el_cat.classList.add('selected');
+    
+    if (filters.seen === true) g_cat.el_valbar.classList.add('selected');
+    if (filters.seen === false) g_cat.el_restbar.classList.add('selected');
+    if (filters.rated) g_cat.el_rate.parentNode.classList.add('selected');
+    if (filters.collected) g_cat.el_coll.parentNode.classList.add('selected');
+    if (filters.listed) g_cat.el_list.parentNode.classList.add('selected');
+}
+var unselectCategory = function () {
+    filters = {};
+    e_catsgraphs.classList.remove('filtered');
+    clearSelected(e_catsgraphs);
+}
+var clearSelected = function (el, classname) {
+    classname = classname || 'selected';
+    el.classList.remove(classname);
+    Array.prototype.forEach.call(el.querySelectorAll('.'+classname), function(el) {
+        el.classList.remove(classname);
+    });
+}
+var handleNav = function () {
+    Array.prototype.forEach.call(document.querySelectorAll('.nav.sections a'), function (el) {
+        var hash = el.href.split('#')[1];
+        if(!movies.cats.includes(hash)) return;
+        el.dataset.category = hash;
+        el.classList.add('category');
+        el.href = '#ttvstats';
+    });
+    var sections = document.querySelector('.nav.sections');
+    // add stats entry, avoid link to bypass trakttv systems
+    sections.children[1].classList.add('stats');
+    var statsnav = document.createElement('div');
+    statsnav.href = '#stats'
+    statsnav.className = 'ttvstats_navbutton';
+    statsnav.innerText = 'Stats';
+    statsnav.dataset.category = 'all';
+    sections.children[1].insertBefore(statsnav, sections.children[1].children[0]);
+    // filter on click
+    sections.addEventListener('click', function (e) {
+        var target = e.target || e.srcElement || e.originalTarget;
+        if (!target.dataset.category) return;
+        categoryFilter(target.dataset.category);
+        var was_selected = target.matches('.selected');
+        clearSelected(this);
+        if (!was_selected) target.classList.add('selected');
+        if (target.nodeName != 'A') {
+            window.scrollBy(0, e_ttvstats.getBoundingClientRect().top - 70);
+        }
+    }, this);
+}
 
 statify = function() {
 
@@ -437,9 +509,10 @@ statify = function() {
 
     e_ttvstats = document.createElement('div');
     e_ttvstats.className = 'ttvstats';
-    e_ttvstats.innerHTML = '<h2>Stats</h2>';
+    e_ttvstats.innerHTML = '<h2 id="ttvstats">Stats</h2>';
     e_ttv.insertBefore(e_ttvstats, e_categories[0]);
 
+    handleNav();
 
     // graphs elements
 
@@ -488,6 +561,7 @@ statify = function() {
             var e_graph = document.createElement('div');
             e_graph.className = 'graph ' + cat;
             e_graph.innerHTML = response;
+            e_graph.dataset.category = cat;
             e_catsgraphs.appendChild(e_graph);
             e_yearschart.style.height = e_catsgraphs.offsetHeight + 'px';
 
@@ -496,6 +570,7 @@ statify = function() {
                 el_valbar = e_graph.querySelector('.valbar'),
                 el_restbar = e_graph.querySelector('.restbar');
             g_cats[cat] = {
+                name: cat,
                 el: e_graph,
                 el_cat: el_cat,
                 el_total: e_graph.querySelector('.total'),
@@ -512,75 +587,43 @@ statify = function() {
             };
             el_cat.innerText = cat;
 
-            var selectCategory = function (el_graph) {
-                clearSelected(el_graph.parentNode);
-                filters.category = cat;
-                el_graph.parentNode.classList.add('filtered');
-                el_graph.classList.add('selected');
-                el_cat.classList.add('selected');
-                
-                if (filters.seen === true) g_cats[cat].el_valbar.classList.add('selected');
-                if (filters.seen === false) g_cats[cat].el_restbar.classList.add('selected');
-                if (filters.rated) g_cats[cat].el_rate.parentNode.classList.add('selected');
-                if (filters.collected) g_cats[cat].el_coll.parentNode.classList.add('selected');
-                if (filters.listed) g_cats[cat].el_list.parentNode.classList.add('selected');
-            }
-            var unselectCategory = function (el) {
-                filters = {};
-                el.parentNode.classList.remove('filtered');
-                clearSelected(el);
-            }
-            var clearSelected = function (el) {
-                el.classList.remove('selected');
-                Array.prototype.forEach.call(el.querySelectorAll('.selected'), function(el) {
-                    el.classList.remove('selected');
-                });
-            }
-            el_cat.addEventListener('click', function(e) {
-                if (this.classList.contains('selected')) {
-                    unselectCategory(this.parentNode);
+            e_graph.addEventListener('click', function(e) {
+                var target = e.target || e.srcElement || e.originalTarget;
+
+                var category = target.closest('.category');
+                if(category) return categoryFilter(this.dataset.category);
+
+                var bar_part = target.closest('.bar_part');
+                if (bar_part) {
+                    var rest = bar_part.matches('.restbar');
+
+                    var was_selected = rest ? filters.seen === false : filters.seen === true;
+                    was_selected = was_selected && bar_part.classList.contains('selected');
+
+                    if (was_selected) delete filters.seen;
+                    else filters.seen = !rest;
+
+                    if (was_selected) clearSelected(bar_part.parentNode);
+                    else selectCategory(this.dataset.category);
+
                     updateDataset();
                     return;
                 }
-                if (this.parentNode.classList.contains('selected')) {
-                    delete filters.seen;
-                    delete filters.rated;
-                    delete filters.collected;
-                    delete filters.listed;
-                }
-                clearSelected(this.parentNode);
-                this.classList.add('selected');
-                selectCategory(this.parentNode);
-                updateDataset();
-            }, this);
-            el_seenbar.addEventListener('click', function(e) {
-                var target = e.target || e.srcElement || e.originalTarget;
-                if (!target.matches('.bar_part')) return;
-                var rest = target.matches('.restbar');
-
-                var was_selected = rest ? filters.seen === false : filters.seen === true;
-                was_selected = was_selected && target.classList.contains('selected');
-
-                if (was_selected) delete filters.seen;
-                else filters.seen = !rest;
-
-                clearSelected(this);
-                if (!was_selected) selectCategory(this.parentNode);
-                updateDataset();
-            }, this);
-            Array.prototype.forEach.call(e_graph.querySelectorAll('.databar:not(.expanded)'), function (el) {
-                el.addEventListener('click', function (e) {
-                    var infotype = this.classList[2],
-                        was_selected = filters[infotype] && this.classList.contains('selected');
+                var databar = target.closest('.databar:not(.expanded)');
+                if (databar) {
+                    was_selected = filters[databar.dataset.type] && databar.classList.contains('selected');
+                
+                    if (was_selected) delete filters[databar.dataset.type];
+                    else filters[databar.dataset.type] = true;
                     
-                    if (was_selected) delete filters[infotype];
-                    else filters[infotype] = true;
-                    
-                    clearSelected(this);
-                    if (!was_selected) selectCategory(this.parentNode);
+                    if (was_selected) clearSelected(databar);
+                    else selectCategory(this.dataset.category);
+
                     updateDataset();
-                }, this);
-            });
+                    return;
+                }
+
+            }, this);
         };
         makeBar('all');
         movies.cats.forEach(makeBar);
