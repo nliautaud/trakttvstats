@@ -587,7 +587,13 @@ statify = function() {
                 el_list: e_graph.querySelector('.listed .text'),
                 el_rate: e_graph.querySelector('.rated .text'),
             };
-            el_cat.innerText = cat;
+            var jobstitles = {
+                production: 'producer',
+                directing: 'director',
+                writing: 'writer',
+                editing: 'editor',
+            }
+            el_cat.innerText = jobstitles[cat] || cat;
 
             e_graph.addEventListener('click', function(e) {
                 var target = e.target || e.srcElement || e.originalTarget;
