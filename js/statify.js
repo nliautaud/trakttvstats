@@ -23,7 +23,8 @@ var processMovies = function (parent) {
         var sames = movies.filter(x => x.id == id),
             sames_cat = sames.filter(x => x.categories[cat])
         if(sames_cat.length) {
-            sames[0].categories[cat].push(job)
+            sames[0].categories[cat] += ', ' + job;
+            m.remove();
             continue
         }
         if(sames.length) {
@@ -41,6 +42,7 @@ var processMovies = function (parent) {
             year: year,
             decade: decade,
             categories: {},
+            origin_cat: cat,
             job: job,
             jobs: jobs,
             seen: m.querySelector('.watch.selected') !== null,
@@ -75,11 +77,6 @@ var f = {
         return el.el_first === undefined
     }
 }
-var forEach = function (array, callback, scope) {
-    for (var i = 0; i < array.length; i++) {
-        callback.call(scope, i, array[i]);
-    }
-};
 var listAttr = function (arr, key) {
     if (!arr || !arr.length || !key in arr[0]) return;
 
@@ -152,11 +149,8 @@ var updateCategoryGraphs = function (dataset) {
     updateCatGraph('all');
     movies.cats.forEach(updateCatGraph);
 }
-var addRatingsChart = function(parent, movies) {
-    var e = document.createElement('div');
-    e.className = 'ttvstats_graph ttvstats_graph_ratings';
-    parent.appendChild(e);
-    return new Chartist.Line(e, ratingsChartData(movies), {
+var addRatingsChart = function(el, movies) {
+    return new Chartist.Line(el, ratingsChartData(movies), {
         showPoint: true,
         axisX: {
             offset: 30,
@@ -205,15 +199,12 @@ var ratingsChartData = function(movies) {
         series: [normalize(ttv), normalize(me)]
     };
 }
-var addYearsChart = function(parent) {
-    var e = document.createElement('div'),
-        data = yearsChartData(movies.all);
-    e.className = 'ttvstats_graph ttvstats_graph_years';
-    e.className += ' series-'+data.labels.length;
-    parent.appendChild(e);
-    return new Chartist.Bar(e, data, {
+var addYearsChart = function(el) {
+    var data = yearsChartData(movies.all);
+    return new Chartist.Bar(el, data, {
         high: Math.max.apply(Math, data.series[0]),
         axisX: {
+            offset: 20,
             labelOffset: {
                 x: -2,
                 y: 5
@@ -256,7 +247,7 @@ var yearsChartData = function (movieset) {
 var updateYearsSelection = function (movieset) {
     if (filters.decade) {
         // determine current index and select current label
-        var labels = e_yearsChart.querySelectorAll('.ct-labels > *');
+        var labels = e_yearschart.querySelectorAll('.ct-labels > *');
         for (var idx = 0; idx < labels.length; idx++) {
             var el = labels[idx];
             if (labels[idx].firstChild.innerText == ''+filters.decade) {
@@ -265,13 +256,13 @@ var updateYearsSelection = function (movieset) {
             }
         }
         // select every n bar of every serie
-        var series = e_yearsChart.querySelectorAll('.ct-series');
+        var series = e_yearschart.querySelectorAll('.ct-series');
         for (var i = 0; i < series.length; i++) {
             series[i].children[idx].classList.add('is-selected');
         }
-        e_yearsChart.classList.add('is-filtered');
+        e_yearschart.classList.add('is-filtered');
     } else {
-        e_yearsChart.classList.remove('is-filtered');
+        e_yearschart.classList.remove('is-filtered');
     }
 }
 
@@ -302,7 +293,7 @@ var filterBy = function(arr) {
     return arr;
 }
 
-var updateDataset = function() {
+var updateDataset = function(doFilterPosters) {
 
     var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
     
@@ -320,7 +311,9 @@ var updateDataset = function() {
 
     var allFilteredSet = filterBy(baseFilteredSet, 'ratings', 'decade', 'seen');
     updateWords(allFilteredSet.length);
-    filterPosters(allFilteredSet);
+    
+    if (doFilterPosters !== false)
+        filterPosters(allFilteredSet);
 }
 
 var updateWords = function(count) {
@@ -388,16 +381,35 @@ var updateWords = function(count) {
 }
 var filterPosters = function (movieset) {
 
-    for (var i = 0; i < movies.all.length; i++) {
-        movies.all[i].el.classList.add('poster-hidden')
+    if (!Object.keys(filters).length) {
+        e_ttvposters.classList.remove('filtered');
+        
+        movies.all.reverse().forEach(function(movie) {
+            var el_cat = e_ttv.querySelector('.posters.' + movie.origin_cat);
+            movie.el_job.innerHTML = movie.categories[movie.origin_cat];
+            movie.el.classList.remove('poster-hidden');
+            el_cat.prepend(movie.el);
+        }, this);
     }
-    movieset.forEach(function(movie) {
-        movie.el.classList.remove('poster-hidden')
-        if(filters.category && filters.category != 'all')
-            movie.el_job.innerHTML = movie.categories[filters.category].join(', ');
-        else
-            movie.el_job.innerHTML = movie.jobs;
-    });
+    else {
+        e_ttvposters.classList.add('filtered');
+
+        movies.all.forEach(function(movie) {
+            movie.el.classList.add('poster-hidden')
+        }, this);
+        
+        movieset.sort((a,b) => b.year - a.year).forEach(function(movie) {
+            movie.el.classList.remove('poster-hidden');
+
+            if(movie.el.parentNode != e_ttvposters)
+                e_ttvposters.appendChild(movie.el);
+
+            if(filters.category && filters.category != 'all')
+                movie.el_job.innerHTML = movie.categories[filters.category];
+            else
+                movie.el_job.innerHTML = movie.jobs;
+        });
+    }
 
     // fire scroll to lazyload images
     var e = document.createEvent('Event')
@@ -414,7 +426,6 @@ statify = function() {
 
     if ( !e_ttv ) return;
 
-
     movies = processMovies(e_ttv);
     if ( !movies.cats ) return;
     filters = {};
@@ -429,34 +440,46 @@ statify = function() {
     e_ttvstats.innerHTML = '<h2>Stats</h2>';
     e_ttv.insertBefore(e_ttvstats, e_categories[0]);
 
-    e_views = document.createElement('div');
-    e_views.className = 'ttvstats_row views';
-    e_ttvstats.appendChild(e_views);
-    
-    // wrap posters and categories headlines
-    e_posters = document.createElement('div')
-    e_posters.className = 'ttvposters'
-    e_ttv.insertBefore(e_posters, e_categories[0])
-    catsandposters = e_ttv.querySelectorAll('h2[id],.row.posters')
-    for (var i = 0; i < catsandposters.length; i++) {
-        e_posters.appendChild(catsandposters[i])
-    }
-    postersRowClassName = e_posters.querySelector('.row').className
-    e_sortablePosters = document.createElement('div')
-    e_sortablePosters.className = 'ttvposters-sortable '+ postersRowClassName
-    e_ttv.insertBefore(e_sortablePosters, e_posters)
 
-    movies.all.sort(function(a,b) { return b.year - a.year });
-    movies.all.forEach(function(movie) {
-        e_sortablePosters.appendChild(movie.el);
-    });
+    // graphs elements
 
-    // Category Graphs
+    var row1 = document.createElement('div');
+    row1.className = 'ttvstats_row';
+    e_ttvstats.appendChild(row1);
 
     e_catsgraphs = document.createElement('div');
     e_catsgraphs.className = 'ttvstats_catsgraphs';
-    e_ttvstats.appendChild(e_catsgraphs);
+    row1.appendChild(e_catsgraphs);
+
+    e_yearschart = document.createElement('div');
+    e_yearschart.className = 'ttvstats_graph_years';
+    row1.appendChild(e_yearschart);
+
+    var row2 = document.createElement('div');
+    row2.className = 'ttvstats_row';
+    e_ttvstats.appendChild(row2);
+
+    e_ttvstatswords = document.createElement('h2');
+    e_ttvstatswords.className = 'ttvstats_text';
+    row2.appendChild(e_ttvstatswords);
+
+    e_ratingschart = document.createElement('div');
+    e_ratingschart.className = 'ttvstats_graph_ratings';
+    row2.appendChild(e_ratingschart);
+
+    // posters
+
+    e_ttvposters = document.createElement('div');
+    e_ttvposters.className = 'row posters ttvposters five-cols season-posters';
+    e_ttvposters.classList.remove()
+    e_ttv.insertBefore(e_ttvposters, e_categories[0]);
+
+    // Graphs make & events
+
+    g_years = addYearsChart(e_yearschart);
+    g_ratings = addRatingsChart(e_ratingschart, movies.all);
     g_cats = {};
+
     chrome.runtime.sendMessage({
         action: 'template',
         selector: '.catgraph'
@@ -466,6 +489,7 @@ statify = function() {
             e_graph.className = 'graph ' + cat;
             e_graph.innerHTML = response;
             e_catsgraphs.appendChild(e_graph);
+            e_yearschart.style.height = e_catsgraphs.offsetHeight + 'px';
 
             var el_cat = e_graph.querySelector('.category'),
                 el_seenbar = e_graph.querySelector('.seen'),
@@ -562,31 +586,34 @@ statify = function() {
         movies.cats.forEach(makeBar);
         updateCategoryGraphs(movies.all);
     });
+    
+    updateDataset(false);
+    
+    // years
 
-    // graphs
+    e_yearschart.addEventListener('click', function(e) {
+        var target = e.target || e.srcElement || e.originalTarget,
+            yearID;
 
-    e_ratings = document.createElement('div');
-    e_ratings.className = 'ttvstats_row ratings';
-    e_ttvstats.appendChild(e_ratings);
+        if (target.matches('.ct-bar')) {
+            // if bar clicked, retrieve corresponding label
+            yearID = Array.from(target.parentNode.children).indexOf(target);
+            target = e_yearschart.querySelectorAll('.ct-label')[yearID];
+        }
+        if (target.matches('.ct-label')) {
+            var year = parseInt(target.innerText);
+            if (!yearID)
+                yearID = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
 
-    g_ratings = addRatingsChart(e_ratings, movies.all);
-    g_years = addYearsChart(e_ratings);
-    e_yearsChart = document.querySelector('.ttvstats_graph_years');
-
-    // words
-
-    e_ttvstatswords = document.createElement('h2');
-    e_ttvstats.appendChild(e_ttvstatswords);
-
-    //
-    // filtering
-    //
-
-    updateDataset();
+            if (filters.decade == year) delete filters.decade;
+            else filters.decade = year;
+            updateDataset();
+        }
+    });
 
     // ratings
 
-    e_ratings.addEventListener('click', function(e) {
+    e_ratingschart.addEventListener('click', function(e) {
         e = e || window.event;
         var targ = ini_targ = e.target || e.srcElement;
         if( !targ.matches('.ct-point') ) return;
@@ -617,27 +644,4 @@ statify = function() {
         
         updateDataset();
     });
-
-    // years
-
-    e_yearsChart.addEventListener('click', function(e) {
-            var target = e.target || e.srcElement || e.originalTarget,
-                yearID;
-
-            if (target.matches('.ct-bar')) {
-                // if bar clicked, retrieve corresponding label
-                yearID = Array.from(target.parentNode.children).indexOf(target);
-                target = e_yearsChart.querySelectorAll('.ct-label')[yearID];
-            }
-            if (target.matches('.ct-label')) {
-                var year = parseInt(target.innerText);
-                if (!yearID)
-                    yearID = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
-
-                if (filters.decade == year) delete filters.decade;
-                else filters.decade = year;
-                updateDataset();
-            }
-        });
-
 }
