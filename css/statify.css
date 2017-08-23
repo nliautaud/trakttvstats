@@ -325,3 +325,28 @@
 .ttvposters.filtered ~ .posters {
     display: none;
 }
+
+/*
+** Nav
+*/
+
+.sections .ttvstats_navbutton {
+    padding: 8px 0;
+    border-bottom: solid 1px #cacaca;
+    cursor: pointer;
+    color: #959595;
+}
+.sections .ttvstats_navbutton:hover {
+    color: black;
+}
+.sections .active .ttvstats_navbutton,
+.sections .selected {
+    color: #ed1c24;
+}
+.sections .active .ttvstats_navbutton + a:not(.selected),
+.sections .active + .active a:not(.selected) {
+    color: #959595 !important;
+}
+.sections .stats + li {
+    padding
+}
