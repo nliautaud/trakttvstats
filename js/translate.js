@@ -100,22 +100,28 @@ countryCodeEmoji = function ( countryCode ) {
         : null;
 }
 renderReleasesDates = function ( el, releases ) {
-    var releasedEl = Array.prototype.filter.call(
-        document.querySelectorAll('.additional-stats li label'), function(x) {
-        return x.textContent == 'Released';
-    });
-    if( !releasedEl ) return;
-    var parent = releasedEl[0].parentNode;
-    var selectList = document.createElement('select');
-    selectList.classList.add('releasesDatesList');
-    parent.innerHTML = releasedEl[0].outerHTML;
-    parent.appendChild(selectList);
+    var e_addstats = document.querySelector('.additional-stats'),
+        e_releasedLabel = Array.prototype.filter.call(
+            e_addstats.querySelectorAll('label'), function(x) {
+            return x.textContent == 'Released';
+        });
+
+    var e_releases;
+    if( !e_releasedLabel.length ) {
+        e_releases = document.createElement('li'); 
+        e_addstats.insertBefore(e_releases, e_addstats.children[2]);
+    } else e_releases = e_releasedLabel[0].parentNode;
+
+    var e_selectList = document.createElement('select');
+    e_selectList.classList.add('releasesDatesList');
+    e_releases.innerHTML = '<label>Released</label>';
+    e_releases.appendChild(e_selectList);
 
     var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     releases.countries.sort((a, b) => a.release_date.localeCompare(b.release_date));
     releases.countries.forEach(function (country) {
         var option = document.createElement('option');
-        selectList.appendChild(option);
+        e_selectList.appendChild(option);
 
         var d = new Date(country.release_date);
         option.text = d.toLocaleDateString(options.i18nLang, dateOptions);
