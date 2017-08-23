@@ -109,7 +109,7 @@ var decadeYears = function (decade) {
     return years;
 }
 
-var updateCategoryGraphs = function (dataset) {
+var updateCategoryGraphs = function (dataset, initialLoad) {
     var updateCatGraph = function (cat) {
         var graph = g_cats[cat];
         if (graph == undefined) return;
@@ -124,6 +124,8 @@ var updateCategoryGraphs = function (dataset) {
 
         graph.el_total.innerText = catset.length;
         graph.el.setAttribute('data-total', catset.length);
+        if (initialLoad)
+            graph.el.style.order = cat == 'all' ? 99999 : catset.length;
 
         graph.el_valbar.style.minWidth = seenpercent + '%';
         graph.el_valper.innerText = seenpercent + '%';
@@ -293,12 +295,12 @@ var filterBy = function(arr) {
     return arr;
 }
 
-var updateDataset = function(doFilterPosters) {
+var updateDataset = function(initialLoad) {
 
     var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
     
     var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
-    updateCategoryGraphs(catsset);
+    updateCategoryGraphs(catsset, initialLoad);
 
     var ratingsset = filterBy(baseFilteredSet, 'decade');
     g_ratings.update(ratingsChartData(ratingsset));
@@ -312,7 +314,7 @@ var updateDataset = function(doFilterPosters) {
     var allFilteredSet = filterBy(baseFilteredSet, 'ratings', 'decade', 'seen');
     updateWords(allFilteredSet.length);
     
-    if (doFilterPosters !== false)
+    if (!initialLoad)
         filterPosters(allFilteredSet);
 }
 
@@ -627,10 +629,10 @@ statify = function() {
         };
         makeBar('all');
         movies.cats.forEach(makeBar);
-        updateCategoryGraphs(movies.all);
+        updateCategoryGraphs(movies.all, true);
     });
     
-    updateDataset(false);
+    updateDataset(true);
     
     // years
 
