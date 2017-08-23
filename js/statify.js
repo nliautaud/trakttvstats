@@ -339,21 +339,22 @@ var updateWords = function(count) {
         w += count + ' movies';
     }
     
-    // category
-    var catw = {
-        directing: 'directed</span> by ',
-        writing: 'written</span> by ',
-        production: 'produced</span> by ',
-        editing: 'edited</span> by ',
-        actor: 'starring</span> ',
-        crew: 'with in the crew</span> ',
-    };
+    // category, name
+    var catbefore = catafter = '',
+        catw = {
+            directing: 'directed</span> by ',
+            writing: 'written</span> by ',
+            production: 'produced</span> by ',
+            editing: 'edited</span> by ',
+            actor: 'starring</span> ',
+            crew: 'with in the crew</span> ',
+        };
     if (filters.category && filters.category != 'all') {
-        cat = ' <span class="filter cat">';
-        cat += catw[filters.category];
-    } else cat = ' on which worked ';
-
-    w += cat + name;
+        if (catw[filters.category])
+            w += ` <span class="filter cat">${catw[filters.category]} ${name}`;
+        else
+            w += ` with ${name} in <span class="filter cat">${filters.category}</span>`;
+    } else w += ' on which worked ' + name;
 
     // decade
     if (filters.decade) {
