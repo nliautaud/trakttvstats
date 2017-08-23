@@ -75,12 +75,6 @@ function warn(){
     var args = Array.prototype.slice.call(arguments)
     console.warn.apply(console, args)
 }
-function closest( el, sel, stop ) {
-    for ( ; el && el !== document && !el.matches(stop); el = el.parentNode )
-        if ( el.matches(sel) )
-            return el
-    return false
-}
 function daydiff(a, b) {
     return ( a.getTime() - b.getTime() ) / ( 1000*60*60*24 )
 }

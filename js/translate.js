@@ -7,7 +7,7 @@ translate = function() {
 
     if( options.i18nMode == 'Load') {
         log('Trakttvstats : translate all...');
-        [...document.querySelectorAll('.posters [data-type=movie]')].forEach(i18nMovieThumb);
+        [...document.querySelectorAll('.posters [data-type]')].forEach(i18nItemThumb);
     }
     else document.body.onmouseover = translateOnMouseOver;
 
@@ -19,9 +19,8 @@ translate = function() {
 }
 translateOnMouseOver = function (event) {
     var target = event.target || event.srcElement || event.originalTarget,
-        is_movie = target.getAttribute('data-type') == 'movie',
-        movie = is_movie ? target : closest(target, '[data-type=movie]', '.row')
-    if( movie ) i18nMovieThumb(movie);
+        item = target.closest('[data-type]');
+    if( item ) i18nItemThumb(item);
 }
 isTranslated = function( el ) {
     return el.matches('.translate, .translated');
@@ -46,10 +45,14 @@ getTMDbPath = function ( el ) {
     if( !tmdbID ) return;
     return tmdbID.href.substr(tmdbID.href.indexOf('.org/') + 5);
 }
-getShowInfos = function ( el ) {
+getItemThumbInfos = function ( el ) {
+    if (el.dataset.type != 'movie' && el.dataset.type != 'show')
+        return;
+
     var metaname = el.querySelector('meta[itemprop=name]');
     if ( !metaname ) return;
     var infos = {
+        type: el.dataset.type == 'movie' ? 'movie' : 'tv',
         name: metaname.getAttribute('content')
     };
 
@@ -131,20 +134,20 @@ renderReleasesDates = function ( el, releases ) {
             option.selected = true;
     });
 }
-function i18nMovieThumb (el) {
+function i18nItemThumb (el) {
     if( isTranslated(el) ) return;
+    var infos = getItemThumbInfos( el );
+    if (!infos) return;
     el.classList.add('translate');
-    var infos = getShowInfos( el );
-    if( !infos ) return;
     var args = {
         query: infos.name,
         year: infos.year,
         language: options.i18nLang.toLowerCase()
     };
 
-    callTMDb( 'search/movie', args, function(result) {
+    callTMDb( 'search/'+infos.type, args, function(result) {
         var translateContent = function() {
-            insertI18nContent(el, '.titles h3', result.title, infos.name );
+            insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
             el.classList.remove('translate');
             el.classList.add('translated');
         };
@@ -197,7 +200,7 @@ function callTMDb( path, args, callback) {
             response = response.results[0]
         }
 
-        log( 'Trakttvstats : TMDb', path, response.title, message.url )
+        log( 'Trakttvstats : TMDb', path, response.title || response.name, message.url )
         callback( response )
     });
 }
