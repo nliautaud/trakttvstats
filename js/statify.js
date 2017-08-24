@@ -1,44 +1,45 @@
 var processMovies = function (parent) {
     var e_movies = parent.querySelectorAll('div[data-type="movie"],div[data-type="show"]'),
-        movies = [], categories = [], years = [], decades = [];
+        moviesidx = {}, movies = [], categories = [], years = [], decades = [];
     for (var i = 0; i < e_movies.length; i++) {
         var m = e_movies[i],
             id = m.dataset.movieId || m.dataset.showId,
-            el_infos = m.querySelector('.titles'),
-            el_job = el_infos.children[2],
-            el_rating = m.querySelector('.corner-rating > .text'),
             cat = m.parentNode.previousSibling.id,
-            year = parseInt(el_infos.children[1].innerText),
+            el_infos = m.querySelector('.titles'),
+            year = el_infos.children[1].firstChild.nodeValue,
             decade = yearDecade(year),
-            job = el_job.innerText,
-            jobs = cat == 'actor' ? 'Actor' : job,
-            percent = m.querySelector('.percentage').innerText,
-            ttvrating = Math.round(parseInt(percent.slice(0, -1)) * .1); // '87%' to 9
+            el_job = el_infos.children[2],
+            job = el_job.firstChild.nodeValue,
+            jobs = cat == 'actor' ? 'Actor' : job;
 
         if (categories.indexOf(cat) === -1) categories.push(cat);
         if (years.indexOf(year) === -1) years.push(year);
         if (decade && decades.indexOf(decade) === -1) decades.push(decade);
 
-        // find if movie exists in another or same category
-        var sames = movies.filter(x => x.id == id),
-            sames_cat = sames.filter(x => x.categories[cat])
-        if(sames_cat.length) {
-            sames[0].categories[cat] += ', ' + job;
-            m.remove();
-            continue
+        // find if movie already registered with or without the current category/jobs
+        if (moviesidx[id] !== undefined) {
+            var same = movies[moviesidx[id]];
+            if (same.categories[cat]) {
+                same.categories[cat] += ', ' + job;
+                m.classList.add('duplicate');
+                log('ttvstats : hide duplicate '+m.id);
+                continue;
+            }
+            same.jobs += ', ' + jobs;
+            same.categories[cat] = [job];
+            log('ttvstats : aggregate known '+m.id);
+            continue;
         }
-        if(sames.length) {
-            sames[0].jobs += ', ' + jobs
-            sames[0].categories[cat] = [job]
-            continue
-        }
-            
+
+        var el_rating = m.querySelector('.corner-rating > .text'),
+            percent = m.querySelector('.percentage').textContent,
+            ttvrating = Math.round(parseInt(percent.slice(0, -1)) * .1); // '87%' to 9
         // register movie
         var movie = {
             el: m,
-            el_first: sames[0],
+            el_first: same,
             el_job: el_job,
-            name: el_infos.children[0].innerText,
+            name: el_infos.firstChild.firstChild.nodeValue,
             year: year,
             decade: decade,
             categories: {},
@@ -46,7 +47,7 @@ var processMovies = function (parent) {
             job: job,
             jobs: jobs,
             seen: m.querySelector('.watch.selected') !== null,
-            rated: el_rating ? parseInt(el_rating.innerText) : false,
+            rated: el_rating ? parseInt(el_rating.firstChild.nodeValue) : false,
             collected: m.querySelector('.collect.selected') !== null,
             listed: m.querySelector('.list.selected') !== null,
             ttvpercent: percent,
@@ -54,6 +55,7 @@ var processMovies = function (parent) {
             id: id,
         };
         movie.categories[cat] = [job];
+        moviesidx[id] = movies.length;
         movies.push(movie);
     }
     return {
@@ -108,33 +110,29 @@ var updateCategoryGraphs = function (dataset, initialLoad) {
         var seenpercent = percentOf(catset, x => x.seen);
         if (!catset.length) seenpercent = 0;
 
-        graph.el_total.innerText = catset.length;
         graph.el.setAttribute('data-total', catset.length);
         if (initialLoad)
             graph.el.style.order = graph.name == 'all' ? 99999 : catset.length;
 
         graph.el_valbar.style.minWidth = seenpercent + '%';
-        graph.el_valper.innerText = seenpercent + '%';
-        graph.el_value.innerText = seen.length;
         graph.el_seenbar.setAttribute('data-value', seenpercent);
-
-        graph.el_rest.innerText = catset.length - seen.length;
-        graph.el_restper.innerText = restpercent + '%';
 
         if (seenpercent == 100) graph.el.classList.add('completed');
         else graph.el.classList.remove('completed');
 
-        graph.el_coll.innerText = catset.filter(x => x.collected).length;
-        graph.el_coll.parentNode.setAttribute('data-value', graph.el_coll.innerText);
+        graph.val_total.nodeValue = catset.length;
+        graph.val_val.nodeValue = seen.length;
+        graph.val_valper.nodeValue = seenpercent + '%';
+        graph.val_rest.nodeValue = catset.length - seen.length;
+        graph.val_restper.nodeValue = restpercent + '%';
 
-        graph.el_list.innerText = catset.filter(x => x.listed).length;
-        graph.el_list.parentNode.setAttribute('data-value', graph.el_list.innerText);
-
-        graph.el_rate.innerText = catset.filter(x => x.rated).length;
-        graph.el_rate.parentNode.setAttribute('data-value', graph.el_rate.innerText);
-
+        graph.val_collected.nodeValue = catset.filter(x => x.collected).length;
+        graph.val_listed.nodeValue = catset.filter(x => x.listed).length;
+        graph.val_rated.nodeValue = catset.filter(x => x.rated).length;
+        graph.val_collected.parentNode.setAttribute('data-value', graph.val_collected.nodeValue);
+        graph.val_listed.parentNode.setAttribute('data-value', graph.val_listed.nodeValue);
+        graph.val_rated.parentNode.setAttribute('data-value', graph.val_rated.nodeValue);
     });
-    updateCategoriesSelection();
 }
 var addRatingsChart = function(el, movies) {
     return new Chartist.Line(el, ratingsChartData(movies), {
@@ -261,7 +259,7 @@ var updateYearsSelection = function () {
         var labels = e_yearschart.querySelectorAll('.ct-labels > *');
         for (var idx = 0; idx < labels.length; idx++) {
             var el = labels[idx];
-            if (labels[idx].firstChild.innerText == ''+filters.decade) {
+            if (labels[idx].firstChild.firstChild.nodeValue == ''+filters.decade) {
                 labels[idx].classList.add('is-selected');
                 break;
             }
@@ -320,8 +318,11 @@ var updateDataset = function(initialLoad) {
 
     var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
     
-    var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
-    updateCategoryGraphs(catsset, initialLoad);
+    if (g_cats.length) {
+        var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
+        updateCategoryGraphs(catsset, initialLoad);
+        updateCategoriesSelection();
+    }
 
     var ratingsset = filterBy(baseFilteredSet, 'decade'),
         ratingsdata = ratingsChartData(ratingsset),
@@ -357,7 +358,7 @@ var updateWords = function(count) {
     }
     
     // category, name
-    var name = document.querySelector('h1').innerText,
+    var name = document.querySelector('h1').firstChild.nodeValue,
         catbefore = catafter = '',
         catw = {
             directing: 'directed</span> by ',
@@ -439,7 +440,7 @@ var filterPosters = function (movieset) {
         
         movies.all.reverse().forEach(function(movie) {
             var el_cat = e_ttv.querySelector('.posters.' + movie.origin_cat);
-            movie.el_job.innerHTML = movie.categories[movie.origin_cat];
+            movie.el_job.firstChild.nodeValue = movie.categories[movie.origin_cat];
             movie.el.classList.remove('poster-hidden');
             el_cat.prepend(movie.el);
         }, this);
@@ -458,16 +459,18 @@ var filterPosters = function (movieset) {
                 e_ttvposters.appendChild(movie.el);
 
             if(filters.category && filters.category != 'all')
-                movie.el_job.innerHTML = movie.categories[filters.category];
+                movie.el_job.firstChild.nodeValue = movie.categories[filters.category];
             else
-                movie.el_job.innerHTML = movie.jobs;
+                movie.el_job.firstChild.nodeValue = movie.jobs;
         });
     }
 
-    // fire scroll to lazyload images
-    var e = document.createEvent('Event')
-    e.initEvent('scroll', true, true)
-    window.document.dispatchEvent(e)
+    // fire scroll to lazyload images, wait a bit for performance
+    setTimeout(function(){
+        var e = document.createEvent('Event')
+        e.initEvent('scroll', true, true)
+        window.document.dispatchEvent(e)
+    }, 200);
 }
 
 var selectCategory = function (name) {
@@ -501,7 +504,7 @@ var handleNav = function () {
     var statsnav = document.createElement('div');
     statsnav.href = '#stats'
     statsnav.className = 'ttvstats_navbutton';
-    statsnav.innerText = 'Stats';
+    statsnav.textContent = 'Stats';
     statsnav.dataset.category = 'all';
     sections.children[1].insertBefore(statsnav, sections.children[1].children[0]);
     // filter on click
@@ -592,7 +595,6 @@ statify = function() {
             e_graph.innerHTML = response;
             e_graph.dataset.category = cat;
             e_catsgraphs.appendChild(e_graph);
-            e_yearschart.style.height = e_catsgraphs.offsetHeight + 'px';
 
             var el_cat = e_graph.querySelector('.category'),
                 el_seenbar = e_graph.querySelector('.seen'),
@@ -602,17 +604,17 @@ statify = function() {
                 name: cat,
                 el: e_graph,
                 el_cat: el_cat,
-                el_total: e_graph.querySelector('.total'),
+                val_total: e_graph.querySelector('.total').firstChild,
                 el_seenbar: el_seenbar,
                 el_valbar: el_valbar,
-                el_value: el_valbar.querySelector('.value'),
-                el_valper: el_valbar.querySelector('.percentage'),
+                val_val: el_valbar.querySelector('.value').firstChild,
+                val_valper: el_valbar.querySelector('.percentage').firstChild,
                 el_restbar: el_restbar,
-                el_rest: el_restbar.querySelector('.value'),
-                el_restper: el_restbar.querySelector('.percentage'),
-                el_coll: e_graph.querySelector('.collected .text'),
-                el_list: e_graph.querySelector('.listed .text'),
-                el_rate: e_graph.querySelector('.rated .text'),
+                val_rest: el_restbar.querySelector('.value').firstChild,
+                val_restper: el_restbar.querySelector('.percentage').firstChild,
+                val_collected: e_graph.querySelector('.collected .text').firstChild,
+                val_listed: e_graph.querySelector('.listed .text').firstChild,
+                val_rated: e_graph.querySelector('.rated .text').firstChild,
             });
             var jobstitles = {
                 production: 'producer',
@@ -620,7 +622,7 @@ statify = function() {
                 writing: 'writer',
                 editing: 'editor',
             }
-            el_cat.innerText = jobstitles[cat] || cat;
+            el_cat.textContent = jobstitles[cat] || cat;
 
             e_graph.addEventListener('click', function(e) {
                 var target = e.target || e.srcElement || e.originalTarget;
@@ -679,7 +681,7 @@ statify = function() {
             target = e_yearschart.querySelectorAll('.ct-label')[yearID];
         }
         if (target.matches('.ct-label')) {
-            var year = parseInt(target.innerText);
+            var year = parseInt(target.firstChild.nodeValue);
             if (!yearID)
                 yearID = Array.from(target.parentNode.parentNode.children).indexOf(target.parentNode);
 

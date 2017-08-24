@@ -10,7 +10,7 @@ addExternalLinks = function() {
 	var list = document.querySelector('.sidebar .external')
 	if(!list || !options.layoutExternalLinks) return
 
-	var title = document.querySelector('h1').innerText
+	var title = document.querySelector('h1').textContent
 
 	if( list.classList.contains('is-customized') ) return
 

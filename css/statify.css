@@ -1,11 +1,12 @@
 .ttvstats_row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
     margin: 1em;
 }
 .ttvstats_row > *:first-child {
     margin-right: 1em;
+    align-self: center;
 }
 @media (max-width: 1000px) {
     .ttvstats_row {
@@ -360,6 +361,7 @@
 */
 
 .poster-hidden,
+.grid-item.duplicate,
 .ttvposters.filtered ~ h2,
 .ttvposters.filtered ~ .posters {
     display: none;
