@@ -254,24 +254,25 @@ var updateCategoriesSelection = function () {
     }, this);
 }
 var updateYearsSelection = function () {
+    clearSelected(e_yearschart);
     if (filters.decade) {
         // determine current index and select current label
         var labels = e_yearschart.querySelectorAll('.ct-labels > *');
         for (var idx = 0; idx < labels.length; idx++) {
             var el = labels[idx];
             if (labels[idx].firstChild.firstChild.nodeValue == ''+filters.decade) {
-                labels[idx].classList.add('is-selected');
+                labels[idx].classList.add('selected');
                 break;
             }
         }
         // select every n bar of every serie
         var series = e_yearschart.querySelectorAll('.ct-series');
         for (var i = 0; i < series.length; i++) {
-            series[i].children[idx].classList.add('is-selected');
+            series[i].children[idx].classList.add('selected');
         }
-        e_yearschart.classList.add('is-filtered');
+        e_yearschart.classList.add('filtered');
     } else {
-        e_yearschart.classList.remove('is-filtered');
+        e_yearschart.classList.remove('filtered');
     }
 }
 var updateRatingsSelection = function () {

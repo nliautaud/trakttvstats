@@ -318,21 +318,21 @@
 .ttvstats_graph_years .ct-series-d .ct-bar { stroke: #16a085; }
 .ttvstats_graph_years .ct-series-e .ct-bar { stroke: #2b678f; }
 
-.ttvstats_graph_years.is-filtered .ct-bar,
-.ttvstats_graph_years.is-filtered .ct-labels {
+.ttvstats_graph_years.filtered .ct-bar,
+.ttvstats_graph_years.filtered .ct-labels {
     opacity: .5;
     transition: all .2s ease;
 }
-.ttvstats_graph_years.is-filtered .ct-bar.is-selected {
+.ttvstats_graph_years.filtered .ct-bar.selected {
 	stroke-width: 2em;
 }
-.ttvstats_graph_years.is-filtered .is-selected {
+.ttvstats_graph_years.filtered .selected {
 	opacity: 1 !important;
 }
 .ttvstats_graph_years .ct-label{
 	font-size: 0.75em;
 }
-.ttvstats_graph_years.is-filtered .is-selected .ct-label{
+.ttvstats_graph_years.filtered .selected .ct-label{
 	color: black;
 	font-size: 0.9em;
 	font-weight: bold;
