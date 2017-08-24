@@ -9,12 +9,11 @@ var processMovies = function (parent) {
             year = el_infos.children[1].firstChild.nodeValue,
             decade = yearDecade(year),
             el_job = el_infos.children[2],
-            job = el_job.firstChild.nodeValue,
-            jobs = cat == 'actor' ? 'Actor' : job;
+            job = el_job.firstChild.nodeValue.trim();
 
-        if (categories.indexOf(cat) === -1) categories.push(cat);
-        if (years.indexOf(year) === -1) years.push(year);
-        if (decade && decades.indexOf(decade) === -1) decades.push(decade);
+        if (cat && !categories.includes(cat)) categories.push(cat);
+        if (year && !years.includes(year)) years.push(year);
+        if (decade && !decades.includes(decade)) decades.push(decade);
 
         // find if movie already registered with or without the current category/jobs
         if (moviesidx[id] !== undefined) {
@@ -25,8 +24,7 @@ var processMovies = function (parent) {
                 log('ttvstats : hide duplicate '+m.id);
                 continue;
             }
-            same.jobs += ', ' + jobs;
-            same.categories[cat] = [job];
+            same.categories[cat] = job;
             log('ttvstats : aggregate known '+m.id);
             continue;
         }
@@ -45,7 +43,6 @@ var processMovies = function (parent) {
             categories: {},
             origin_cat: cat,
             job: job,
-            jobs: jobs,
             seen: m.querySelector('.watch.selected') !== null,
             rated: el_rating ? parseInt(el_rating.firstChild.nodeValue) : false,
             collected: m.querySelector('.collect.selected') !== null,
@@ -54,10 +51,21 @@ var processMovies = function (parent) {
             ttvrating: percent ? 1+Math.round(percent*.09) : undefined, // '87%' to 9,
             id: id,
         };
-        movie.categories[cat] = [job];
+        movie.categories[cat] = job;
         moviesidx[id] = movies.length;
         movies.push(movie);
     }
+
+    movies.forEach(function(movie) {
+        var cats = Object.keys(movie.categories);
+        movie.jobs = cats.map(function(cat){
+            if (cat != 'actor') return movie.categories[cat];
+            if (cats.length > 1 || movie.categories.actor == '')
+                return 'Actor';
+            return `Actor / <em>${movie.categories.actor}</em>`;
+        }).join(', ');
+    }, this);
+
     return {
         all: movies,
         cats: categories,
@@ -422,9 +430,7 @@ var updateWords = function(count) {
 var ratingWordList = function(arr, incl, excl) {
     if (arr.length == 10) return incl;
     if (arr.length < 6) return incl + joinWithLastSep(arr, ' or ');
-    return excl + joinWithLastSep([1,2,3,4,5,6,7,8,9,10].filter(x => 
-        arr.indexOf(x) === -1
-    ), ' or ');
+    return excl + joinWithLastSep([1,2,3,4,5,6,7,8,9,10].filter(x => !arr.includes(x)), ' or ');
 }
 var joinWithLastSep = function(arr, lastsep, firstsep, sep) {
     sep = sep || ', ';
@@ -462,9 +468,8 @@ var filterPosters = function (movieset) {
                 e_ttvposters.appendChild(movie.el);
 
             if(filters.category && filters.category != 'all')
-                movie.el_job.firstChild.nodeValue = movie.categories[filters.category];
-            else
-                movie.el_job.firstChild.nodeValue = movie.jobs;
+                movie.el_job.textContent = movie.categories[filters.category];
+            else movie.el_job.innerHTML = movie.jobs;
         });
     }
 
