@@ -7,7 +7,7 @@ translate = function() {
 
     if( options.i18nMode == 'Load') {
         log('Trakttvstats : translate all...');
-        [...document.querySelectorAll('.posters [data-type]')].forEach(i18nItemThumb);
+        [...document.querySelectorAll('[data-type]')].forEach(i18nItemThumb);
     }
     else document.body.onmouseover = translateOnMouseOver;
 
