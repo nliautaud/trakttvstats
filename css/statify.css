@@ -321,10 +321,11 @@
 .ttvstats_graph_years.filtered .ct-bar,
 .ttvstats_graph_years.filtered .ct-labels {
     opacity: .5;
+    transform-origin: 50% 50%;
     transition: all .2s ease;
 }
 .ttvstats_graph_years.filtered .ct-bar.selected {
-	stroke-width: 2em;
+	transform: scaleX(2);
 }
 .ttvstats_graph_years.filtered .selected {
 	opacity: 1 !important;
@@ -334,7 +335,7 @@
 }
 .ttvstats_graph_years.filtered .selected .ct-label{
 	color: black;
-	font-size: 0.9em;
+	transform: scale(1.5);
 	font-weight: bold;
 }
 
