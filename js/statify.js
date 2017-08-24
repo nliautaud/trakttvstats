@@ -317,6 +317,8 @@ var updateDataset = function(initialLoad) {
 
     log(filters);
 
+    if (!filters.category) filters.category = 'all';
+
     var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
     
     if (g_cats.length) {
