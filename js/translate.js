@@ -105,6 +105,8 @@ countryCodeEmoji = function ( countryCode ) {
         : null;
 }
 renderReleasesDates = function ( el, releases ) {
+    if (!releases.countries || !releases.countries.length) return;
+    
     var e_addstats = document.querySelector('.additional-stats'),
         e_releasedLabel = Array.prototype.filter.call(
             e_addstats.querySelectorAll('label'), function(x) {
@@ -172,7 +174,7 @@ function i18nItemPage (el, tmdbPath) {
                 insertI18nContent(el, '.info #overview', result.overview);
             if (result.biography)
                 insertI18nContent(el, '.info #biography + p', result.biography);
-            if (result.releases && result.releases.length)
+            if (result.releases)
                 renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
