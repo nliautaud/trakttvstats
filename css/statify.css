@@ -222,8 +222,9 @@
     stroke: #ccc;
     stroke-width: 1px;
 }
-.ttvstats_graph_ratings:hover .ct-series-b .ct-line {
-    stroke-width: 5px;
+.ttvstats_graph_ratings .ct-line.shadow {
+    stroke: #fff;
+    stroke-width: 10px;
 }
 .ttvstats_graph_ratings .ct-point {
     opacity: 0;
@@ -233,12 +234,12 @@
     opacity: 1;
 }
 .ttvstats_graph_ratings .ct-line:hover ~ .ct-point {
-    transform: scale(5);
+    stroke: #FF7413;
 }
 .ttvstats_graph_ratings .ct-point:hover {
-    transform: scale(6);
+    stroke: #FF7413;
+    transform: scale(5.5);
 }
-.ttvstats_graph_ratings.selected-b .ct-series-b .ct-point,
 .ttvstats_graph_ratings[data-selected_b*="1-"] .ct-series-b .ct-point:nth-of-type(1),
 .ttvstats_graph_ratings[data-selected_b*="2-"] .ct-series-b .ct-point:nth-of-type(2),
 .ttvstats_graph_ratings[data-selected_b*="3-"] .ct-series-b .ct-point:nth-of-type(3),
@@ -249,8 +250,22 @@
 .ttvstats_graph_ratings[data-selected_b*="8-"] .ct-series-b .ct-point:nth-of-type(8),
 .ttvstats_graph_ratings[data-selected_b*="9-"] .ct-series-b .ct-point:nth-of-type(9),
 .ttvstats_graph_ratings[data-selected_b*="10-"] .ct-series-b .ct-point:nth-of-type(10) {
+    opacity: 1;
     transform: scale(6);
     stroke: #FF7413;
+}
+.ttvstats_graph_ratings[data-selected_b*="1-"] .ct-series-b .ct-point:nth-of-type(1):hover,
+.ttvstats_graph_ratings[data-selected_b*="2-"] .ct-series-b .ct-point:nth-of-type(2):hover,
+.ttvstats_graph_ratings[data-selected_b*="3-"] .ct-series-b .ct-point:nth-of-type(3):hover,
+.ttvstats_graph_ratings[data-selected_b*="4-"] .ct-series-b .ct-point:nth-of-type(4):hover,
+.ttvstats_graph_ratings[data-selected_b*="5-"] .ct-series-b .ct-point:nth-of-type(5):hover,
+.ttvstats_graph_ratings[data-selected_b*="6-"] .ct-series-b .ct-point:nth-of-type(6):hover,
+.ttvstats_graph_ratings[data-selected_b*="7-"] .ct-series-b .ct-point:nth-of-type(7):hover,
+.ttvstats_graph_ratings[data-selected_b*="8-"] .ct-series-b .ct-point:nth-of-type(8):hover,
+.ttvstats_graph_ratings[data-selected_b*="9-"] .ct-series-b .ct-point:nth-of-type(9):hover,
+.ttvstats_graph_ratings[data-selected_b*="10-"] .ct-series-b .ct-point:nth-of-type(10):hover,
+.ttvstats_graph_ratings[data-selected_b="1-2-3-4-5-6-7-8-9-10-"] .ct-series-b .ct-line:hover ~ .ct-point {
+    transform: scale(5.5);
 }
 
 

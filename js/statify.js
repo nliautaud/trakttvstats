@@ -201,6 +201,14 @@ var ratingsChartData = function(movies) {
         series: [normalize(ttv), normalize(me)]
     };
 }
+var createShadowLinesGraph = function (data) {
+    let lines = e_ratingschart.querySelectorAll('.ct-line');
+    Array.prototype.forEach.call(lines, function (line) {
+        let shadow = line.cloneNode();
+        shadow.classList.add('shadow');
+        line.parentNode.insertBefore(shadow, line);
+    });
+}
 var addYearsChart = function(el) {
     var data = yearsChartData(movies.all);
     return new Chartist.Bar(el, data, {
@@ -556,6 +564,7 @@ statify = function() {
 
     g_years = addYearsChart(e_yearschart);
     g_ratings = addRatingsChart(e_ratingschart, movies.all);
+    g_ratings.on('created', createShadowLinesGraph);
     g_cats = {};
 
     chrome.runtime.sendMessage({
@@ -679,7 +688,7 @@ statify = function() {
         }
         // select one
         if (target.matches('.ct-point')) {
-            var rating = Array.prototype.indexOf.call(target.parentNode.children, target);
+            var rating = Array.prototype.indexOf.call(target.parentNode.children, target)-1;
             if (filters.ratings) {
                 if (!filters.ratings.includes(rating))
                     filters.ratings.push(rating);
