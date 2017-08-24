@@ -39,7 +39,16 @@
     font-size: 1.2em;
 }
     .ttvstats_catsgraphs.filtered .graph:not(.selected) {
-        opacity: .5;
+        opacity: .6;
+    }
+    .ttvstats_catsgraphs.filtered .graph.all.selected ~ .graph {
+        opacity: 1;
+    }
+    .ttvstats_catsgraphs.filtered .graph:not(.selected):not(.all) .category:before {
+        content: '& ';
+    }
+    .ttvstats_catsgraphs.filtered .graph.all.selected ~ .graph .category:before {
+        content: '';
     }
     .ttvstats_catsgraphs .graph > * {
         white-space: nowrap;
