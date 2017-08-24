@@ -212,8 +212,8 @@
     transform-origin: 50% 50%;
 	transition: all .1s ease;
 }
-.ttvstats_graph_ratings .ct-series-b .ct-line, 
-.ttvstats_graph_ratings .ct-series-b .ct-point {
+.ttvstats_graph_ratings .ct-series .ct-line, 
+.ttvstats_graph_ratings .ct-series .ct-point {
     stroke: #d0131a;
     stroke-width: 3px;
 }
@@ -230,11 +230,12 @@
     opacity: 0;
 }
 .ttvstats_graph_ratings:hover .ct-point {
+    stroke-width: 3px;
     transform: scale(4);
     opacity: 1;
 }
 .ttvstats_graph_ratings .ct-line:hover ~ .ct-point {
-    stroke: #FF7413;
+    -stroke: #FF7413;
 }
 .ttvstats_graph_ratings .ct-point:hover {
     stroke: #FF7413;

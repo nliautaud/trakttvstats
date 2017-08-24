@@ -110,12 +110,9 @@ var decadeYears = function (decade) {
 }
 
 var updateCategoryGraphs = function (dataset, initialLoad) {
-    var updateCatGraph = function (cat) {
-        var graph = g_cats[cat];
-        if (graph == undefined) return;
-
+    g_cats.forEach(function (graph) {
         var catset = dataset;
-        if (cat != 'all') catset = dataset.filter(x => x.categories[cat])
+        if (graph.name != 'all') catset = dataset.filter(x => x.categories[graph.name])
 
         var seen = catset.filter(x => x.seen);
         var restpercent = percentOf(catset, x => !x.seen);
@@ -125,7 +122,7 @@ var updateCategoryGraphs = function (dataset, initialLoad) {
         graph.el_total.innerText = catset.length;
         graph.el.setAttribute('data-total', catset.length);
         if (initialLoad)
-            graph.el.style.order = cat == 'all' ? 99999 : catset.length;
+            graph.el.style.order = graph.name == 'all' ? 99999 : catset.length;
 
         graph.el_valbar.style.minWidth = seenpercent + '%';
         graph.el_valper.innerText = seenpercent + '%';
@@ -147,9 +144,8 @@ var updateCategoryGraphs = function (dataset, initialLoad) {
         graph.el_rate.innerText = catset.filter(x => x.rated).length;
         graph.el_rate.parentNode.setAttribute('data-value', graph.el_rate.innerText);
 
-    }
-    updateCatGraph('all');
-    movies.cats.forEach(updateCatGraph);
+    });
+    updateCategoriesSelection();
 }
 var addRatingsChart = function(el, movies) {
     return new Chartist.Line(el, ratingsChartData(movies), {
@@ -254,7 +250,23 @@ var yearsChartData = function (movieset) {
     }, this);
     return chartdata;
 }
-var updateYearsSelection = function (movieset) {
+var updateCategoriesSelection = function () {
+    clearSelected(e_catsgraphs);
+    if (filters.category) e_catsgraphs.classList.add('filtered');
+    else return e_catsgraphs.classList.remove('filtered');
+    var graph = g_cats.find(x => x.name == filters.category);
+    if (!graph) return;
+    graph.el.classList.add('selected');
+    Array.from(graph.el.querySelectorAll('*[data-type]')).forEach(function(el) {
+        if (filters[el.dataset.type] != undefined) {
+            el.classList.add('selected');
+            var bar = el.querySelector('.bar'),
+                idx = filters[el.dataset.type] ? 0 : 1;
+            if (bar) bar.children[idx].classList.add('selected');
+        }
+    }, this);
+}
+var updateYearsSelection = function () {
     if (filters.decade) {
         // determine current index and select current label
         var labels = e_yearschart.querySelectorAll('.ct-labels > *');
@@ -274,6 +286,11 @@ var updateYearsSelection = function (movieset) {
     } else {
         e_yearschart.classList.remove('is-filtered');
     }
+}
+var updateRatingsSelection = function () {
+    if (filters.ratings)
+        e_ratingschart.dataset['selected_b'] = filters.ratings.join('-')+'-';
+    else e_ratingschart.dataset['selected_b'] = '';
 }
 
 var filterBy = function(arr) {
@@ -305,6 +322,8 @@ var filterBy = function(arr) {
 
 var updateDataset = function(initialLoad) {
 
+    log(filters);
+
     var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
     
     var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
@@ -314,13 +333,14 @@ var updateDataset = function(initialLoad) {
         ratingsdata = ratingsChartData(ratingsset),
         haschanged = JSON.stringify(g_ratings.data.series) != JSON.stringify(ratingsdata.series);
     if (haschanged) g_ratings.update(ratingsdata);
+    updateRatingsSelection();
 
     var yearsdata = yearsChartData(baseFilteredSet),
         haschanged = JSON.stringify(g_years.data.series) != JSON.stringify(yearsdata.series);
     if (haschanged) g_years.update(yearsdata, {
         high: Math.max.apply(Math, yearsdata.series[0]) + Number.EPSILON
     }, true);
-    updateYearsSelection(baseFilteredSet);
+    updateYearsSelection();
 
     var allFilteredSet = filterBy(baseFilteredSet, 'ratings', 'decade', 'seen');
     updateWords(allFilteredSet.length);
@@ -433,40 +453,15 @@ var filterPosters = function (movieset) {
     window.document.dispatchEvent(e)
 }
 
-var categoryFilter = function (name) {
-    var g_cat = g_cats[name];
-    if (g_cat.el_cat.classList.contains('selected')) {
-        unselectCategory(g_cat.el);
-        updateDataset();
-        return;
-    }
-    if (g_cat.el.classList.contains('selected')) {
+var selectCategory = function (name) {
+    if (filters.category == name) {
+        delete filters.category;
         delete filters.seen;
         delete filters.rated;
         delete filters.collected;
         delete filters.listed;
-    }
-    selectCategory(g_cat.name);
+    } else filters.category = name;
     updateDataset();
-}
-var selectCategory = function (name) {
-    var g_cat = g_cats[name];
-    clearSelected(e_catsgraphs);
-    filters.category = g_cat.name;
-    e_catsgraphs.classList.add('filtered');
-    g_cat.el.classList.add('selected');
-    g_cat.el_cat.classList.add('selected');
-    
-    if (filters.seen === true) g_cat.el_valbar.classList.add('selected');
-    if (filters.seen === false) g_cat.el_restbar.classList.add('selected');
-    if (filters.rated) g_cat.el_rate.parentNode.classList.add('selected');
-    if (filters.collected) g_cat.el_coll.parentNode.classList.add('selected');
-    if (filters.listed) g_cat.el_list.parentNode.classList.add('selected');
-}
-var unselectCategory = function () {
-    filters = {};
-    e_catsgraphs.classList.remove('filtered');
-    clearSelected(e_catsgraphs);
 }
 var clearSelected = function (el, classname) {
     classname = classname || 'selected';
@@ -496,7 +491,7 @@ var handleNav = function () {
     sections.addEventListener('click', function (e) {
         var target = e.target || e.srcElement || e.originalTarget;
         if (!target.dataset.category) return;
-        categoryFilter(target.dataset.category);
+        selectCategory(target.dataset.category);
         var was_selected = target.matches('.selected');
         clearSelected(this);
         if (!was_selected) target.classList.add('selected');
@@ -568,7 +563,7 @@ statify = function() {
     g_years = addYearsChart(e_yearschart);
     g_ratings = addRatingsChart(e_ratingschart, movies.all);
     g_ratings.on('created', createShadowLinesGraph);
-    g_cats = {};
+    g_cats = [];
 
     chrome.runtime.sendMessage({
         action: 'template',
@@ -586,7 +581,7 @@ statify = function() {
                 el_seenbar = e_graph.querySelector('.seen'),
                 el_valbar = e_graph.querySelector('.valbar'),
                 el_restbar = e_graph.querySelector('.restbar');
-            g_cats[cat] = {
+            g_cats.push({
                 name: cat,
                 el: e_graph,
                 el_cat: el_cat,
@@ -601,7 +596,7 @@ statify = function() {
                 el_coll: e_graph.querySelector('.collected .text'),
                 el_list: e_graph.querySelector('.listed .text'),
                 el_rate: e_graph.querySelector('.rated .text'),
-            };
+            });
             var jobstitles = {
                 production: 'producer',
                 directing: 'director',
@@ -614,34 +609,34 @@ statify = function() {
                 var target = e.target || e.srcElement || e.originalTarget;
 
                 var category = target.closest('.category');
-                if(category) return categoryFilter(this.dataset.category);
+                if(category) return selectCategory(this.dataset.category);
 
                 var bar_part = target.closest('.bar_part');
                 if (bar_part) {
                     var rest = bar_part.matches('.restbar');
 
                     var was_selected = rest ? filters.seen === false : filters.seen === true;
-                    was_selected = was_selected && bar_part.classList.contains('selected');
+                    was_selected = was_selected && filters.category == this.dataset.category;
 
                     if (was_selected) delete filters.seen;
                     else filters.seen = !rest;
 
-                    if (was_selected) clearSelected(bar_part.parentNode);
-                    else selectCategory(this.dataset.category);
-
+                    filters.category = this.dataset.category;
                     updateDataset();
                     return;
                 }
                 var databar = target.closest('.databar:not(.expanded)');
                 if (databar) {
-                    was_selected = filters[databar.dataset.type] && databar.classList.contains('selected');
+                    was_selected = filters[databar.dataset.type] && filters.category == this.dataset.category;
                 
                     if (was_selected) delete filters[databar.dataset.type];
                     else filters[databar.dataset.type] = true;
+                    if (databar.dataset.type == 'rated') {
+                        if (was_selected) delete filters.ratings;
+                        else filters.ratings = [1,2,3,4,5,6,7,8,9,10];
+                    }
+                    filters.category = this.dataset.category;
                     
-                    if (was_selected) clearSelected(databar);
-                    else selectCategory(this.dataset.category);
-
                     updateDataset();
                     return;
                 }
@@ -700,11 +695,10 @@ statify = function() {
                 else delete filters.ratings;
             } else filters.ratings = [rating];
         }
-        
-        var serie = target.parentNode.classList[1].slice(-1);
-        if (filters.ratings)
-            e_ratingschart.dataset['selected_'+serie] = filters.ratings.join('-')+'-';
-        else e_ratingschart.dataset['selected_'+serie] = '';
+        // sync ratings/rated
+        if (filters.ratings) filters.rated = true;
+        else delete filters.rated;
+
         updateDataset();
     });
 }
