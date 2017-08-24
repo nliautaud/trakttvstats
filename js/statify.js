@@ -32,8 +32,8 @@ var processMovies = function (parent) {
         }
 
         var el_rating = m.querySelector('.corner-rating > .text'),
-            percent = m.querySelector('.percentage').textContent,
-            ttvrating = Math.round(parseInt(percent.slice(0, -1)) * .1); // '87%' to 9
+            percent = m.querySelector('.percentage').textContent;
+        percent = parseInt(percent.slice(0, -1));
         // register movie
         var movie = {
             el: m,
@@ -51,7 +51,7 @@ var processMovies = function (parent) {
             collected: m.querySelector('.collect.selected') !== null,
             listed: m.querySelector('.list.selected') !== null,
             ttvpercent: percent,
-            ttvrating: ttvrating,
+            ttvrating: percent ? 1+Math.round(percent*.09) : undefined, // '87%' to 9,
             id: id,
         };
         movie.categories[cat] = [job];
@@ -150,30 +150,30 @@ var addRatingsChart = function(el, movies) {
             showGrid: false,
         },
         chartPadding: {
-            top: 4,
+            top: 10,
             right: -40,
             bottom: 0,
             left: -35
         },
     });
 }
-var ratingsChartData = function(movies) {
+var ratingsChartData = function(movieset) {
 
-    var me = [0,0,0,0,0,0,0,0,0,0],
+    var user= [0,0,0,0,0,0,0,0,0,0],
         ttv= [0,0,0,0,0,0,0,0,0,0],
         lab= [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    for (var i = 0; i < movies.length; i++) {
-        if(movies[i].rated)
-            me[movies[i].rated-1]++;
-        ttv[movies[i].ttvrating-1]++;
-    }
+    movieset.forEach(function(movie, i) {
+        if (movie.rated) user[movie.rated-1]++;
+        if(movie.ttvrating && (!filters.ratings || filters.ratings.includes(movie.rated)))
+            ttv[movie.ttvrating-1]++;
+    }, this);
 
     if(options.ratingsfilter) {
         for (var i = 0; i < options.ratingsfilter.length; i++) {
             var r = parseInt(options.ratingsfilter[i]);
             if(!Number.isInteger(r) || r < 0) continue;
-            me.splice(r-1, 1);
+            user.splice(r-1, 1);
             ttv.splice(r-1, 1);
             lab.splice(r-1, 1);
         }
@@ -181,7 +181,7 @@ var ratingsChartData = function(movies) {
 
     return {
         labels: lab,
-        series: [normalize(ttv), normalize(me)]
+        series: [normalize(ttv), normalize(user)]
     };
 }
 var createShadowLinesGraph = function (data) {
@@ -298,9 +298,9 @@ var filterBy = function(arr) {
                 break;
             case 'ratings':
                 if (filters.ratings)
-                    arr = arr.filter(x => filters.ratings.indexOf(x.rated) !== -1);
+                    arr = arr.filter(x => filters.ratings.includes(x.rated));
                 if (filters.ttvratings)
-                    arr = arr.filter(x => filters.ttvratings.indexOf(x.ttvrating) !== -1);
+                    arr = arr.filter(x => filters.ttvratings.includes(x.ttvrating));
                 break;
             default:
                 if (filters[name] === true)
@@ -319,7 +319,7 @@ var updateDataset = function(initialLoad) {
 
     if (!filters.category) filters.category = 'all';
 
-    var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed', 'rated');
+    var baseFilteredSet = filterBy(movies.all, 'category', 'collected', 'listed');
     
     if (g_cats.length) {
         var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
@@ -333,7 +333,7 @@ var updateDataset = function(initialLoad) {
     if (haschanged) g_ratings.update(ratingsdata);
     updateRatingsSelection();
 
-    var yearsdata = yearsChartData(baseFilteredSet),
+    var yearsdata = yearsChartData(filterBy(baseFilteredSet, 'ratings')),
         haschanged = JSON.stringify(g_years.data.series) != JSON.stringify(yearsdata.series);
     if (haschanged) g_years.update(yearsdata, {
         high: Math.max.apply(Math, yearsdata.series[0]) + Number.EPSILON
