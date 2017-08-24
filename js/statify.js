@@ -310,12 +310,15 @@ var updateDataset = function(initialLoad) {
     var catsset = filterBy(movies.all, 'category', 'decade', 'ratings');
     updateCategoryGraphs(catsset, initialLoad);
 
-    var ratingsset = filterBy(baseFilteredSet, 'decade');
-    g_ratings.update(ratingsChartData(ratingsset));
+    var ratingsset = filterBy(baseFilteredSet, 'decade'),
+        ratingsdata = ratingsChartData(ratingsset),
+        haschanged = JSON.stringify(g_ratings.data.series) != JSON.stringify(ratingsdata.series);
+    if (haschanged) g_ratings.update(ratingsdata);
 
-    var data = yearsChartData(baseFilteredSet);
-    g_years.update(data, {
-        high: Math.max.apply(Math, data.series[0]) + Number.EPSILON
+    var yearsdata = yearsChartData(baseFilteredSet),
+        haschanged = JSON.stringify(g_years.data.series) != JSON.stringify(yearsdata.series);
+    if (haschanged) g_years.update(yearsdata, {
+        high: Math.max.apply(Math, yearsdata.series[0]) + Number.EPSILON
     }, true);
     updateYearsSelection(baseFilteredSet);
 
