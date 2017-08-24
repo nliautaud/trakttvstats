@@ -374,9 +374,11 @@ var updateWords = function(count) {
         if (perso_filters.length) w += ' and';
         filters.ratings.sort();
         w += ' that <span class="filter">I rated ';
-        w += filters.ratings.slice(0, -1).join(', ');
-        if( filters.ratings.length > 1) w += ' or ';
-        w += filters.ratings.slice(-1);
+        if (filters.ratings.length < 10) {
+            w += filters.ratings.slice(0, -1).join(', ');
+            if( filters.ratings.length > 1) w += ' or ';
+            w += filters.ratings.slice(-1);
+        }
         w += '</span>';
     }
 
@@ -666,34 +668,31 @@ statify = function() {
     // ratings
 
     e_ratingschart.addEventListener('click', function(e) {
-        e = e || window.event;
-        var targ = ini_targ = e.target || e.srcElement;
-        if( !targ.matches('.ct-point') ) return;
+        var target = e.target || e.srcElement || e.originalTarget;
+        if (!target.matches('.ct-line,.ct-point')) return;
 
-        while (targ && !targ.matches('.ttvstats_graph_ratings')) {
-            targ = targ.parentNode;
-            if (targ == e_ttvstats) return;
+        // select all
+        if (target.matches('.ct-line')) {
+            if (!filters.ratings || filters.ratings.length < 10)
+                filters.ratings = [1,2,3,4,5,6,7,8,9,10];
+            else delete filters.ratings;
         }
-        if(targ.matches('.is-null')) return;
-
-        var rating = Array.prototype.indexOf.call(ini_targ.parentElement.children, ini_targ),
-            serie = ini_targ.parentElement.classList[1].slice(-1);
-
-        if (!filters.ratings) {
-            filters.ratings = [rating];
-        } else {
-            var existing = filters.ratings.indexOf(rating);
-            if( existing !== -1 ) {
-                if (filters.ratings.length == 1)
-                    delete filters.ratings;
-                else filters.ratings.splice(existing, 1);
-            } else {
-                filters.ratings.push(rating);
-            }
+        // select one
+        if (target.matches('.ct-point')) {
+            var rating = Array.prototype.indexOf.call(target.parentNode.children, target);
+            if (filters.ratings) {
+                if (!filters.ratings.includes(rating))
+                    filters.ratings.push(rating);
+                else if (filters.ratings.length > 1)
+                    filters.ratings.splice(filters.ratings.indexOf(rating), 1);
+                else delete filters.ratings;
+            } else filters.ratings = [rating];
         }
-
-        targ.classList.toggle('selected-'+serie+'-'+rating);
         
+        var serie = target.parentNode.classList[1].slice(-1);
+        if (filters.ratings)
+            e_ratingschart.dataset['selected_'+serie] = filters.ratings.join('-')+'-';
+        else e_ratingschart.dataset['selected_'+serie] = '';
         updateDataset();
     });
 }
