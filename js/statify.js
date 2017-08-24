@@ -412,7 +412,6 @@ var updateWords = function(count) {
         w += '</span>';
         infosblocks.push(w);
     }
-    console.log(infosblocks);
 
     e_ttvstatswords.innerHTML = joinWithLastSep(infosblocks, ' and ', ' ');
 }
