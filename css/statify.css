@@ -234,38 +234,66 @@
     transform: scale(4);
     opacity: 1;
 }
-.ttvstats_graph_ratings .ct-line:hover ~ .ct-point {
-    -stroke: #FF7413;
-}
 .ttvstats_graph_ratings .ct-point:hover {
     stroke: #FF7413;
     transform: scale(5.5);
 }
-.ttvstats_graph_ratings[data-selected_b*="1-"] .ct-series-b .ct-point:nth-of-type(1),
-.ttvstats_graph_ratings[data-selected_b*="2-"] .ct-series-b .ct-point:nth-of-type(2),
-.ttvstats_graph_ratings[data-selected_b*="3-"] .ct-series-b .ct-point:nth-of-type(3),
-.ttvstats_graph_ratings[data-selected_b*="4-"] .ct-series-b .ct-point:nth-of-type(4),
-.ttvstats_graph_ratings[data-selected_b*="5-"] .ct-series-b .ct-point:nth-of-type(5),
-.ttvstats_graph_ratings[data-selected_b*="6-"] .ct-series-b .ct-point:nth-of-type(6),
-.ttvstats_graph_ratings[data-selected_b*="7-"] .ct-series-b .ct-point:nth-of-type(7),
-.ttvstats_graph_ratings[data-selected_b*="8-"] .ct-series-b .ct-point:nth-of-type(8),
-.ttvstats_graph_ratings[data-selected_b*="9-"] .ct-series-b .ct-point:nth-of-type(9),
-.ttvstats_graph_ratings[data-selected_b*="10-"] .ct-series-b .ct-point:nth-of-type(10) {
+.ttvstats_graph_ratings .ct-series-a .ct-point:hover {
+    stroke: #888;
+}
+.ttvstats_graph_ratings[data-user*="1-"] .ct-series-b .ct-point:nth-of-type(1),
+.ttvstats_graph_ratings[data-user*="2-"] .ct-series-b .ct-point:nth-of-type(2),
+.ttvstats_graph_ratings[data-user*="3-"] .ct-series-b .ct-point:nth-of-type(3),
+.ttvstats_graph_ratings[data-user*="4-"] .ct-series-b .ct-point:nth-of-type(4),
+.ttvstats_graph_ratings[data-user*="5-"] .ct-series-b .ct-point:nth-of-type(5),
+.ttvstats_graph_ratings[data-user*="6-"] .ct-series-b .ct-point:nth-of-type(6),
+.ttvstats_graph_ratings[data-user*="7-"] .ct-series-b .ct-point:nth-of-type(7),
+.ttvstats_graph_ratings[data-user*="8-"] .ct-series-b .ct-point:nth-of-type(8),
+.ttvstats_graph_ratings[data-user*="9-"] .ct-series-b .ct-point:nth-of-type(9),
+.ttvstats_graph_ratings[data-user*="10-"] .ct-series-b .ct-point:nth-of-type(10) {
     opacity: 1;
     transform: scale(6);
     stroke: #FF7413;
 }
-.ttvstats_graph_ratings[data-selected_b*="1-"] .ct-series-b .ct-point:nth-of-type(1):hover,
-.ttvstats_graph_ratings[data-selected_b*="2-"] .ct-series-b .ct-point:nth-of-type(2):hover,
-.ttvstats_graph_ratings[data-selected_b*="3-"] .ct-series-b .ct-point:nth-of-type(3):hover,
-.ttvstats_graph_ratings[data-selected_b*="4-"] .ct-series-b .ct-point:nth-of-type(4):hover,
-.ttvstats_graph_ratings[data-selected_b*="5-"] .ct-series-b .ct-point:nth-of-type(5):hover,
-.ttvstats_graph_ratings[data-selected_b*="6-"] .ct-series-b .ct-point:nth-of-type(6):hover,
-.ttvstats_graph_ratings[data-selected_b*="7-"] .ct-series-b .ct-point:nth-of-type(7):hover,
-.ttvstats_graph_ratings[data-selected_b*="8-"] .ct-series-b .ct-point:nth-of-type(8):hover,
-.ttvstats_graph_ratings[data-selected_b*="9-"] .ct-series-b .ct-point:nth-of-type(9):hover,
-.ttvstats_graph_ratings[data-selected_b*="10-"] .ct-series-b .ct-point:nth-of-type(10):hover,
-.ttvstats_graph_ratings[data-selected_b="1-2-3-4-5-6-7-8-9-10-"] .ct-series-b .ct-line:hover ~ .ct-point {
+.ttvstats_graph_ratings[data-user*="1-"] .ct-series-b .ct-point:nth-of-type(1):hover,
+.ttvstats_graph_ratings[data-user*="2-"] .ct-series-b .ct-point:nth-of-type(2):hover,
+.ttvstats_graph_ratings[data-user*="3-"] .ct-series-b .ct-point:nth-of-type(3):hover,
+.ttvstats_graph_ratings[data-user*="4-"] .ct-series-b .ct-point:nth-of-type(4):hover,
+.ttvstats_graph_ratings[data-user*="5-"] .ct-series-b .ct-point:nth-of-type(5):hover,
+.ttvstats_graph_ratings[data-user*="6-"] .ct-series-b .ct-point:nth-of-type(6):hover,
+.ttvstats_graph_ratings[data-user*="7-"] .ct-series-b .ct-point:nth-of-type(7):hover,
+.ttvstats_graph_ratings[data-user*="8-"] .ct-series-b .ct-point:nth-of-type(8):hover,
+.ttvstats_graph_ratings[data-user*="9-"] .ct-series-b .ct-point:nth-of-type(9):hover,
+.ttvstats_graph_ratings[data-user*="10-"] .ct-series-b .ct-point:nth-of-type(10):hover,
+.ttvstats_graph_ratings[data-user="1-2-3-4-5-6-7-8-9-10-"] .ct-series-b .ct-line:hover ~ .ct-point {
+    transform: scale(5.5);
+}
+.ttvstats_graph_ratings[data-trakt*="1-"] .ct-series-a .ct-point:nth-of-type(1),
+.ttvstats_graph_ratings[data-trakt*="2-"] .ct-series-a .ct-point:nth-of-type(2),
+.ttvstats_graph_ratings[data-trakt*="3-"] .ct-series-a .ct-point:nth-of-type(3),
+.ttvstats_graph_ratings[data-trakt*="4-"] .ct-series-a .ct-point:nth-of-type(4),
+.ttvstats_graph_ratings[data-trakt*="5-"] .ct-series-a .ct-point:nth-of-type(5),
+.ttvstats_graph_ratings[data-trakt*="6-"] .ct-series-a .ct-point:nth-of-type(6),
+.ttvstats_graph_ratings[data-trakt*="7-"] .ct-series-a .ct-point:nth-of-type(7),
+.ttvstats_graph_ratings[data-trakt*="8-"] .ct-series-a .ct-point:nth-of-type(8),
+.ttvstats_graph_ratings[data-trakt*="9-"] .ct-series-a .ct-point:nth-of-type(9),
+.ttvstats_graph_ratings[data-trakt*="10-"] .ct-series-a .ct-point:nth-of-type(10) {
+    opacity: 1;
+    stroke-width: 3px;
+    transform: scale(6);
+    stroke: #888;
+}
+.ttvstats_graph_ratings[data-trakt*="1-"] .ct-series-a .ct-point:nth-of-type(1):hover,
+.ttvstats_graph_ratings[data-trakt*="2-"] .ct-series-a .ct-point:nth-of-type(2):hover,
+.ttvstats_graph_ratings[data-trakt*="3-"] .ct-series-a .ct-point:nth-of-type(3):hover,
+.ttvstats_graph_ratings[data-trakt*="4-"] .ct-series-a .ct-point:nth-of-type(4):hover,
+.ttvstats_graph_ratings[data-trakt*="5-"] .ct-series-a .ct-point:nth-of-type(5):hover,
+.ttvstats_graph_ratings[data-trakt*="6-"] .ct-series-a .ct-point:nth-of-type(6):hover,
+.ttvstats_graph_ratings[data-trakt*="7-"] .ct-series-a .ct-point:nth-of-type(7):hover,
+.ttvstats_graph_ratings[data-trakt*="8-"] .ct-series-a .ct-point:nth-of-type(8):hover,
+.ttvstats_graph_ratings[data-trakt*="9-"] .ct-series-a .ct-point:nth-of-type(9):hover,
+.ttvstats_graph_ratings[data-trakt*="10-"] .ct-series-a .ct-point:nth-of-type(10):hover,
+.ttvstats_graph_ratings[data-trakt="1-2-3-4-5-6-7-8-9-10-"] .ct-series-a .ct-line:hover ~ .ct-point {
     transform: scale(5.5);
 }
 
@@ -303,7 +331,7 @@
 .ttvstats_graph_years .ct-label{
 	font-size: 0.75em;
 }
-.ttvstats_graph_years .is-selected .ct-label{
+.ttvstats_graph_years.is-filtered .is-selected .ct-label{
 	color: black;
 	font-size: 0.9em;
 	font-weight: bold;

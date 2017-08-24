@@ -63,20 +63,6 @@ var processMovies = function (parent) {
         decades: decades.sort()
     };
 }
-// filters
-var f = {
-    ratings : function (ratings) {
-        return function (el) {
-            return el.rated !== false && ratings.indexOf(el.rated) !== -1;
-        };
-    },
-    unique : function (val, id, self) {
-        return self.indexOf(val) === id
-    },
-    noduplicate : function (el, id, self) {
-        return el.el_first === undefined
-    }
-}
 var listAttr = function (arr, key) {
     if (!arr || !arr.length || !key in arr[0]) return;
 
@@ -84,7 +70,10 @@ var listAttr = function (arr, key) {
     for (var i = 0; i < arr.length; i++) {
         list.push(arr[i][key]);
     }
-    return list.filter(f.unique);
+    var unique = function (val, id, self) {
+        return self.indexOf(val) === id
+    };
+    return list.filter(unique);
 }
 var percentOf = function (arr, filter) {
     var filtered = arr.filter(filter);
@@ -288,9 +277,12 @@ var updateYearsSelection = function () {
     }
 }
 var updateRatingsSelection = function () {
+    e_ratingschart.dataset['user'] = '';
+    e_ratingschart.dataset['trakt'] = '';
     if (filters.ratings)
-        e_ratingschart.dataset['selected_b'] = filters.ratings.join('-')+'-';
-    else e_ratingschart.dataset['selected_b'] = '';
+        e_ratingschart.dataset['user'] = filters.ratings.join('-')+'-';
+    if (filters.ttvratings)
+        e_ratingschart.dataset['trakt'] = filters.ttvratings.join('-')+'-';
 }
 
 var filterBy = function(arr) {
@@ -307,7 +299,9 @@ var filterBy = function(arr) {
                 break;
             case 'ratings':
                 if (filters.ratings)
-                    arr = arr.filter(f.ratings(filters.ratings));
+                    arr = arr.filter(x => filters.ratings.indexOf(x.rated) !== -1);
+                if (filters.ttvratings)
+                    arr = arr.filter(x => filters.ttvratings.indexOf(x.ttvrating) !== -1);
                 break;
             default:
                 if (filters[name] === true)
@@ -350,28 +344,21 @@ var updateDataset = function(initialLoad) {
 }
 
 var updateWords = function(count) {
+    var w = '', infosblocks = [];
 
-    var name = document.querySelector('h1').innerText;
-    var w = '', cat;
-    var perso_filters = [];
-    ['seen', 'rated', 'collected', 'listed'].forEach(function(x) {
-        var span = `<span class="filter ${x}">`;
-        if (filters[x] === true)
-            perso_filters.push(`${span}${x == 'seen' ? 'saw' : x}</span>`);
-        else if (filters[x] === false)
-            perso_filters.push(`${span}didn't ${x == 'seen' ? 'see' : x}</span>`);
-    }, this);
-    
+    // intro, count
     if (count == 0) w += 'There isn\'t any movie';
     else if (count == 1) w += 'The only movie';
     else {
-        if (!perso_filters.length) w += 'All the '
-        else w += 'The ';
+        let persofilters = ['seen', 'rated', 'collected', 'listed'],
+            persoexists = persofilters.find(x => filters[x] !== undefined);
+        w += persoexists ? 'The ' : 'All the ';
         w += count + ' movies';
     }
     
     // category, name
-    var catbefore = catafter = '',
+    var name = document.querySelector('h1').innerText,
+        catbefore = catafter = '',
         catw = {
             directing: 'directed</span> by ',
             writing: 'written</span> by ',
@@ -391,29 +378,60 @@ var updateWords = function(count) {
     if (filters.decade) {
         w += ' <span class="filter date">in the ' + yearDecade(filters.decade) + '\'s</span>';
     }
+    infosblocks.push(w);
     
-    // seen, rated, collected, listed
-    if (perso_filters.length) {
-        w += ' that I ';
-        w += perso_filters.slice(0, -1).join(', ');
-        if (perso_filters.length > 1)
-            w += ' and ';
-        w += perso_filters.slice(-1);
-    }
-    // rating
-    if (filters.ratings) {
-        if (perso_filters.length) w += ' and';
-        filters.ratings.sort();
-        w += ' that <span class="filter">I rated ';
-        if (filters.ratings.length < 10) {
-            w += filters.ratings.slice(0, -1).join(', ');
-            if( filters.ratings.length > 1) w += ' or ';
-            w += filters.ratings.slice(-1);
-        }
+    // ttvratings
+    if (filters.ttvratings) {
+        filters.ttvratings.sort((a,b) => a-b);
+        w = ' that <span class="filter">';
+        w += ratingWordList(filters.ttvratings, 'are rated ', 'are not rated ');
         w += '</span>';
+        infosblocks.push(w);
+    }
+    
+    // seen, collected, listed
+    var persos = [];
+    ['seen', 'collected', 'listed'].forEach(function(x) {
+        var span = `<span class="filter ${x}">`;
+        if (filters[x] === true)
+            persos.push(`${span}${x == 'seen' ? 'saw' : x}</span>`);
+        else if (filters[x] === false)
+            persos.push(`${span}didn't ${x == 'seen' ? 'see' : x}</span>`);
+    }, this);
+    if (persos.length) {
+        persos[0] = 'that I ' + persos[0];
+        Array.prototype.push.apply(infosblocks, persos);
     }
 
-    e_ttvstatswords.innerHTML = w;
+    // ratings
+    if (filters.ratings) {
+        if (persos.length) w = '<span class="filter">';
+        else w = 'that <span class="filter">I ';
+        filters.ratings.sort((a,b) => a-b);
+        w += ratingWordList(filters.ratings, 'rated ', 'didn\'t rated ');
+        w += '</span>';
+        infosblocks.push(w);
+    }
+    console.log(infosblocks);
+
+    e_ttvstatswords.innerHTML = joinWithLastSep(infosblocks, ' and ', ' ');
+}
+var ratingWordList = function(arr, incl, excl) {
+    if (arr.length == 10) return incl;
+    if (arr.length < 6) return incl + joinWithLastSep(arr, ' or ');
+    return excl + joinWithLastSep([1,2,3,4,5,6,7,8,9,10].filter(x => 
+        arr.indexOf(x) === -1
+    ), ' or ');
+}
+var joinWithLastSep = function(arr, lastsep, firstsep, sep) {
+    sep = sep || ', ';
+    firstsep = firstsep || (arr.length > 2 ? sep : lastsep);
+    if (arr.length == 1) return arr[0];
+    var out = arr[0];
+    if (arr.length > 1) out += firstsep
+    out += arr.slice(1, -1).join(sep);
+    if (arr.length > 2) out += lastsep;
+    return out + arr.slice(-1);
 }
 var filterPosters = function (movieset) {
 
@@ -678,22 +696,24 @@ statify = function() {
         var target = e.target || e.srcElement || e.originalTarget;
         if (!target.matches('.ct-line,.ct-point')) return;
 
+        var serie = target.closest('.ct-series').getAttribute('class').slice(-1),
+            filter = serie == 'a' ? 'ttvratings' : 'ratings';
         // select all
         if (target.matches('.ct-line')) {
-            if (!filters.ratings || filters.ratings.length < 10)
-                filters.ratings = [1,2,3,4,5,6,7,8,9,10];
-            else delete filters.ratings;
+            if (!filters[filter] || filters[filter].length < 10)
+                filters[filter] = [1,2,3,4,5,6,7,8,9,10];
+            else delete filters[filter];
         }
         // select one
         if (target.matches('.ct-point')) {
             var rating = Array.prototype.indexOf.call(target.parentNode.children, target)-1;
-            if (filters.ratings) {
-                if (!filters.ratings.includes(rating))
-                    filters.ratings.push(rating);
-                else if (filters.ratings.length > 1)
-                    filters.ratings.splice(filters.ratings.indexOf(rating), 1);
-                else delete filters.ratings;
-            } else filters.ratings = [rating];
+            if (filters[filter]) {
+                if (!filters[filter].includes(rating))
+                    filters[filter].push(rating);
+                else if (filters[filter].length > 1)
+                    filters[filter].splice(filters[filter].indexOf(rating), 1);
+                else delete filters[filter];
+            } else filters[filter] = [rating];
         }
         // sync ratings/rated
         if (filters.ratings) filters.rated = true;
