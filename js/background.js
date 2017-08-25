@@ -41,6 +41,13 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 })
 
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (tab.url.indexOf('https://trakt.tv') == 0) {
+        chrome.pageAction.show(tabId);
+    }
+});
+
+
 function queueExecution(tabId, execMethod, injectDetailsArray) {
     function createCallback(tabId, injectDetails, innerCallback) {
         return function () {

@@ -4,12 +4,14 @@
     <title>Options</title>
     <style>
         * { box-sizing: border-box; }
-        body { padding: 1em 1em .5em; }
-        label, div { display: block; margin: 0 0 1em; }
+        body { min-width: 25em; padding: 1em 1em .5em; }
+        label, strong { display: block; margin: 0 0 1em; }
         button { padding: .5em 2em !important; }
         input, select { width: 50%; }
         .label-inline { display: inline-block; width: 45%; }
         .save { margin-top: 2em !important; }
+        .toggle { max-height: 99999px;  overflow: hidden; }
+        .i18n.disabled .toggle { max-height: 0; }
     </style>
 </head>
 <body>
@@ -28,33 +30,37 @@
         <span class="label-inline">Multiline titles</span>
         <input id="layoutMultilineTitles" type="checkbox">
     </label>
-    <div><strong>Translation : </strong></div>
-    <label>
-        <span class="label-inline">Language (ISO 639-1)</span>
-        <input id="i18nLang" type="text" size="2" placeholder="ex: fr">
-    </label>
-    <label>
-        <span class="label-inline">Translate items</span>
-        <select id="i18nMode">
-            <option value="Hover">On mouse hover</option>
-            <option value="Load">On page load</option>
-        </select>
-    </label>
-    <label>
-        <span class="label-inline">Titles and synopsis</span>
-        <select id="i18nShow">
-            <option value="Both">Show original & translation</option>
-            <option value="Replace">Show translation only</option>
-        </select>
-    </label>
-    <label>
-        <span class="label-inline">Localize posters</span>
-        <input id="i18nBack" type="checkbox">
-    </label>
-    <label>
-        <span class="label-inline"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
-        <input id="tmdbApiKey" type="text" placeholder="Leave blank for default">
-    </label>
+    <div class="i18n">
+        <strong>Translation : </strong>
+        <label>
+            <span class="label-inline">Language (ISO 639-1)</span>
+            <input id="i18nLang" type="text" size="2" placeholder="ex: fr">
+        </label>
+        <div class="toggle">
+            <label>
+                <span class="label-inline">Translate items</span>
+                <select id="i18nMode">
+                    <option value="Hover">On mouse hover</option>
+                    <option value="Load">On page load</option>
+                </select>
+            </label>
+            <label>
+                <span class="label-inline">Titles and synopsis</span>
+                <select id="i18nShow">
+                    <option value="Both">Show original & translation</option>
+                    <option value="Replace">Show translation only</option>
+                </select>
+            </label>
+            <label>
+                <span class="label-inline">Localize posters</span>
+                <input id="i18nBack" type="checkbox">
+            </label>
+            <label>
+                <span class="label-inline"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
+                <input id="tmdbApiKey" type="text" placeholder="Leave blank for default">
+            </label>
+        </div>
+    </div>
 
     <div class="save">
         <button id="save">Save</button>

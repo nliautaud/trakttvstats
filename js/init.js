@@ -16,6 +16,9 @@ init = function( items ) {
     statify()
     layout()
 
+    if ( !options.i18nLang )
+        return;
+
     if ( !options.tmdbApiKey )
         options.tmdbApiKey = defaultK
 
@@ -51,15 +54,15 @@ init = function( items ) {
 }
 
 chrome.storage.sync.get({
-    ratingsfilter: null,
-    tmdbApiKey: null,
+    ratingsfilter: '',
+    tmdbApiKey: '',
     tmdbConfig: null,
     tmdbConfigDate: null,
-    i18nLang: null,
+    i18nLang: '',
     i18nMode: 'Hover',
     i18nShow: 'Both',
     i18nBack: false,
-    layoutExternalLinks: null,
+    layoutExternalLinks: '',
     layoutMultilineTitles: false,
 }, init)
 

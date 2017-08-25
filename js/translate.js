@@ -146,7 +146,7 @@ function i18nItemThumb (el) {
     var args = {
         query: infos.name,
         year: infos.year,
-        language: options.i18nLang.toLowerCase()
+        language: options.i18nLang
     };
 
     callTMDb( 'search/'+infos.type, args, function(result) {
@@ -162,7 +162,7 @@ function i18nItemThumb (el) {
 }
 function i18nItemPage (el, tmdbPath) {
     var args  = {
-        language: options.i18nLang.toLowerCase(),
+        language: options.i18nLang,
         append_to_response: 'releases'
     }
     callTMDb( tmdbPath, args, function(result) {
