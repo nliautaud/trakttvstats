@@ -7,7 +7,7 @@ translate = function() {
 
     if( options.i18nMode == 'Load') {
         log('Trakttvstats : translate all...');
-        [...document.querySelectorAll('[data-type]')].forEach(i18nItemThumb);
+        [...document.querySelectorAll('.grid-item[data-type]')].forEach(i18nItemThumb);
     }
     else document.body.onmouseover = translateOnMouseOver;
 
@@ -19,7 +19,7 @@ translate = function() {
 }
 translateOnMouseOver = function (event) {
     var target = event.target || event.srcElement || event.originalTarget,
-        item = target.closest('[data-type]');
+        item = target.closest('.grid-item[data-type]');
     if( item ) i18nItemThumb(item);
 }
 isTranslated = function( el ) {
