@@ -1,6 +1,10 @@
 # trakttvstats
 A chrome extension adding various improvements to [trakt.tv](https://trakt.tv). Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce).
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/khhjjcbdknmdbdhgkbnldplgoppeehce.svg?colorB=4cc61e)](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce)
+[![Development version](https://img.shields.io/chrome-web-store/v/ppeoegnflhlfjkclghpfkgpgpbodlaaa.svg?label=development%20version)](https://chrome.google.com/webstore/detail/ppeoegnflhlfjkclghpfkgpgpbodlaaa)
+[![Issues & Suggestions](https://img.shields.io/github/issues-raw/nliautaud/trakttvstats.svg?label=issues%20%26%20suggestions)](https://github.com/nliautaud/trakttvstats/issues)
+
 -------------
 - [Features](#features)
     - [People statistics & filtering](#people-statistics--filtering)
