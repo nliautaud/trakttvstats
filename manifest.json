@@ -4,8 +4,8 @@
   "name": "Trakt improver DEV",
   "short_name" : "trakttvstats",
   "description": "Add various improvements to Trakt.tv",
-  "version": "0.4.0.21",
-  "version_name": "0.4 alpha (0.4.0.21)",
+  "version": "0.4.0.23",
+  "version_name": "0.4 alpha (0.4.0.23)",
   "permissions": [
     "storage",
     "tabs",
