@@ -77,7 +77,7 @@ insertI18nContent = function ( parent, sel, replace, find ) {
 }
 insertI18nImage = function ( parent, sel, showInfo, callback ) {
     if (!showInfo) return callback();
-    
+
     var img = parent.querySelector( sel + ' img.real'),
         img_type = img.parentNode.className == 'poster' ? 'poster' : 'backdrop',
         img_path = showInfo[img_type+'_path'];
@@ -106,7 +106,7 @@ countryCodeEmoji = function ( countryCode ) {
 }
 renderReleasesDates = function ( el, releases ) {
     if (!releases.countries || !releases.countries.length) return;
-    
+
     var e_addstats = document.querySelector('.additional-stats'),
         e_releasedLabel = Array.prototype.filter.call(
             e_addstats.querySelectorAll('label'), function(x) {
@@ -115,7 +115,7 @@ renderReleasesDates = function ( el, releases ) {
 
     var e_releases;
     if( !e_releasedLabel.length ) {
-        e_releases = document.createElement('li'); 
+        e_releases = document.createElement('li');
         e_addstats.insertBefore(e_releases, e_addstats.children[2]);
     } else e_releases = e_releasedLabel[0].parentNode;
 
@@ -160,6 +160,36 @@ function i18nItemThumb (el) {
         else insertI18nImage(el, '', result, translateContent);
     });
 }
+function i18nPageTitle (el, data) {
+    var title1 = el.querySelector( 'h1' );
+    title1.className = 'page-title page-title_main';
+
+    var worldwide_title = title1.childNodes[0].nodeValue.trim();
+
+    var original_title = data.original_title || data.original_name;
+    if (original_title && worldwide_title != original_title) {
+        let title2 = document.createElement( 'h2' );
+        title1.parentNode.appendChild(title2);
+        title2.className = 'page-title page-title_secondary';
+        title2.innerText = original_title;
+        let info = document.createElement( 'span' );
+        info.className = 'info';
+        info.innerText = ' (original title)';
+        title2.appendChild(info);
+    }
+
+    var localized_title = data.title || data.name;
+    if (localized_title && worldwide_title != localized_title && original_title != localized_title) {
+        let title3 = document.createElement( 'h2' );
+        title1.parentNode.appendChild(title3);
+        title3.className = 'page-title page-title_third';
+        title3.innerText = localized_title;
+        let info = document.createElement( 'span' );
+        info.className = 'info';
+        info.innerText = ' (' + countryCodeEmoji(options.i18nLang) + ')';
+        title3.appendChild(info);
+    }
+}
 function i18nItemPage (el, tmdbPath) {
     var args  = {
         language: options.i18nLang,
@@ -167,9 +197,7 @@ function i18nItemPage (el, tmdbPath) {
     }
     callTMDb( tmdbPath, args, function(result) {
         var translateContent = function() {
-            insertI18nContent(el, 'h1',
-                result.title || result.name,
-                result.original_title || result.original_name );
+            i18nPageTitle(el, result);
             if (result.overview)
                 insertI18nContent(el, '.info #overview', result.overview);
             if (result.biography)
