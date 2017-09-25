@@ -1,5 +1,5 @@
 options = {}
-VERBOSE = false
+VERBOSE = true
 defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
