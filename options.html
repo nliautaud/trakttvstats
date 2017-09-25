@@ -1,71 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Options</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { min-width: 25em; padding: 1em 1em .5em; }
-        label, strong { display: block; margin: 0 0 1em; }
-        button { padding: .5em 2em !important; }
-        input, select { width: 50%; }
-        .label-inline { display: inline-block; width: 45%; }
-        .save { margin-top: 2em !important; }
-        .toggle { max-height: 99999px;  overflow: hidden; }
-        .i18n.disabled .toggle { max-height: 0; }
-    </style>
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="css/options.css">
 </head>
 <body>
 
-    <div><strong>Charts : </strong></div>
-    <label>
-        <span class="label-inline">Ratings to hide from charts</span>
+    <div class="row">
+        <strong>Charts :</strong>
+    </div>
+    <label class="row">
+        <span class="label">Ratings to hide from charts</span>
         <input id="ratingsfilter" type="text" placeholder="ex: 1,2">
     </label>
-    <div><strong>Layout : </strong></div>
-    <label>
-        <span class="label-inline">Custom external links:</span>
+    <div class="row">
+        <strong>Layout :</strong>
+    </div>
+    <label class="row">
+        <span class="label">Custom external links:</span>
         <input id="layoutExternalLinks" type="text" placeholder="ex: allocine,criticker">
     </label>
-    <label>
-        <span class="label-inline">Multiline titles</span>
+    <div class="row full">
+        <span class="label">Titles</span>
+        <div class="titlesZone">
+            <div class="title" data-type="world"><input type="checkbox">World-wide title</div>
+            <div class="title" data-type="original"><input type="checkbox">Original title</div>
+            <div class="title" data-type="localized"><input type="checkbox">Localized title</div>
+        </div>
+    </div>
+    <label class="row">
+        <span class="label">Multiline titles</span>
         <input id="layoutMultilineTitles" type="checkbox">
     </label>
+    <div class="row">
+        <strong>Translation :</strong>
+    </div>
     <div class="i18n">
-        <strong>Translation : </strong>
-        <label>
-            <span class="label-inline">Language (ISO 639-1)</span>
+        <label class="row">
+            <span class="label">Language (ISO 639-1)</span>
             <input id="i18nLang" type="text" size="2" placeholder="ex: fr">
         </label>
         <div class="toggle">
-            <label>
-                <span class="label-inline">Translate items</span>
+            <label class="row">
+                <span class="label">Translate items</span>
                 <select id="i18nMode">
                     <option value="Hover">On mouse hover</option>
                     <option value="Load">On page load</option>
                 </select>
             </label>
-            <label>
-                <span class="label-inline">Titles and synopsis</span>
+            <label class="row">
+                <span class="label">Titles and synopsis</span>
                 <select id="i18nShow">
                     <option value="Both">Show original & translation</option>
                     <option value="Replace">Show translation only</option>
                 </select>
             </label>
-            <label>
-                <span class="label-inline">Localize posters</span>
+            <label class="row">
+                <span class="label">Localize posters</span>
                 <input id="i18nBack" type="checkbox">
             </label>
-            <label>
-                <span class="label-inline"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
+            <label class="row">
+                <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
                 <input id="tmdbApiKey" type="text" placeholder="Leave blank for default">
             </label>
         </div>
     </div>
 
-    <div class="save">
-        <button id="save">Save</button>
-        <span id="status"></span>
-    </div>
+    <span id="status"></span>
 
     <script src="js/options.js"></script>
 </body>

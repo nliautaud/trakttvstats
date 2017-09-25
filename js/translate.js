@@ -162,33 +162,44 @@ function i18nItemThumb (el) {
 }
 function i18nPageTitle (el, data) {
     var title1 = el.querySelector( 'h1' );
-    title1.className = 'page-title page-title_main';
+    var titles = {
+        'world': {
+            type: 'world',
+            text: title1.childNodes[0].nodeValue.trim(),
+            info: '(world-wide title)'
+        },
+        'original': {
+            type: 'original',
+            text: data.original_title || data.original_name,
+            info: '(original title)'
+        },
+        'localized': {
+            type: 'localized',
+            text: data.title || data.name,
+            info: '(' + countryCodeEmoji(options.i18nLang) + ')'
+        }
+    };
+    var titlesLines = [];
+    options.layoutTitles.forEach(function(el, id) {
+        let sameTextAlready = titlesLines.find(x => x.text == titles[el.type].text);
+        if (!sameTextAlready && (!id || el.checked))
+            titlesLines.push(titles[el.type]);
+    });
 
-    var worldwide_title = title1.childNodes[0].nodeValue.trim();
-
-    var original_title = data.original_title || data.original_name;
-    if (original_title && worldwide_title != original_title) {
-        let title2 = document.createElement( 'h2' );
-        title1.parentNode.appendChild(title2);
-        title2.className = 'page-title page-title_secondary';
-        title2.innerText = original_title;
+    let addSubTitleLine = function(id, cl) {
+        let el = document.createElement( 'h2' );
+        title1.parentNode.appendChild(el);
+        el.className = 'page-title page-title_'+cl;
+        el.innerText = titlesLines[id].text + ' ';
         let info = document.createElement( 'span' );
         info.className = 'info';
-        info.innerText = ' (original title)';
-        title2.appendChild(info);
+        info.innerText = titlesLines[id].info;
+        el.appendChild(info);
     }
 
-    var localized_title = data.title || data.name;
-    if (localized_title && worldwide_title != localized_title && original_title != localized_title) {
-        let title3 = document.createElement( 'h2' );
-        title1.parentNode.appendChild(title3);
-        title3.className = 'page-title page-title_third';
-        title3.innerText = localized_title;
-        let info = document.createElement( 'span' );
-        info.className = 'info';
-        info.innerText = ' (' + countryCodeEmoji(options.i18nLang) + ')';
-        title3.appendChild(info);
-    }
+    title1.childNodes[0].nodeValue = titlesLines[0].text + ' ';
+    if (titlesLines[1]) addSubTitleLine(1, 'secondary');
+    if (titlesLines[2]) addSubTitleLine(2, 'third');
 }
 function i18nItemPage (el, tmdbPath) {
     var args  = {

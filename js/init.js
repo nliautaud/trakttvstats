@@ -64,6 +64,11 @@ chrome.storage.sync.get({
     i18nBack: false,
     layoutExternalLinks: '',
     layoutMultilineTitles: false,
+    layoutTitles: [
+      {type: 'world', checked: true},
+      {type: 'localized', checked: true},
+      {type: 'original', checked: false}
+    ],
 }, init)
 
 

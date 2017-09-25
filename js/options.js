@@ -1,50 +1,84 @@
-function save_options() {
-  var options = {
-    ratingsfilter:    document.getElementById('ratingsfilter').value,
-    tmdbApiKey:       document.getElementById('tmdbApiKey').value,
-    i18nLang:         document.getElementById('i18nLang').value.toLowerCase(),
-    i18nMode:         document.getElementById('i18nMode').value,
-    i18nShow:         document.getElementById('i18nShow').value,
-    i18nBack:         document.getElementById('i18nBack').checked,
-    layoutExternalLinks:    document.getElementById('layoutExternalLinks').value,
-    layoutMultilineTitles:  document.getElementById('layoutMultilineTitles').checked,
-  };
-  chrome.storage.sync.set(options, function() {
-    var status = document.getElementById('status')
-    status.textContent = 'Options saved.'
-    updateOptions(options)
-    setTimeout(function() {
-      status.textContent = ''
-    }, 750)
-  })
-}
+$(function() {
+  var titlesZone = $( ".titlesZone" );
 
-function restore_options() {
-  chrome.storage.sync.get({
-    ratingsfilter: '',
-    tmdbApiKey: '',
-    i18nLang: '',
-    i18nMode: 'Hover',
-    i18nShow: 'Both',
-    i18nBack: false,
-    layoutExternalLinks: '',
-    layoutMultilineTitles: false,
-  }, function(items) {
-    document.getElementById('ratingsfilter').value = items.ratingsfilter
-    document.getElementById('tmdbApiKey').value = items.tmdbApiKey
-    document.getElementById('i18nLang').value = items.i18nLang.toLowerCase()
-    document.getElementById('i18nMode').value = items.i18nMode
-    document.getElementById('i18nShow').value = items.i18nShow
-    document.getElementById('i18nBack').checked = items.i18nBack
-    document.getElementById('layoutExternalLinks').value = items.layoutExternalLinks
-    document.getElementById('layoutMultilineTitles').checked = items.layoutMultilineTitles
-    updateOptions(items)
-  })
-}
+  function getOrderedTitles() {
+    return $.map( titlesZone.children(), function(el) {
+      el = $(el);
+      return {
+        type: el.data('type'),
+        checked: el.find('input').prop('checked')
+      };
+    });
+  }
+  function orderTitlesOption(data) {
+    $.each(data, function(id, item) {
+      el = titlesZone.find('[data-type='+item.type+']')
+        .remove()
+        .appendTo(titlesZone)
+        .find('input')
+          .prop('checked', item.checked)
+          .change(save_options);
+    });
+  }
+  
+  function save_options() {
+    var options = {
+      ratingsfilter:    document.getElementById('ratingsfilter').value,
+      tmdbApiKey:       document.getElementById('tmdbApiKey').value,
+      i18nLang:         document.getElementById('i18nLang').value.toLowerCase(),
+      i18nMode:         document.getElementById('i18nMode').value,
+      i18nShow:         document.getElementById('i18nShow').value,
+      i18nBack:         document.getElementById('i18nBack').checked,
+      layoutExternalLinks:    document.getElementById('layoutExternalLinks').value,
+      layoutMultilineTitles:  document.getElementById('layoutMultilineTitles').checked,
+      layoutTitles:           getOrderedTitles(),
+    };
+    chrome.storage.sync.set(options);
+    updateOptions(options);
+  }
 
-function updateOptions(options) {
-  if (!options.i18nLang) document.querySelector('.i18n').classList.add('disabled')
-  else document.querySelector('.i18n').classList.remove('disabled')
-}
-document.addEventListener('DOMContentLoaded', restore_options)
-document.getElementById('save').addEventListener('click', save_options)
+  function restore_options() {
+    chrome.storage.sync.get({
+      ratingsfilter: '',
+      tmdbApiKey: '',
+      i18nLang: '',
+      i18nMode: 'Hover',
+      i18nShow: 'Both',
+      i18nBack: false,
+      layoutExternalLinks: '',
+      layoutMultilineTitles: false,
+      layoutTitles: [
+        {type: 'world', checked: true},
+        {type: 'localized', checked: true},
+        {type: 'original', checked: false}
+      ],
+    }, function(options) {
+      document.getElementById('ratingsfilter').value = options.ratingsfilter
+      document.getElementById('tmdbApiKey').value = options.tmdbApiKey
+      document.getElementById('i18nLang').value = options.i18nLang.toLowerCase()
+      document.getElementById('i18nMode').value = options.i18nMode
+      document.getElementById('i18nShow').value = options.i18nShow
+      document.getElementById('i18nBack').checked = options.i18nBack
+      document.getElementById('layoutExternalLinks').value = options.layoutExternalLinks
+      document.getElementById('layoutMultilineTitles').checked = options.layoutMultilineTitles
+      orderTitlesOption(options.layoutTitles);
+      updateOptions(options);
+    })
+  }
+
+  function updateOptions(options) {
+    if (!options.i18nLang) document.querySelector('.i18n').classList.add('disabled')
+    else document.querySelector('.i18n').classList.remove('disabled')
+  }
+
+  titlesZone.sortable({
+      stop: save_options
+  });
+  $( ".titlesZone .title" ).draggable({
+    connectToSortable: ".titlesZone",
+    containment: "parent"
+  });
+  $( 'input, select' ).change(save_options);
+
+  restore_options();
+});
