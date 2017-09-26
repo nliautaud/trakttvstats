@@ -43,7 +43,6 @@ $(function() {
       i18nMode: 'Hover',
       i18nPosters: 'Disable',
       i18nSynopsis: 'Both',
-      i18nBack: false,
       layoutExternalLinks: '',
       layoutSynopsisMaxLines: 5,
       layoutMultilineTitles: false,
