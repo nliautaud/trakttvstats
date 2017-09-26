@@ -27,9 +27,11 @@ body {
 }
 .toggle {
     max-height: 99999px;
-    overflow: hidden;
 }
-.i18n.disabled .toggle { max-height: 0; }
+.i18n.disabled .toggle {
+    overflow: hidden;
+    max-height: 0;
+}
 
 input {
     vertical-align: bottom;
