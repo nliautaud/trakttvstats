@@ -36,6 +36,7 @@ $(function() {
 
   function restore_options() {
     chrome.storage.sync.get({
+      debug: false,
       ratingsfilter: '',
       tmdbApiKey: '',
       i18nLang: '',

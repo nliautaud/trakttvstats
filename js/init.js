@@ -1,5 +1,4 @@
 options = {}
-VERBOSE = true
 defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
@@ -54,6 +53,7 @@ init = function( items ) {
 }
 
 chrome.storage.sync.get({
+    debug: false,
     ratingsfilter: '',
     tmdbApiKey: '',
     tmdbConfig: null,
@@ -75,12 +75,12 @@ chrome.storage.sync.get({
 
 
 function log(){
-    if( !VERBOSE ) return
+    if( !options.debug ) return
     var args = Array.prototype.slice.call(arguments)
     console.log.apply(console, args)
 }
 function warn(){
-    if( !VERBOSE ) return
+    if( !options.debug ) return
     var args = Array.prototype.slice.call(arguments)
     console.warn.apply(console, args)
 }

@@ -9,16 +9,15 @@
 </head>
 <body>
 
-    <div class="row">
-        <strong>Charts :</strong>
-    </div>
+    <div class="section-title">Charts :</div>
+
     <label class="row">
         <span class="label">Ratings to hide from charts</span>
         <input type="text" placeholder="ex: 1,2" data-option="ratingsfilter">
     </label>
-    <div class="row">
-        <strong>Layout :</strong>
-    </div>
+
+    <div class="section-title">Layout :</div>
+
     <label class="row">
         <span class="label">Custom external links:</span>
         <input type="text" placeholder="ex: allocine,criticker" data-option="layoutExternalLinks">
@@ -31,9 +30,9 @@
         <span class="label">Synopsis max lines</span>
         <input type="number" min="1" size="2" placeholder="10" data-option="layoutSynopsisMaxLines">
     </label>
-    <div class="row">
-        <strong>Translation :</strong>
-    </div>
+
+    <div class="section-title">Translation :</div>
+
     <div class="i18n">
         <label class="row">
             <span class="label">Language (ISO 639-1)</span>
@@ -74,7 +73,12 @@
         </div>
     </div>
 
-    <span id="status"></span>
+    <div class="section-title">Other :</div>
+
+    <label class="row">
+        <span class="label">Debug</span>
+        <input type="checkbox" data-option="debug">
+    </label>
 
     <script src="js/options.js"></script>
 </body>
