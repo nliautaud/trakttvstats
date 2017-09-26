@@ -28,7 +28,8 @@ addExternalLinks = function() {
 }
 
 limitSynopsisLines = function() {
-    var el = document.querySelector( '.info #biography + p' ) || document.querySelector( '.info #overview' );
+	var el = document.querySelector('.info #biography + p') || document.querySelector('.info #overview');
+	if (!el) return;
     el.classList.add('lineClamp');
     el.style.webkitLineClamp = options.layoutSynopsisMaxLines;
 }
