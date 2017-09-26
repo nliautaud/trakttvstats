@@ -22,17 +22,14 @@ $(function() {
   }
   
   function save_options() {
-    var options = {
-      ratingsfilter:    document.getElementById('ratingsfilter').value,
-      tmdbApiKey:       document.getElementById('tmdbApiKey').value,
-      i18nLang:         document.getElementById('i18nLang').value.toLowerCase(),
-      i18nMode:         document.getElementById('i18nMode').value,
-      i18nShow:         document.getElementById('i18nShow').value,
-      i18nBack:         document.getElementById('i18nBack').checked,
-      layoutExternalLinks:    document.getElementById('layoutExternalLinks').value,
-      layoutMultilineTitles:  document.getElementById('layoutMultilineTitles').checked,
-      i18nTitlesLines:           getOrderedTitles(),
-    };
+    var options = {};
+    $('[data-option]').each(function() {
+      var optionName = $(this).data('option');
+      if ($(this).is(':checkbox')) options[optionName] = this.checked;
+      else options[optionName] = this.value;
+    });
+    options.i18nLang = options.i18nLang.toLowerCase();
+    options.i18nTitlesLines = getOrderedTitles();
     chrome.storage.sync.set(options);
     updateOptions(options);
   }
@@ -53,14 +50,11 @@ $(function() {
         {type: 'original', checked: false}
       ],
     }, function(options) {
-      document.getElementById('ratingsfilter').value = options.ratingsfilter
-      document.getElementById('tmdbApiKey').value = options.tmdbApiKey
-      document.getElementById('i18nLang').value = options.i18nLang.toLowerCase()
-      document.getElementById('i18nMode').value = options.i18nMode
-      document.getElementById('i18nShow').value = options.i18nShow
-      document.getElementById('i18nBack').checked = options.i18nBack
-      document.getElementById('layoutExternalLinks').value = options.layoutExternalLinks
-      document.getElementById('layoutMultilineTitles').checked = options.layoutMultilineTitles
+      $('[data-option]').each(function() {
+        var optionName = $(this).data('option');
+        if ($(this).is(':checkbox')) this.checked = options[optionName];
+        else this.value = options[optionName];
+      });
       orderTitlesOption(options.i18nTitlesLines);
       updateOptions(options);
     })

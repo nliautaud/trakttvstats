@@ -14,18 +14,18 @@
     </div>
     <label class="row">
         <span class="label">Ratings to hide from charts</span>
-        <input id="ratingsfilter" type="text" placeholder="ex: 1,2">
+        <input type="text" placeholder="ex: 1,2" data-option="ratingsfilter">
     </label>
     <div class="row">
         <strong>Layout :</strong>
     </div>
     <label class="row">
         <span class="label">Custom external links:</span>
-        <input id="layoutExternalLinks" type="text" placeholder="ex: allocine,criticker">
+        <input type="text" placeholder="ex: allocine,criticker" data-option="layoutExternalLinks">
     </label>
     <label class="row">
         <span class="label">Multiline titles</span>
-        <input id="layoutMultilineTitles" type="checkbox">
+        <input type="checkbox" data-option="layoutMultilineTitles">
     </label>
     <div class="row">
         <strong>Translation :</strong>
@@ -33,7 +33,7 @@
     <div class="i18n">
         <label class="row">
             <span class="label">Language (ISO 639-1)</span>
-            <input id="i18nLang" type="text" size="2" placeholder="ex: fr">
+            <input type="text" size="2" placeholder="ex: fr" data-option="i18nLang">
         </label>
         <div class="toggle">
             <label class="row">
@@ -60,11 +60,11 @@
             </label>
             <label class="row">
                 <span class="label">Localize posters</span>
-                <input id="i18nBack" type="checkbox">
+                <input type="checkbox" data-option="i18nBack">
             </label>
             <label class="row">
                 <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
-                <input id="tmdbApiKey" type="text" placeholder="Leave blank for default">
+                <input type="text" placeholder="Leave blank for default" data-option="tmdbApiKey">
             </label>
         </div>
     </div>
