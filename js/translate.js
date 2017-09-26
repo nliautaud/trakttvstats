@@ -138,34 +138,11 @@ renderReleasesDates = function ( el, releases ) {
             option.selected = true;
     });
 }
-function i18nItemThumb (el) {
-    if( isTranslated(el) ) return;
-    var infos = getItemThumbInfos( el );
-    if (!infos) return;
-    el.classList.add('translate');
-    var args = {
-        query: infos.name,
-        year: infos.year,
-        language: options.i18nLang
-    };
-
-    callTMDb( 'search/'+infos.type, args, function(result) {
-        var translateContent = function() {
-            if( result )
-                insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
-            el.classList.remove('translate');
-            el.classList.add('translated');
-        };
-        if( !options.i18nBack ) translateContent();
-        else insertI18nImage(el, '', result, translateContent);
-    });
-}
-function i18nPageTitle (el, data) {
-    var title1 = el.querySelector( 'h1' );
+function getTitlesLines (h1, data) {
     var titles = {
         'world': {
             type: 'world',
-            text: title1.childNodes[0].nodeValue.trim(),
+            text: h1.childNodes[0].nodeValue.trim(),
             info: '(world-wide title)'
         },
         'original': {
@@ -186,21 +163,62 @@ function i18nPageTitle (el, data) {
         if (!title.text || exists || (id && !el.checked)) return;
         titlesLines.push(title);
     });
+    return titlesLines;
+}
+function i18nPageTitle (el, data) {
+    var h1 = el.querySelector( 'h1' ),
+        titles = getTitlesLines(h1, data);
 
     let addSubTitleLine = function(id, cl) {
         let el = document.createElement( 'h2' );
-        title1.parentNode.appendChild(el);
+        h1.parentNode.appendChild(el);
         el.className = 'page-title page-title_'+cl;
-        el.innerText = titlesLines[id].text + ' ';
+        el.innerText = titles[id].text + ' ';
         let info = document.createElement( 'span' );
         info.className = 'info';
-        info.innerText = titlesLines[id].info;
+        info.innerText = titles[id].info;
         el.appendChild(info);
-    }
+    };
 
-    title1.childNodes[0].nodeValue = titlesLines[0].text + ' ';
-    if (titlesLines[1]) addSubTitleLine(1, 'secondary');
-    if (titlesLines[2]) addSubTitleLine(2, 'third');
+    h1.childNodes[0].nodeValue = titles[0].text + ' ';
+    if (titles[1]) addSubTitleLine(1, 'secondary');
+    if (titles[2]) addSubTitleLine(2, 'third');
+}
+function i18nThumbTitle (el, data) {
+    var ttle = el.querySelector( '.titles h3' ),
+        titles = getTitlesLines(ttle, data);
+
+    let addSubTitleLine = function(id, cl) {
+        let el = document.createElement( 'h3' );
+        ttle.parentNode.insertBefore(el, ttle.nextSibling);
+        el.className = 'thumb-title thumb-title_'+cl;
+        el.innerText = titles[id].text + ' ';
+    };
+
+    ttle.childNodes[0].nodeValue = titles[0].text + ' ';
+    if (titles[1]) addSubTitleLine(1, 'secondary');
+}
+function i18nItemThumb (el) {
+    if( isTranslated(el) ) return;
+    var infos = getItemThumbInfos( el );
+    if (!infos) return;
+    el.classList.add('translate');
+    var args = {
+        query: infos.name,
+        year: infos.year,
+        language: options.i18nLang
+    };
+
+    callTMDb( 'search/'+infos.type, args, function(result) {
+        var translateContent = function() {
+            if( result ) i18nThumbTitle(el, result);
+                //insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
+            el.classList.remove('translate');
+            el.classList.add('translated');
+        };
+        if( !options.i18nBack ) translateContent();
+        else insertI18nImage(el, '', result, translateContent);
+    });
 }
 function i18nItemPage (el, tmdbPath) {
     var args  = {

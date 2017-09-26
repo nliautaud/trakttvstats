@@ -1,20 +1,3 @@
-/* listed shows */
-.i18nShowBoth .posters .titles>h3 {
-	height: 2.2em;
-}
-.i18nShowBoth .posters .titles .i18n {
-	display: block;
-	font-size: 0.8em;
-	font-style: italic;
-	margin-top: .2em;
-	white-space: nowrap;
-  	overflow: hidden;
-  	text-overflow: ellipsis;
-}
-.i18nShowReplace .posters .titles>h3 .i18n_original {
-	display: none;
-}
-
 /* poster images */
 .real.i18n_original {
 	opacity: 0;
@@ -29,7 +12,18 @@
     to {opacity: 1}
 }
 
-/* show page title & overwiew */
+/* page titles */
+.page-title .info {
+    font-family: "Proxima Nova";
+    color: #999;
+}
+.posters h3.thumb-title,
+.fanarts .fanart h3.thumb-title {
+	font: italic 1em "Proxima Nova";
+	margin: 0;
+}
+
+/* titles & overwiew */
 .i18nShowBoth .i18n,
 .i18nShowBoth .additional-stats ~ * .i18n {
 	font-style: italic;
@@ -37,14 +31,6 @@
 .i18nShowBoth .additional-stats ~ * .i18n {
 	display: block;
 	margin-top: 1em;
-}
-.i18nShowBoth h1 .i18n::before,
-.i18nShowBoth .fanart h3 .i18n::before {
-	content: ' (';
-}
-.i18nShowBoth h1 .i18n::after, 
-.i18nShowBoth .fanart h3 .i18n::after {
-	content: ') ';
 }
 .i18nShowReplace .i18n_original,
 .i18nShowReplace .additional-stats ~ * .i18n_original {
