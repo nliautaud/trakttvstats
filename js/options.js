@@ -41,6 +41,7 @@ $(function() {
       tmdbApiKey: '',
       i18nLang: '',
       i18nMode: 'Hover',
+      i18nPosters: 'Disable',
       i18nSynopsis: 'Both',
       i18nBack: false,
       layoutExternalLinks: '',

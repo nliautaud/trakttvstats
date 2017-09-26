@@ -2,6 +2,8 @@ translate = function() {
 
     if( options.i18nMode )
         document.body.classList.add('i18nMode'+options.i18nMode)
+    if( options.i18nPosters )
+        document.body.classList.add('i18nPosters'+options.i18nPosters)
     if( options.i18nSynopsis )
         document.body.classList.add('i18nSynopsis'+options.i18nSynopsis)
 
@@ -76,7 +78,8 @@ i18nSynopsis = function ( parent, sel, translated ) {
     el_ori.parentNode.insertBefore(el_loc, el_ori.nextSibling);
 }
 insertI18nImage = function ( parent, sel, showInfo, callback ) {
-    if (!showInfo) return callback();
+    if (!showInfo || options.i18nPosters == 'Disable')
+        return callback();
 
     var img = parent.querySelector( sel + ' img.real'),
         img_type = img.parentNode.className == 'poster' ? 'poster' : 'backdrop',
@@ -215,8 +218,7 @@ function i18nItemThumb (el) {
             el.classList.remove('translate');
             el.classList.add('translated');
         };
-        if( !options.i18nBack ) translateContent();
-        else insertI18nImage(el, '', result, translateContent);
+        insertI18nImage(el, '', result, translateContent);
     });
 }
 function i18nItemPage (el, tmdbPath) {
@@ -235,8 +237,7 @@ function i18nItemPage (el, tmdbPath) {
                 renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
-        if( !options.i18nBack ) translateContent();
-        else insertI18nImage(el, '#info-wrapper', result, translateContent);
+        insertI18nImage(el, '#info-wrapper', result, translateContent);
     });
 }
 function callTMDb( path, args, callback) {

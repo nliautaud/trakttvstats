@@ -1,11 +1,23 @@
 /* poster images */
 .real.i18n_original {
-	opacity: 0;
-	transition: opacity .5s;
+    opacity: 0;
+    transition: opacity .5s;
 }
 .real.i18n {
     opacity: 1;
     animation: fade .5s;
+    transition: opacity .5s;
+}
+.i18nPostersHoverLoca .real.i18n_original ,
+.i18nPostersHoverLoca .poster:hover .real.i18n {
+    opacity: 1;
+}
+.i18nPostersHoverLoca .real.i18n,
+.i18nPostersHoverLoca .poster:hover .real.i18n_original {
+    opacity: 0;
+}
+.i18nPostersHoverOrig .real.i18n_original:hover {
+    opacity: 1;
 }
 @keyframes fade {
     from {opacity: 0}
@@ -19,19 +31,19 @@
 }
 .posters h3.thumb-title,
 .fanarts .fanart h3.thumb-title {
-	font: italic 1em "Proxima Nova";
-	margin: 0;
+    font: italic 1em "Proxima Nova";
+    margin: 0;
 }
 
 /* synopsis & biography */
 .i18nSynopsisBoth .synopsis_localized {
-	margin-top: 1em;
-	font-style: italic;
+    margin-top: 1em;
+    font-style: italic;
 }
 .i18nSynopsisReplace .synopsis_original {
-	display: none;
+    display: none;
 }
 
 .releasesDatesList {
-	border: none;
+    border: none;
 }

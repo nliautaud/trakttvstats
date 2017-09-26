@@ -55,16 +55,21 @@
                 </div>
             </div>
             <label class="row">
-                <span class="label">Synopsis</span>
+                <span class="label">Localized synopsis</span>
                 <select data-option="i18nSynopsis">
                     <option value="Both">Show both</option>
-                    <option value="Replace">Translation only</option>
+                    <option value="Replace">Replace original</option>
                     <option value="Disable">Disable</option>
                 </select>
             </label>
             <label class="row">
-                <span class="label">Localize posters</span>
-                <input type="checkbox" data-option="i18nBack">
+                <span class="label">Localized posters</span>
+                <select data-option="i18nPosters">
+                    <option value="Replace">Replace original</option>
+                    <option value="HoverOrig">Original on hover</option>
+                    <option value="HoverLoca">Localized on hover</option>
+                    <option value="Disable">Disable</option>
+                </select>
             </label>
             <label class="row">
                 <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
