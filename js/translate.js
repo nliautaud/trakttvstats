@@ -181,9 +181,10 @@ function i18nPageTitle (el, data) {
     };
     var titlesLines = [];
     options.layoutTitles.forEach(function(el, id) {
-        let sameTextAlready = titlesLines.find(x => x.text == titles[el.type].text);
-        if (!sameTextAlready && (!id || el.checked))
-            titlesLines.push(titles[el.type]);
+        let title = titles[el.type],
+            exists = titlesLines.find(x => x.text == title.text);
+        if (!title.text || exists || (id && !el.checked)) return;
+        titlesLines.push(title);
     });
 
     let addSubTitleLine = function(id, cl) {
