@@ -60,10 +60,11 @@ chrome.storage.sync.get({
     tmdbConfigDate: null,
     i18nLang: '',
     i18nMode: 'Hover',
-    i18nShow: 'Both',
+    i18nSynopsis: 'Both',
     i18nBack: false,
     layoutExternalLinks: '',
     layoutMultilineTitles: false,
+    layoutSynopsisMaxLines: 5,
     i18nTitlesLines: [
       {type: 'world', checked: true},
       {type: 'localized', checked: true},

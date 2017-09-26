@@ -2,8 +2,8 @@ translate = function() {
 
     if( options.i18nMode )
         document.body.classList.add('i18nMode'+options.i18nMode)
-    if( options.i18nShow )
-        document.body.classList.add('i18nShow'+options.i18nShow)
+    if( options.i18nSynopsis )
+        document.body.classList.add('i18nSynopsis'+options.i18nSynopsis)
 
     if( options.i18nMode == 'Load') {
         log('Trakttvstats : translate all...');
@@ -66,14 +66,14 @@ getItemThumbInfos = function ( el ) {
 
     return infos;
 }
-insertI18nContent = function ( parent, sel, replace, find ) {
-    var el = parent.querySelector( sel );
-    find = find || el.innerHTML;
-    if(find == replace) return;
-    el.innerHTML = el.innerHTML.replace( find,
-        '<span class="i18n_original">' + find + '</span>' +
-        '<span class="i18n">' + replace + '</span>'
-    );
+i18nSynopsis = function ( parent, sel, translated ) {
+    if(options.i18nSynopsis == 'Disable') return;
+    let el_ori = parent.querySelector( sel ),
+        el_loc = el_ori.cloneNode();
+    el_ori.classList.add('synopsis_original');
+    el_loc.classList.add('synopsis_localized');
+    el_loc.textContent = translated;
+    el_ori.parentNode.insertBefore(el_loc, el_ori.nextSibling);
 }
 insertI18nImage = function ( parent, sel, showInfo, callback ) {
     if (!showInfo) return callback();
@@ -212,7 +212,6 @@ function i18nItemThumb (el) {
     callTMDb( 'search/'+infos.type, args, function(result) {
         var translateContent = function() {
             if( result ) i18nThumbTitle(el, result);
-                //insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
             el.classList.remove('translate');
             el.classList.add('translated');
         };
@@ -229,9 +228,9 @@ function i18nItemPage (el, tmdbPath) {
         var translateContent = function() {
             i18nPageTitle(el, result);
             if (result.overview)
-                insertI18nContent(el, '.info #overview', result.overview);
+                i18nSynopsis(el, '.info #overview', result.overview);
             if (result.biography)
-                insertI18nContent(el, '.info #biography + p', result.biography);
+                i18nSynopsis(el, '.info #biography + p', result.biography);
             if (result.releases)
                 renderReleasesDates(el, result.releases);
             el.classList.add('translated');

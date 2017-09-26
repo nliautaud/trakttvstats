@@ -23,17 +23,12 @@
 	margin: 0;
 }
 
-/* titles & overwiew */
-.i18nShowBoth .i18n,
-.i18nShowBoth .additional-stats ~ * .i18n {
+/* synopsis & biography */
+.i18nSynopsisBoth .synopsis_localized {
+	margin-top: 1em;
 	font-style: italic;
 }
-.i18nShowBoth .additional-stats ~ * .i18n {
-	display: block;
-	margin-top: 1em;
-}
-.i18nShowReplace .i18n_original,
-.i18nShowReplace .additional-stats ~ * .i18n_original {
+.i18nSynopsisReplace .synopsis_original {
 	display: none;
 }
 

@@ -7,3 +7,10 @@
 	height: auto !important;
 	white-space: normal !important;
 }
+
+.lineClamp {
+	overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+}

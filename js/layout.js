@@ -4,6 +4,7 @@ layout = function() {
         document.body.classList.add('layoutMultilineTitles')
 
 	addExternalLinks();
+	limitSynopsisLines();
 }
 
 addExternalLinks = function() {
@@ -24,4 +25,10 @@ addExternalLinks = function() {
 		new_el.innerHTML = domain
 		firstlink.parentElement.appendChild(new_el)
 	})
+}
+
+limitSynopsisLines = function() {
+    var el = document.querySelector( '.info #biography + p' ) || document.querySelector( '.info #overview' );
+    el.classList.add('lineClamp');
+    el.style.webkitLineClamp = options.layoutSynopsisMaxLines;
 }

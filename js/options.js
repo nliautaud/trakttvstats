@@ -40,9 +40,10 @@ $(function() {
       tmdbApiKey: '',
       i18nLang: '',
       i18nMode: 'Hover',
-      i18nShow: 'Both',
+      i18nSynopsis: 'Both',
       i18nBack: false,
       layoutExternalLinks: '',
+      layoutSynopsisMaxLines: 5,
       layoutMultilineTitles: false,
       i18nTitlesLines: [
         {type: 'world', checked: true},
