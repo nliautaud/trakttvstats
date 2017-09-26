@@ -31,7 +31,7 @@ $(function() {
       i18nBack:         document.getElementById('i18nBack').checked,
       layoutExternalLinks:    document.getElementById('layoutExternalLinks').value,
       layoutMultilineTitles:  document.getElementById('layoutMultilineTitles').checked,
-      layoutTitles:           getOrderedTitles(),
+      i18nTitlesLines:           getOrderedTitles(),
     };
     chrome.storage.sync.set(options);
     updateOptions(options);
@@ -47,7 +47,7 @@ $(function() {
       i18nBack: false,
       layoutExternalLinks: '',
       layoutMultilineTitles: false,
-      layoutTitles: [
+      i18nTitlesLines: [
         {type: 'world', checked: true},
         {type: 'localized', checked: true},
         {type: 'original', checked: false}
@@ -61,7 +61,7 @@ $(function() {
       document.getElementById('i18nBack').checked = options.i18nBack
       document.getElementById('layoutExternalLinks').value = options.layoutExternalLinks
       document.getElementById('layoutMultilineTitles').checked = options.layoutMultilineTitles
-      orderTitlesOption(options.layoutTitles);
+      orderTitlesOption(options.i18nTitlesLines);
       updateOptions(options);
     })
   }

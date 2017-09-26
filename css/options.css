@@ -38,6 +38,9 @@ input {
     background: #f5f5f5;
     cursor: -webkit-grab;
 }
+.titlesZone .title:first-child input {
+    visibility: hidden;
+}
 .titlesZone .title:before {
     content: "☰";
     color: #ccc;

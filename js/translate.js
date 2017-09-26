@@ -157,7 +157,7 @@ function getTitlesLines (h1, data) {
         }
     };
     var titlesLines = [];
-    options.layoutTitles.forEach(function(el, id) {
+    options.i18nTitlesLines.forEach(function(el, id) {
         let title = titles[el.type],
             exists = titlesLines.find(x => x.text == title.text);
         if (!title.text || exists || (id && !el.checked)) return;
