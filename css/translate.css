@@ -30,24 +30,27 @@
 }
 
 /* show page title & overwiew */
-.i18nShowBoth .summary .i18n,
-.i18nShowBoth #overview .i18n {
+.i18nShowBoth .i18n,
+.i18nShowBoth .additional-stats ~ * .i18n {
 	font-style: italic;
 }
-.i18nShowBoth #overview .i18n {
+.i18nShowBoth .additional-stats ~ * .i18n {
 	display: block;
 	margin-top: 1em;
 }
-.i18nShowBoth .summary .i18n::before {
-	font-style: normal;
+.i18nShowBoth h1 .i18n::before,
+.i18nShowBoth .fanart h3 .i18n::before {
 	content: ' (';
 }
-.i18nShowBoth .summary .i18n::after {
-	font-style: normal;
-	content: ')';
+.i18nShowBoth h1 .i18n::after, 
+.i18nShowBoth .fanart h3 .i18n::after {
+	content: ') ';
 }
-.i18nShowReplace .summary .i18n_original,
-.i18nShowReplace #overview .i18n_original {
+.i18nShowReplace .i18n_original,
+.i18nShowReplace .additional-stats ~ * .i18n_original {
 	display: none;
 }
 
+.releasesDatesList {
+	border: none;
+}

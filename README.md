@@ -1,24 +1,23 @@
 # trakttvstats
 A chrome extension adding various improvements to [trakt.tv](https://trakt.tv). Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce).
 
--------------
-- [Features](#features)
-    - [People statistics & filtering](#people-statistics--filtering)
-    - [Layout improvements](#layout-improvements)
-    - [Titles, summaries & posters localization](#translation--posters-localization)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/khhjjcbdknmdbdhgkbnldplgoppeehce.svg?colorB=4cc61e)](https://chrome.google.com/webstore/detail/khhjjcbdknmdbdhgkbnldplgoppeehce)
+[![Development version](https://img.shields.io/chrome-web-store/v/ppeoegnflhlfjkclghpfkgpgpbodlaaa.svg?label=development%20version)](https://chrome.google.com/webstore/detail/ppeoegnflhlfjkclghpfkgpgpbodlaaa)
+[![Issues & Suggestions](https://img.shields.io/github/issues-raw/nliautaud/trakttvstats.svg?label=issues%20%26%20suggestions)](https://github.com/nliautaud/trakttvstats/issues)
 
--------------
-## Features
+Features
 
-Filmography charts|Filmography filtering
+- [Graphs, statistics & filtering](#graphs-statistics--filtering)
+- [Translation & localization](#translation--localization)
+- [Layout improvements](#layout-improvements)
+
+![Statistics screen](img/feature_stats.jpg)|![Filtering screen](img/feature_stats-filter.jpg)
 :--:|:--:
-![screen_01](img/screen_01.png) | ![screen_02](img/screen_02.png)
 
-External links|Translations|Options
-:--:|:--:|:--:
-![links](img/links.png) | ![options](img/translation2.png) | ![options](img/options.png)
+![Localization screen](img/feature_i18n.jpg)|![Layout screen](img/feature_layout.jpg)
+:--:|:--:
 
-### Filmography statistics & filtering
+## Graphs, statistics & filtering
 
 A way to navigate into someone filmography trough your personnal history.
 
@@ -41,25 +40,45 @@ By clicking on charts, the movies list below is neatly organized and filtered, a
 
 An option allow to skip specific ratings from the related chart. It may be useful if some of your ratings aren't reliable and distort the chart (ex. too many 5's ?).
 
-### Layout improvements
+## Translation & localization
 
-The extension add several features to the site layout and navuigation that can be setup in the option page.
+By specifying a language code in the options, you'll enable the following features :
+- Localized titles (show the localized and/or original title in addition to the english one)
+- Localized synopsis and biography
+- Localized posters
+- Localized release dates (list all the releases dates, not only the US one, and show the most relevant one)
 
-- Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``Allociné, Criticker, SensCritique...``. (List website names or addresses in options, separated by commas)
-- Enable multiline titles, to display movies informations in full length in listed views. The title will be on several lines instead of cropped on a single line.
+Translations and localized data uses the TMDb API. The language code, as [defined in the TMDb API](https://developers.themoviedb.org/3/getting-started/languages) :
+>  is a bare [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code [*and*] you can specify an extra [ISO-3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) tag
 
-### Translation & posters localization
+For example `fr`, `de`, or `pt-BR`.
 
-The extension can translate on the fly movies titles, overviews and localize posters in any language by using the TMDb data. You have to specify a language in the options.
+Settings | Description
+--|--
+Translate items | - *On mouse hover* do less calls to the API<br>- *On load* translate every movie of the page at once
+Titles & synopsis | - *Show original & translation* : adds the localized titles or summaries next to the originals.<br>- *Show translation only* : replace the title and summaries by their localized version.
+Localize posters | Enable or disable the replacement of the images by their localized version
+Custom TMDb API Key | **(optionnal)** if you want to call the API trough your own TMDb account
 
-Modes :
-- *On mouse hover* : the translation of listed movies is done when an item is hovered. Reduce the number of calls to TMDb.
-- *On load* : translate every listed movies of the pages on load. Create numerous calls to TMDb.
+## Layout improvements
 
-Display :
-- *Show original & translation* : adds the localized titles or summaries next to the originals.
-- *Show translation only* : replace the title and summaries by their localized version.
+The extension add several features to the site layout and navigation that can be setup in the option page.
 
-*Localize posters* replace poster images by their localized version.
+### Custom external links
 
-You can also specify a custom API Key if you want to use your own or if the default one is down.
+Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar.
+
+Ex: `Allociné, Criticker, SensCritique...`
+
+List website names separated by commas. The feature will use Google "*I'm lucky*" to redirect to the first Google search result related to the given term and the page title. Ex: `Deadpool 2016 Criticker`. If there is no certain result, Google may redirect to the search result page.
+
+### Multiline titles
+
+By default, the titles under the posters are cropped to a single line to maintain a strict layout :
+
+    Indiana Jones and the...
+
+You can disable this behavior and show the title in full glory by enabling this option in the settings.
+
+    Indiana Jones and the
+    Temple of Doom

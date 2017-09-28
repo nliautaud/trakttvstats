@@ -1,5 +1,9 @@
 chrome.runtime.onMessage.addListener(function(request, sender, callback) {
 
+    if( request.action == "template") {
+        callback(document.querySelector(request.selector).innerHTML);
+        return true;
+    }
     if (request.action == "xhttp") {
         var xhr = new XMLHttpRequest();
         var method = request.method ? request.method.toUpperCase() : 'GET';
@@ -35,6 +39,13 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
             { file: 'css/layout.css' },
         ]);
 })
+
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (tab.url.indexOf('https://trakt.tv') == 0) {
+        chrome.pageAction.show(tabId);
+    }
+});
 
 
 function queueExecution(tabId, execMethod, injectDetailsArray) {

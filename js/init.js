@@ -1,5 +1,5 @@
 options = {}
-VERBOSE = false
+VERBOSE = true
 defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
@@ -15,6 +15,9 @@ init = function( items ) {
 
     statify()
     layout()
+
+    if ( !options.i18nLang )
+        return;
 
     if ( !options.tmdbApiKey )
         options.tmdbApiKey = defaultK
@@ -51,15 +54,15 @@ init = function( items ) {
 }
 
 chrome.storage.sync.get({
-    ratingsfilter: null,
-    tmdbApiKey: null,
+    ratingsfilter: '',
+    tmdbApiKey: '',
     tmdbConfig: null,
     tmdbConfigDate: null,
-    i18nLang: null,
+    i18nLang: '',
     i18nMode: 'Hover',
     i18nShow: 'Both',
     i18nBack: false,
-    layoutExternalLinks: null,
+    layoutExternalLinks: '',
     layoutMultilineTitles: false,
 }, init)
 
@@ -74,12 +77,6 @@ function warn(){
     if( !VERBOSE ) return
     var args = Array.prototype.slice.call(arguments)
     console.warn.apply(console, args)
-}
-function closest( el, sel, stop ) {
-    for ( ; el && el !== document && !el.matches(stop); el = el.parentNode )
-        if ( el.matches(sel) )
-            return el
-    return false
 }
 function daydiff(a, b) {
     return ( a.getTime() - b.getTime() ) / ( 1000*60*60*24 )
