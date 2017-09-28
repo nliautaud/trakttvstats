@@ -62,7 +62,23 @@ Custom TMDb API Key | **(optionnal)** if you want to call the API trough your ow
 
 ## Layout improvements
 
-The extension add several features to the site layout and navuigation that can be setup in the option page.
+The extension add several features to the site layout and navigation that can be setup in the option page.
 
-- Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar of people & shows pages. Ex: ``Allociné, Criticker, SensCritique...``. (List website names or addresses in options, separated by commas)
-- Enable multiline titles, to display movies informations in full length in listed views. The title will be on several lines instead of cropped on a single line.
+### Custom external links
+
+Add links to any other websites than IMDb, TMDb and Wikipedia on the sidebar.
+
+Ex: `Allociné, Criticker, SensCritique...`
+
+List website names separated by commas. The feature will use Google "*I'm lucky*" to redirect to the first Google search result related to the given term and the page title. Ex: `Deadpool 2016 Criticker`. If there is no certain result, Google may redirect to the search result page.
+
+### Multiline titles
+
+By default, the titles under the posters are cropped to a single line to maintain a strict layout :
+
+    Indiana Jones and the...
+
+You can disable this behavior and show the title in full glory by enabling this option in the settings.
+
+    Indiana Jones and the
+    Temple of Doom
