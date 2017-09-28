@@ -14,3 +14,9 @@
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
 }
+
+/* improve readability of years on fanarts */
+.fanarts .fanart h3 span.year {
+    color: #ffffff;
+    opacity: 0.7;
+}
