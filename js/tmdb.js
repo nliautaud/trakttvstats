@@ -4,7 +4,8 @@ var tmdb = new function tmdb() {
 
     const API = 'https://api.themoviedb.org/3'
     var key = '34536d0dee70a9a47b625cd994f302a3',
-        config = null
+        config = null,
+        toCache = null
 
     function apiURL( path, args ) {
         var args_str = ''
@@ -20,13 +21,16 @@ var tmdb = new function tmdb() {
         if ( options.tmdbApiKey )
             key = options.tmdbApiKey
         return new Promise( ( resolve, reject ) => {
-            chrome.storage.sync.get( 'tmdbConfig', function storageResponse( cache ) {
-                if ( cache.tmdbConfig ) {
-                    cache.tmdbConfig.date = new Date( cache.tmdbConfig.date )
-                    cache.tmdbConfig.age = daydiff( new Date(), cache.tmdbConfig.date )
+            chrome.storage.sync.get( {
+                tmdbConfig: null,
+                tmdbCache: {}
+            }, function storageResponse( store ) {
+                if ( store.tmdbConfig ) {
+                    store.tmdbConfig.date = new Date( store.tmdbConfig.date )
+                    store.tmdbConfig.age = daydiff( new Date(), store.tmdbConfig.date )
 
-                    if ( cache.tmdbConfig.images !== null && cache.tmdbConfig.age < 3 ) {
-                        config = cache.tmdbConfig
+                    if ( store.tmdbConfig.images !== null && store.tmdbConfig.age < 3 ) {
+                        config = store.tmdbConfig
                         log( `TMDb config from cache, ${Math.round( config.age )} days old` )
                         return resolve()
                     }
@@ -56,34 +60,59 @@ var tmdb = new function tmdb() {
             width = sizes[ Math.floor( sizes.length / 2 ) ]
         return config.images.secure_base_url + width + endpath
     }
+    this.updateCache = function storeCache() {
+        if ( !toCache ) return
+        chrome.storage.local.set( toCache, function storageResponse() {
+            log( 'TMDb cache updated', Object.keys( toCache ).length )
+            toCache = null
+        } )
+    }
     this.call = function call( path, args ) {
         return new Promise( ( resolve, reject ) => {
-            var message = {
-                action: 'xhttp',
-                url: apiURL( path, args )
-            }
-            chrome.runtime.sendMessage( message, function messageResponse( msg ) {
+            var url = apiURL( path, args )
 
-                if ( !msg.response )
-                    return reject( `TMDb no response for ${message.url}` )
+            chrome.storage.local.get( url, function storageResponse( store ) {
 
-                let response = JSON.parse( msg.response )
-
-                if ( !response )
-                    return reject( `TMDb response object error ${message.url}` )
-
-                if ( response.status_message )
-                    return reject( `TMDb error, ${response.status_message} ${message.url}` )
-
-                if ( response.total_results == 0 ) {
-                    warn( 'TMDb : no search results for', args.query, message.url )
-                    return resolve()
+                if ( store[ url ] && store[ url ].age < 30 ) {
+                    log( 'TMDb get', args.query ? `"${args.query}"` : path, 'from cache' )
+                    return resolve( store[ url ].response )
                 }
-                if ( response.total_results )
-                    response = response.results[ 0 ]
 
-                log( 'TMDb', path, response.title || response.name, message.url )
-                resolve( response )
+                chrome.runtime.sendMessage( {
+                    action: 'xhttp',
+                    url: url
+                }, function messageResponse( msg ) {
+
+                    if ( !msg.response )
+                        return reject( `TMDb no response for ${url}` )
+
+                    let response = JSON.parse( msg.response )
+
+                    if ( !response )
+                        return reject( `TMDb response object error ${url}` )
+
+                    if ( response.status_message )
+                        return reject( `TMDb error, ${response.status_message} ${url}` )
+
+                    if ( response.total_results == 0 ) {
+                        warn( 'TMDb : no search results for', args.query, url )
+                        return resolve()
+                    }
+                    if ( response.total_results )
+                        response = response.results[ 0 ]
+
+                    log( 'TMDb', path, response.title || response.name, url )
+                    resolve( response )
+
+                    if ( !toCache ) toCache = {}
+                    toCache[ url ] = {
+                        response: response,
+                        date: ( new Date() ).getTime(),
+                        get age() {
+                            return Math.round( daydiff( new Date(), new Date( this.date ) ) )
+                        }
+                    }
+                } )
             } )
         } )
     }

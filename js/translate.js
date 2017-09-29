@@ -18,7 +18,7 @@ function translate() {
         document.body.onmouseover = function onMouseHover( event ) {
             var target = event.target || event.srcElement || event.originalTarget,
                 item = target.closest( '.grid-item[data-type]' )
-            if ( item ) translateItem( item ).catch( error )
+            if ( item ) translateItem( item ).then( tmdb.updateCache ).catch( error )
         }
     }
 
@@ -26,7 +26,7 @@ function translate() {
     if ( tmdbPath && !isTranslated( document.body ) )
         loadPromises.push( translatePage( document.body, tmdbPath ) )
 
-    Promise.all( loadPromises ).catch( error )
+    Promise.all( loadPromises ).then( tmdb.updateCache ).catch( error )
 }
 
 function isTranslated( el ) {
