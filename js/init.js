@@ -1,4 +1,4 @@
-/*global chrome statify layout translate tmdb*/
+/*global chrome statify layout translate TMDB*/
 
 var options = {}
 
@@ -19,7 +19,7 @@ function init( items ) {
     statify()
     layout()
 
-    tmdb.configure( options ).then( translate )
+    TMDB.configure( options ).then( translate )
 }
 
 chrome.storage.sync.get( {

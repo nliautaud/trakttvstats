@@ -1,5 +1,6 @@
-/*global options log warn error chrome tmdb*/
+/*global options log warn error chrome TMDB*/
 function translate() {
+
     if ( !options.i18nLang ) return
 
     if ( options.i18nMode )
@@ -9,24 +10,26 @@ function translate() {
     if ( options.i18nSynopsis )
         document.body.classList.add( 'i18nSynopsis' + options.i18nSynopsis )
 
-    let loadPromises = []
     if ( options.i18nMode == 'Load' ) {
-        log( 'translate all...' )
-        let items = [ ...document.querySelectorAll( '.grid-item[data-type]' ) ]
-        loadPromises = items.map( translateItem )
+        var items = [ ...document.querySelectorAll( '.grid-item[data-type]' ) ],
+            first = items.shift()
+        if ( first ) {
+            log( 'translate', items.length, 'items' )
+            translateItem( first ).then( () => {
+                return Promise.all( items.map( translateItem ) )
+            } ).then( TMDB.updateCache ).catch( error )
+        }
     } else {
         document.body.onmouseover = function onMouseHover( event ) {
             var target = event.target || event.srcElement || event.originalTarget,
                 item = target.closest( '.grid-item[data-type]' )
-            if ( item ) translateItem( item ).then( tmdb.updateCache ).catch( error )
+            if ( item ) translateItem( item ).then( TMDB.updateCache ).catch( error )
         }
     }
 
     const tmdbPath = getTMDbPath( document.body )
     if ( tmdbPath && !isTranslated( document.body ) )
-        loadPromises.push( translatePage( document.body, tmdbPath ) )
-
-    Promise.all( loadPromises ).then( tmdb.updateCache ).catch( error )
+        translatePage( document.body, tmdbPath )
 }
 
 function isTranslated( el ) {
@@ -92,7 +95,7 @@ function insertI18nImage( parent, sel, showInfo, callback ) {
 
     img_i18n = new Image()
     img_i18n.className = 'real i18n'
-    img_i18n.src = tmdb.imageUrl( img_path, img_type )
+    img_i18n.src = TMDB.imageURL( img_path, img_type )
     img_i18n.onload = function i18nImageLoaded() {
         img.classList.add( 'i18n_original' )
         img.parentNode.insertBefore( img_i18n, img )
@@ -208,19 +211,17 @@ function renderItemTitle( el, data ) {
 }
 function translateItem( el ) {
     return new Promise( ( resolve, reject ) => {
-        var infos,
-            args
-        if ( isTranslated( el ) ) return
-        infos = getItemInfos( el )
-        if ( !infos ) return
-        el.classList.add( 'translate' )
-        args = {
+        if ( isTranslated( el ) ) return resolve()
+        const infos = getItemInfos( el )
+        if ( !infos ) return resolve()
+        let args = {
             query: infos.name,
             year: infos.year,
             language: options.i18nLang
         }
-        tmdb.call( 'search/' + infos.type, args ).then( ( result ) => {
-            insertI18nImage( el, '', result, function translateContent() {
+        el.classList.add( 'translate' )
+        TMDB.get( 'search/' + infos.type, args ).then( result => {
+            insertI18nImage( el, '', result, () => {
                 if ( result ) renderItemTitle( el, result )
                 resolve( result )
                 el.classList.remove( 'translate' )
@@ -231,12 +232,12 @@ function translateItem( el ) {
 }
 function translatePage( el, tmdbPath ) {
     return new Promise( ( resolve, reject ) => {
-        var args = {
+        const args = {
             language: options.i18nLang,
             append_to_response: 'releases'
         }
-        tmdb.call( tmdbPath, args ).then( ( result ) => {
-            insertI18nImage( el, '#info-wrapper', result, function translateContent() {
+        TMDB.get( tmdbPath, args ).then( result => {
+            insertI18nImage( el, '#info-wrapper', result, () => {
                 renderPageTitle( el, result )
                 if ( result.overview )
                     renderSynopsis( el, '.info #overview', result.overview )

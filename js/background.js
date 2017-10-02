@@ -1,26 +1,8 @@
 /*global chrome*/
 
 chrome.runtime.onMessage.addListener( function onMessage( request, sender, callback ) {
-
     if ( request.action == 'template' ) {
         callback( document.querySelector( request.selector ).innerHTML )
-        return true
-    }
-    if ( request.action == 'xhttp' ) {
-        let xhr = new XMLHttpRequest(),
-            method = request.method ? request.method.toUpperCase() : 'GET'
-        xhr.open( method, request.url, true )
-        xhr.onreadystatechange = function onStateChange() {
-            if ( xhr.readyState == XMLHttpRequest.DONE )
-                callback( { response: xhr.responseText, request: request } )
-        }
-        xhr.onerror = function onError() {
-            callback( { response: null, request: request } )
-        }
-        if ( method == 'POST' )
-            xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' )
-
-        xhr.send( request.data )
         return true
     }
 } )
