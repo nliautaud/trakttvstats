@@ -24,7 +24,7 @@
     </label>
     <label class="row">
         <span class="label">Multiline titles</span>
-        <input type="checkbox" data-option="layoutMultilineTitles">
+        <div><input type="checkbox" data-option="layoutMultilineTitles"></div>
     </label>
     <label class="row">
         <span class="label">Synopsis max lines</span>
@@ -33,57 +33,62 @@
 
     <div class="section-title">Translation :</div>
 
-    <div class="i18n">
+    <label class="row">
+        <span class="label">Language (ISO 639-1)</span>
+        <input type="text" size="2" placeholder="ex: fr" data-option="i18nLang" data-toggle="i18nGroup">
+    </label>
+    <div class="toggle i18nGroup">
         <label class="row">
-            <span class="label">Language (ISO 639-1)</span>
-            <input type="text" size="2" placeholder="ex: fr" data-option="i18nLang">
+            <span class="label">Translate items</span>
+            <select data-option="i18nMode">
+                <option value="Hover">On mouse hover</option>
+                <option value="Load">On page load</option>
+            </select>
         </label>
-        <div class="toggle">
-            <label class="row">
-                <span class="label">Translate items</span>
-                <select data-option="i18nMode">
-                    <option value="Hover">On mouse hover</option>
-                    <option value="Load">On page load</option>
-                </select>
-            </label>
-            <div class="row full">
-                <span class="label">Titles</span>
-                <div class="titlesZone">
-                    <div class="title" data-type="world"><input type="checkbox">World-wide title</div>
-                    <div class="title" data-type="original"><input type="checkbox">Original title</div>
-                    <div class="title" data-type="localized"><input type="checkbox">Localized title</div>
-                </div>
+        <div class="row label">Titles</div>
+        <div class="row">
+            <div class="titlesZone">
+                <div class="title" data-type="world"><input type="checkbox">World-wide title</div>
+                <div class="title" data-type="original"><input type="checkbox">Original title</div>
+                <div class="title" data-type="localized"><input type="checkbox">Localized title</div>
             </div>
-            <label class="row">
-                <span class="label">Localized synopsis</span>
-                <select data-option="i18nSynopsis">
-                    <option value="Both">Show both</option>
-                    <option value="Replace">Replace original</option>
-                    <option value="Disable">Disable</option>
-                </select>
-            </label>
-            <label class="row">
-                <span class="label">Localized posters</span>
-                <select data-option="i18nPosters">
-                    <option value="Replace">Replace original</option>
-                    <option value="HoverOrig">Original on hover</option>
-                    <option value="HoverLoca">Localized on hover</option>
-                    <option value="Disable">Disable</option>
-                </select>
-            </label>
-            <label class="row">
-                <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
-                <input type="text" placeholder="Leave blank for default" data-option="tmdbApiKey">
-            </label>
         </div>
+        <label class="row">
+            <span class="label">Localized synopsis</span>
+            <select data-option="i18nSynopsis">
+                <option value="Both">Show both</option>
+                <option value="Replace">Replace original</option>
+                <option value="Disable">Disable</option>
+            </select>
+        </label>
+        <label class="row">
+            <span class="label">Localized posters</span>
+            <select data-option="i18nPosters">
+                <option value="Replace">Replace original</option>
+                <option value="HoverOrig">Original on hover</option>
+                <option value="HoverLoca">Localized on hover</option>
+                <option value="Disable">Disable</option>
+            </select>
+        </label>
+        <label class="row">
+            <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
+            <input type="text" placeholder="Leave blank for default" data-option="tmdbApiKey">
+        </label>
     </div>
 
     <div class="section-title">Other :</div>
 
     <label class="row">
         <span class="label">Debug</span>
-        <input type="checkbox" data-option="debug">
+        <div><input type="checkbox" data-option="debug" data-toggle="advancedGroup"></div>
     </label>
+    <div class="toggle advancedGroup">
+        <div class="row">
+            <span class="label">Local Storage</span>
+            <button class="clearLocalStorage">Clear</button>
+        </div>
+        <div class="localStorageData row"></div>
+    </div>
 
     <script src="js/options.js"></script>
 </body>

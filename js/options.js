@@ -34,7 +34,7 @@ $( () => {
         options.i18nLang = options.i18nLang.toLowerCase()
         options.i18nTitlesLines = getOrderedTitles()
         chrome.storage.sync.set( options )
-        updateOptions( options )
+        updateOptionsView( options )
     }
 
     function restoreOptions() {
@@ -61,13 +61,44 @@ $( () => {
                 else this.value = options[ optionName ]
             } )
             orderTitlesOption( options.i18nTitlesLines )
-            updateOptions( options )
+            updateOptionsView( options )
         } )
     }
 
-    function updateOptions( options ) {
-        if ( !options.i18nLang ) document.querySelector( '.i18n' ).classList.add( 'disabled' )
-        else document.querySelector( '.i18n' ).classList.remove( 'disabled' )
+    function updateOptionsView( options ) {
+        // groups toggles
+        $( '[data-toggle]' ).each( function setState() {
+            const group = $( '.toggle.' + $( this ).data( 'toggle' ) ),
+                isUnchecked = $( this ).is( ':checkbox' ) && !this.checked
+            group.toggleClass( 'disabled', isUnchecked || this.value === '' )
+        } )
+        if ( options.debug )
+            chrome.storage.local.get( null, renderLocalStorageData )
+    }
+
+    function renderLocalStorageData( data ) {
+        const localStorageData = $( '.localStorageData' )
+        localStorageData.empty()
+        $.each( data, ( i, val ) => {
+            var table = $( '<div class="table">' )
+            table.html( `
+                <div class="table-head disabled" data-selftoggle>
+                    ${i} (${Object.keys( val ).length})
+                </div>` )
+            $.each( val, ( key, val ) => {
+                key = key.substring( 0, 150 )
+                val = JSON.stringify( val ).substring( 0, 150 ).substring( 0, 150 )
+                table.append( `
+                    <div class="table-row">
+                        <div>${key}</div>
+                        <div>${val}...</div>
+                    </div>` )
+            } )
+            localStorageData.append( table )
+        } )
+        $( '[data-selftoggle]' ).click( function setState() {
+            $( this ).toggleClass( 'disabled' )
+        } )
     }
 
     titlesZone.sortable( {
@@ -78,6 +109,10 @@ $( () => {
         containment: 'parent'
     } )
     $( 'input, select' ).change( saveOptions )
+    $( '.clearLocalStorage' ).click( () => {
+        chrome.storage.local.clear()
+        renderLocalStorageData( {} )
+    } )
 
     restoreOptions()
 } )
