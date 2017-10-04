@@ -231,12 +231,12 @@ function translateItem( el ) {
     } )
 }
 function translatePage( el, tmdbPath ) {
-    return new Promise( ( resolve, reject ) => {
-        const args = {
-            language: options.i18nLang,
-            append_to_response: 'releases'
-        }
-        TMDB.get( tmdbPath, args ).then( result => {
+    const args = {
+        language: options.i18nLang,
+        append_to_response: 'releases'
+    }
+    TMDB.get( tmdbPath, args )
+        .then( result => {
             insertI18nImage( el, '#info-wrapper', result, () => {
                 renderPageTitle( el, result )
                 if ( result.overview )
@@ -245,9 +245,9 @@ function translatePage( el, tmdbPath ) {
                     renderSynopsis( el, '.info #biography + p', result.biography )
                 if ( result.releases )
                     renderReleasesDates( el, result.releases )
-                resolve( result )
                 el.classList.add( 'translated' )
             } )
-        } ).catch( reject )
-    } )
+        } )
+        .then( TMDB.updateCache )
+        .catch( error )
 }
