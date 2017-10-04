@@ -85,7 +85,7 @@ function insertI18nImage( parent, sel, showInfo, callback ) {
         return callback()
 
     img = parent.querySelector( sel + ' img.real' )
-    img_type = img.parentNode.className == 'poster' ? 'poster' : 'backdrop'
+    img_type = img.parentNode.classList.contains( 'poster' ) ? 'poster' : 'backdrop'
     img_path = showInfo[ img_type + '_path' ]
 
     if ( !img_path ) {
