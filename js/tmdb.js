@@ -29,7 +29,7 @@ TMDB.get = function get( path, args ) {
         },
         cached = TMDB.cache[ query.url ]
     if ( cached && cached.age < 30 ) {
-        log( 'TMDb get', query.name, 'from cache' )
+        log( 'TMDb get', query.name, 'from cache', cached.response )
         return Promise.resolve( cached.response )
     }
     return TMDB.call( query )
