@@ -30,6 +30,8 @@ function translate() {
     const tmdbPath = getTMDbPath( document.body )
     if ( tmdbPath && !isTranslated( document.body ) )
         translatePage( document.body, tmdbPath )
+
+    translateDates()
 }
 
 function isTranslated( el ) {
@@ -67,7 +69,7 @@ function getItemInfos( el ) {
     return infos
 }
 function renderSynopsis( parent, sel, translated ) {
-    if ( options.i18nSynopsis == 'Disable' ) return
+    if ( !translated || options.i18nSynopsis == 'Disable' ) return
     let el_ori = parent.querySelector( sel ),
         el_loc = el_ori.cloneNode()
     el_ori.classList.add( 'synopsis_original' )
@@ -110,14 +112,15 @@ function countryCodeEmoji( countryCode ) {
         ? String.fromCodePoint( ...[ ...cc ].map( c => c.charCodeAt() + 127397 ) )
         : null
 }
-function renderReleasesDates( el, releases ) {
+function renderReleasesDatesList( el, releases ) {
     var e_addstats,
         e_releasedLabel,
         e_releases,
         e_selectList,
-        dateOptions
+        dateOptions,
+        selected
 
-    if ( !releases.countries || !releases.countries.length ) return
+    if ( !releases || !releases.countries || !releases.countries.length ) return
 
     e_addstats = document.querySelector( '.additional-stats' )
     e_releasedLabel = Array.prototype.filter.call(
@@ -138,15 +141,13 @@ function renderReleasesDates( el, releases ) {
     dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }
     releases.countries.sort( ( a, b ) => a.release_date.localeCompare( b.release_date ) )
     releases.countries.forEach( function addReleaseDateOption( country ) {
-        var option = document.createElement( 'option' ),
-            d = new Date( country.release_date )
-
+        let option = document.createElement( 'option' )
         e_selectList.appendChild( option )
-        option.text = d.toLocaleDateString( options.i18nLang, dateOptions )
+        option.text = new Date( country.release_date ).toLocaleDateString( options.i18nLang, dateOptions )
         option.text += ' (' + countryCodeEmoji( country.iso_3166_1 ) + ')'
 
-        if ( country.iso_3166_1.toUpperCase() == options.i18nLang.toUpperCase() )
-            option.selected = true
+        if ( !selected && country.iso_3166_1.toUpperCase() == options.i18nLang.toUpperCase() )
+            option.selected = selected = true
     } )
 }
 function getTitlesLines( h1, data ) {
@@ -221,12 +222,13 @@ function translateItem( el ) {
         }
         el.classList.add( 'translate' )
         TMDB.get( 'search/' + infos.type, args ).then( result => {
-            insertI18nImage( el, '', result, () => {
-                if ( result ) renderItemTitle( el, result )
-                resolve( result )
-                el.classList.remove( 'translate' )
-                el.classList.add( 'translated' )
-            } )
+            if ( result ) {
+                insertI18nImage( el, '', result )
+                renderItemTitle( el, result )
+            }
+            el.classList.remove( 'translate' )
+            el.classList.add( 'translated' )
+            resolve( result )
         } ).catch( reject )
     } )
 }
@@ -235,19 +237,21 @@ function translatePage( el, tmdbPath ) {
         language: options.i18nLang,
         append_to_response: 'releases'
     }
-    TMDB.get( tmdbPath, args )
-        .then( result => {
-            insertI18nImage( el, '#info-wrapper', result, () => {
-                renderPageTitle( el, result )
-                if ( result.overview )
-                    renderSynopsis( el, '.info #overview', result.overview )
-                if ( result.biography )
-                    renderSynopsis( el, '.info #biography + p', result.biography )
-                if ( result.releases )
-                    renderReleasesDates( el, result.releases )
-                el.classList.add( 'translated' )
-            } )
+    TMDB.get( tmdbPath, args ).then( result => {
+        TMDB.updateCache()
+        insertI18nImage( el, '#info-wrapper', result )
+        renderPageTitle( el, result )
+        renderSynopsis( el, '.info #overview', result.overview )
+        renderSynopsis( el, '.info #biography + p', result.biography )
+        renderReleasesDatesList( el, result.releases )
+        el.classList.add( 'translated' )
+    } ).catch( error )
+}
+function translateDates() {
+    [ ...document.querySelectorAll( '.format-date' ) ].forEach( el => {
+        el.classList.add( 'localized' )
+        el.textContent = new Date( el.dataset.date ).toLocaleDateString( options.i18nLang, {
+            year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
         } )
-        .then( TMDB.updateCache )
-        .catch( error )
+    } )
 }

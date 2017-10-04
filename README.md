@@ -46,7 +46,8 @@ By specifying a language code in the options, you'll enable the following featur
 - Localized titles (show the localized and/or original title in addition to the english one)
 - Localized synopsis and biography
 - Localized posters
-- Localized release dates (list all the releases dates, not only the US one, and show the most relevant one)
+- Localized releases (list all the releases dates, not only the US one, and show the most relevant one)
+- Localized dates (translate every dates on the pages, ex. `30 août 2017 à 21:44`)
 
 Translations and localized data uses the TMDb API. The language code, as [defined in the TMDb API](https://developers.themoviedb.org/3/getting-started/languages) :
 >  is a bare [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code [*and*] you can specify an extra [ISO-3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) tag
