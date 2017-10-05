@@ -1,4 +1,4 @@
-.posters {
+.posters:not(.season-posters) {
 	display: flex;
 	flex-flow: row wrap;
 }
