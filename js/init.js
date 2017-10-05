@@ -1,46 +1,43 @@
-/*global chrome statify layout translate TMDB*/
+/*global chrome statify layout translate warn TMDB*/
 
-var options = {}
+var options = options || null
+if ( !options ) {
+    chrome.storage.sync.get( {
+        debug: false,
+        ratingsfilter: '',
+        tmdbApiKey: '',
+        tmdbConfig: null,
+        tmdbConfigDate: null,
+        i18nLang: '',
+        i18nMode: 'Hover',
+        i18nPosters: 'Disable',
+        i18nSynopsis: 'Both',
+        layoutExternalLinks: '',
+        layoutMultilineTitles: false,
+        layoutSynopsisMaxLines: 5,
+        i18nTitlesLines: [
+            { type: 'world', checked: true },
+            { type: 'localized', checked: true },
+            { type: 'original', checked: false }
+        ],
+    }, items => {
+        options = items
+        setDebug()
+        init()
+    } )
+} else init()
 
-function init( items ) {
+async function init() {
 
     // wait until page is fully dynamically loaded
     if ( document.querySelector( '.turbolinks-progress-bar' )
-     || document.querySelector( '#loading-bg' ).style.display == 'block' ) {
-        setTimeout( () => {
-            init( items )
-        }, 500 )
-        return
-    }
-
-    options = items
-    setDebug()
+     || document.getElementById( 'loading-bg' ).style.display == 'block' )
+        return setTimeout( init, 100 )
 
     statify()
     layout()
-
     TMDB.configure( options ).then( translate )
 }
-
-chrome.storage.sync.get( {
-    debug: false,
-    ratingsfilter: '',
-    tmdbApiKey: '',
-    tmdbConfig: null,
-    tmdbConfigDate: null,
-    i18nLang: '',
-    i18nMode: 'Hover',
-    i18nPosters: 'Disable',
-    i18nSynopsis: 'Both',
-    layoutExternalLinks: '',
-    layoutMultilineTitles: false,
-    layoutSynopsisMaxLines: 5,
-    i18nTitlesLines: [
-        { type: 'world', checked: true },
-        { type: 'localized', checked: true },
-        { type: 'original', checked: false }
-    ],
-}, init )
 
 function setDebug() {
     if ( options.debug ) {
