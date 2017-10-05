@@ -23,16 +23,13 @@ function translate() {
 
 function translateCachedItems( items ) {
     log( 'translate cached items' )
-    Promise.all( items.map( item => {
-        translateItem( item, true )
-    } ) ).then( TMDB.updateCache ).catch( error )
+    Promise.all( items.map( item => translateItem( item, true ) ) ).catch( error )
 }
 function translateItemsOnView( items ) {
     function translateViewed() {
         let viewedItems = items.filter( el => isInViewport( el ) && !isTranslated( el ) )
         if ( !viewedItems.length ) return
-        log( 'translate', viewedItems.length, 'items on view' )
-        Promise.all( viewedItems.map( translateItem ) )
+        Promise.all( viewedItems.map( item => translateItem( item, false ) ) )
             .then( TMDB.updateCache )
             .catch( error )
     }
@@ -60,30 +57,25 @@ function getTMDbPath( el ) {
     if ( !tmdbID ) return
     return tmdbID.href.substr( tmdbID.href.indexOf( '.org/' ) + 5 )
 }
-function getItemInfos( el ) {
-    var metaname,
-        infos,
-        year,
-        yearinname
+function getTitleInfos( el ) {
+    let infos = {},
+        year = el.querySelector( '.year' ),
+        sxe = el.querySelector( '.main-title-sxe' )
+    if ( year )
+        infos.year = year.textContent
+    if ( sxe ) {
+        infos.title = el.querySelector( '.main-title' ).textContent
+        sxe = sxe.textContent.split( 'x' )
+        infos.season = parseInt( sxe[ 0 ] )
+        infos.episode = parseInt( sxe[ 1 ] )
+    } else infos.title = el.childNodes[ 0 ].nodeValue
 
-    if ( el.dataset.type != 'movie' && el.dataset.type != 'show' )
-        return
-
-    metaname = el.querySelector( 'meta[itemprop=name]' )
-    if ( !metaname ) return
-    infos = {
-        type: el.dataset.type == 'movie' ? 'movie' : 'tv',
-        name: metaname.getAttribute( 'content' )
-    }
-
-    yearinname = /(.+?) \((\d{4})\)/.exec( infos.name )
+    let yearinname = /(.+?) \((\d{4})\)/.exec( infos.title )
     if ( yearinname ) {
-        infos.name = yearinname[ 1 ]
+        infos.title = yearinname[ 1 ]
         infos.year = yearinname[ 2 ]
     }
-    year = el.querySelector( '.year' )
-    infos.year = year ? year.innerHTML : infos.year
-
+    infos.title = infos.title.trim()
     return infos
 }
 function renderSynopsis( parent, sel, translated ) {
@@ -169,11 +161,12 @@ function renderReleasesDatesList( el, releases ) {
     } )
 }
 function getTitlesLines( h1, data ) {
-    var titlesLines = [],
+    var infos = getTitleInfos( h1 ),
+        titlesLines = [],
         titles = {
             'world': {
                 type: 'world',
-                text: h1.childNodes[ 0 ].nodeValue.trim(),
+                text: infos.title,
                 info: '(world-wide title)'
             },
             'original': {
@@ -230,25 +223,49 @@ function renderItemTitle( el, data ) {
 }
 function translateItem( el, onlyCached ) {
     return new Promise( ( resolve, reject ) => {
-        if ( isTranslated( el ) ) return resolve()
-        const infos = getItemInfos( el )
+
+        if ( isTranslated( el ) || !el.dataset.type.match( 'movie|show|episode' ) )
+            return resolve()
+        const infos = getTitleInfos( el.querySelector( 'h3' ) )
         if ( !infos ) return resolve()
         let args = {
-            query: infos.name,
+            query: infos.title,
             year: infos.year,
             language: options.i18nLang
         }
         el.classList.add( 'translate' )
-        TMDB.get( 'search/' + infos.type, args, onlyCached ).then( result => {
-            if ( result ) {
-                insertI18nImage( el, '', result )
-                renderItemTitle( el, result )
-                el.classList.add( 'translated' )
-            }
-            el.classList.remove( 'translate' )
-            resolve( result )
-        } ).catch( reject )
+
+        if ( el.dataset.type == 'episode' ) {
+            let href = el.querySelector( 'a' ).getAttribute( 'href' ).split( '/' ),
+                name = href[ 2 ],
+                season = href[ 4 ],
+                episode = href[ 6 ]
+            TMDB.get( 'search/tv', { query: name }, onlyCached ).then( result => {
+                if ( !result ) return resolve()
+                let path = `tv/${result.id}`
+                if ( season ) path += `/season/${season}`
+                if ( episode ) path += `/episode/${episode}`
+                return TMDB.get( path, args, onlyCached )
+            } ).then( result => {
+                translateItemResult( el, result )
+                resolve()
+            } ).catch( reject )
+        } else {
+            let type = el.dataset.type == 'movie' ? 'movie' : 'tv'
+            TMDB.get( 'search/' + type, args, onlyCached ).then( result => {
+                translateItemResult( el, result )
+                resolve()
+            } ).catch( reject )
+        }
     } )
+}
+function translateItemResult( el, result ) {
+    if ( result ) {
+        insertI18nImage( el, '', result )
+        renderItemTitle( el, result )
+        el.classList.add( 'translated' )
+    }
+    el.classList.remove( 'translate' )
 }
 function translatePage( el, tmdbPath ) {
     const args = {

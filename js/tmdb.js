@@ -29,7 +29,7 @@ TMDB.get = function get( path, args, onlyCached ) {
         },
         cached = TMDB.cache[ query.url ]
     if ( cached && cached.age < 30 ) {
-        log( 'TMDb get', query.name, 'from cache', cached.response )
+        log( 'TMDb get', query.name, 'from cache' )
         return Promise.resolve( cached.response )
     }
     if ( onlyCached ) return Promise.resolve()
@@ -94,8 +94,8 @@ TMDB.cacheResponse = function cacheResponse( url, response ) {
     }
 }
 TMDB.updateCache = function storeCache() {
-    log( 'TMDb', TMDB.tocache, 'requests to cache' )
     if ( TMDB.tocache < 1 ) return Promise.resolve()
+    log( 'TMDb', TMDB.tocache, 'requests to cache' )
     return new Promise( resolve => {
         chrome.storage.local.set( {
             cache: TMDB.cache
