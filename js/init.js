@@ -9,7 +9,6 @@ if ( !options ) {
         tmdbConfig: null,
         tmdbConfigDate: null,
         i18nLang: '',
-        i18nMode: 'Hover',
         i18nPosters: 'Disable',
         i18nSynopsis: 'Both',
         layoutExternalLinks: '',

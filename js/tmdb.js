@@ -22,7 +22,7 @@ TMDB.configure = function configure( options ) {
         } ).catch( reject )
     } )
 }
-TMDB.get = function get( path, args ) {
+TMDB.get = function get( path, args, onlyCached ) {
     const query = {
             url: TMDB.apiURL( path, args ),
             name: args && args.query ? `"${args.query}"` : path
@@ -32,6 +32,7 @@ TMDB.get = function get( path, args ) {
         log( 'TMDb get', query.name, 'from cache', cached.response )
         return Promise.resolve( cached.response )
     }
+    if ( onlyCached ) return Promise.resolve()
     return TMDB.call( query )
 }
 TMDB.call = function call( query ) {

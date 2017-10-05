@@ -10,22 +10,9 @@ function translate() {
     if ( options.i18nSynopsis )
         document.body.classList.add( 'i18nSynopsis' + options.i18nSynopsis )
 
-    if ( options.i18nMode == 'Load' ) {
-        var items = [ ...document.querySelectorAll( '.grid-item[data-type]' ) ],
-            first = items.shift()
-        if ( first ) {
-            log( 'translate', items.length, 'items' )
-            translateItem( first ).then( () => {
-                return Promise.all( items.map( translateItem ) )
-            } ).then( TMDB.updateCache ).catch( error )
-        }
-    } else {
-        document.body.onmouseover = function onMouseHover( event ) {
-            var target = event.target || event.srcElement || event.originalTarget,
-                item = target.closest( '.grid-item[data-type]' )
-            if ( item ) translateItem( item ).then( TMDB.updateCache ).catch( error )
-        }
-    }
+    var items = [ ...document.querySelectorAll( '.grid-item[data-type]' ) ]
+    translateCachedItems( items )
+    translateItemsOnView( items )
 
     const tmdbPath = getTMDbPath( document.body )
     if ( tmdbPath && !isTranslated( document.body ) )
@@ -34,6 +21,37 @@ function translate() {
     translateDates()
 }
 
+function translateCachedItems( items ) {
+    log( 'translate cached items' )
+    Promise.all( items.map( item => {
+        translateItem( item, true )
+    } ) ).then( TMDB.updateCache ).catch( error )
+}
+function translateItemsOnView( items ) {
+    function translateViewed() {
+        let viewedItems = items.filter( el => isInViewport( el ) && !isTranslated( el ) )
+        if ( !viewedItems.length ) return
+        log( 'translate', viewedItems.length, 'items on view' )
+        Promise.all( viewedItems.map( translateItem ) )
+            .then( TMDB.updateCache )
+            .catch( error )
+    }
+    document.addEventListener( 'scroll', translateViewed )
+    document.addEventListener( 'resize', translateViewed )
+    translateViewed()
+}
+function isInViewport( el ) {
+    const offset = 300,
+        rect = el.getBoundingClientRect(),
+        html = document.documentElement,
+        height = ( window.innerHeight || html.clientHeight ) + offset,
+        width = ( window.innerWidth || html.clientWidth ) + offset,
+        topIn = rect.top >= -offset && rect.top <= height,
+        botIn = rect.bottom >= -offset && rect.tobottomp <= height,
+        leftIn = rect.left >= -offset && rect.left <= width,
+        rightIn = rect.right >= -offset && rect.right <= width
+    return ( topIn || botIn ) && ( leftIn || rightIn )
+}
 function isTranslated( el ) {
     return el.matches( '.translate, .translated' )
 }
@@ -210,7 +228,7 @@ function renderItemTitle( el, data ) {
     ttle.childNodes[ 0 ].nodeValue = titles[ 0 ].text + ' '
     if ( titles[ 1 ] ) addSubTitleLine( 1, 'secondary' )
 }
-function translateItem( el ) {
+function translateItem( el, onlyCached ) {
     return new Promise( ( resolve, reject ) => {
         if ( isTranslated( el ) ) return resolve()
         const infos = getItemInfos( el )
@@ -221,13 +239,13 @@ function translateItem( el ) {
             language: options.i18nLang
         }
         el.classList.add( 'translate' )
-        TMDB.get( 'search/' + infos.type, args ).then( result => {
+        TMDB.get( 'search/' + infos.type, args, onlyCached ).then( result => {
             if ( result ) {
                 insertI18nImage( el, '', result )
                 renderItemTitle( el, result )
+                el.classList.add( 'translated' )
             }
             el.classList.remove( 'translate' )
-            el.classList.add( 'translated' )
             resolve( result )
         } ).catch( reject )
     } )
