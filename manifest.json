@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
 
-  "name": "Trakt improver DEV",
+  "name": "Trakt improver",
   "short_name" : "trakttvstats",
   "description": "Add various improvements to Trakt.tv",
-  "version": "0.4.0.23",
-  "version_name": "0.4 (0.4.0.23)",
+  "version": "0.4.1",
+  "version_name": "0.4 (0.4.1)",
   "permissions": [
     "storage",
     "tabs",
