@@ -1,56 +1,49 @@
-/* listed shows */
-.i18nShowBoth .posters .titles>h3 {
-	height: 2.2em;
-}
-.i18nShowBoth .posters .titles .i18n {
-	display: block;
-	font-size: 0.8em;
-	font-style: italic;
-	margin-top: .2em;
-	white-space: nowrap;
-  	overflow: hidden;
-  	text-overflow: ellipsis;
-}
-.i18nShowReplace .posters .titles>h3 .i18n_original {
-	display: none;
-}
-
 /* poster images */
 .real.i18n_original {
-	opacity: 0;
-	transition: opacity .5s;
+    opacity: 0;
+    transition: opacity .5s;
 }
 .real.i18n {
     opacity: 1;
     animation: fade .5s;
+    transition: opacity .5s;
+}
+.i18nPostersHoverLoca .real.i18n_original ,
+.i18nPostersHoverLoca .poster:hover .real.i18n {
+    opacity: 1;
+}
+.i18nPostersHoverLoca .real.i18n,
+.i18nPostersHoverLoca .poster:hover .real.i18n_original {
+    opacity: 0;
+}
+.i18nPostersHoverOrig .real.i18n_original:hover {
+    opacity: 1;
 }
 @keyframes fade {
     from {opacity: 0}
     to {opacity: 1}
 }
 
-/* show page title & overwiew */
-.i18nShowBoth .i18n,
-.i18nShowBoth .additional-stats ~ * .i18n {
-	font-style: italic;
+/* page titles */
+.page-title .info {
+    font-family: "Proxima Nova";
+    color: #999;
 }
-.i18nShowBoth .additional-stats ~ * .i18n {
-	display: block;
-	margin-top: 1em;
+.posters h3.thumb-title,
+.fanarts .fanart h3.thumb-title {
+    font: italic 1em "Proxima Nova";
+    margin: 0;
 }
-.i18nShowBoth h1 .i18n::before,
-.i18nShowBoth .fanart h3 .i18n::before {
-	content: ' (';
+
+/* synopsis & biography */
+.i18nSynopsisBoth .synopsis_localized {
+    margin-top: 1em;
+    font-style: italic;
 }
-.i18nShowBoth h1 .i18n::after, 
-.i18nShowBoth .fanart h3 .i18n::after {
-	content: ') ';
-}
-.i18nShowReplace .i18n_original,
-.i18nShowReplace .additional-stats ~ * .i18n_original {
-	display: none;
+.i18nSynopsisReplace .synopsis_original {
+    display: none;
 }
 
 .releasesDatesList {
-	border: none;
+    border: none;
 }

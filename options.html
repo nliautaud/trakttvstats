@@ -1,71 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Options</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { min-width: 25em; padding: 1em 1em .5em; }
-        label, strong { display: block; margin: 0 0 1em; }
-        button { padding: .5em 2em !important; }
-        input, select { width: 50%; }
-        .label-inline { display: inline-block; width: 45%; }
-        .save { margin-top: 2em !important; }
-        .toggle { max-height: 99999px;  overflow: hidden; }
-        .i18n.disabled .toggle { max-height: 0; }
-    </style>
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="css/options.css">
 </head>
 <body>
 
-    <div><strong>Charts : </strong></div>
-    <label>
-        <span class="label-inline">Ratings to hide from charts</span>
-        <input id="ratingsfilter" type="text" placeholder="ex: 1,2">
+    <div class="section-title">Charts :</div>
+
+    <label class="row">
+        <span class="label">Ratings to hide from charts</span>
+        <input type="text" placeholder="ex: 1,2" data-option="ratingsfilter">
     </label>
-    <div><strong>Layout : </strong></div>
-    <label>
-        <span class="label-inline">Custom external links:</span>
-        <input id="layoutExternalLinks" type="text" placeholder="ex: allocine,criticker">
+
+    <div class="section-title">Layout :</div>
+
+    <label class="row">
+        <span class="label">Custom external links:</span>
+        <input type="text" placeholder="ex: allocine,criticker" data-option="layoutExternalLinks">
     </label>
-    <label>
-        <span class="label-inline">Multiline titles</span>
-        <input id="layoutMultilineTitles" type="checkbox">
+    <label class="row">
+        <span class="label">Multiline titles</span>
+        <input type="checkbox" data-option="layoutMultilineTitles">
     </label>
+    <label class="row">
+        <span class="label">Synopsis max lines</span>
+        <input type="number" min="1" size="2" placeholder="10" data-option="layoutSynopsisMaxLines">
+    </label>
+
+    <div class="section-title">Translation :</div>
+
     <div class="i18n">
-        <strong>Translation : </strong>
-        <label>
-            <span class="label-inline">Language (ISO 639-1)</span>
-            <input id="i18nLang" type="text" size="2" placeholder="ex: fr">
+        <label class="row">
+            <span class="label">Language (ISO 639-1)</span>
+            <input type="text" size="2" placeholder="ex: fr" data-option="i18nLang">
         </label>
         <div class="toggle">
-            <label>
-                <span class="label-inline">Translate items</span>
-                <select id="i18nMode">
+            <label class="row">
+                <span class="label">Translate items</span>
+                <select data-option="i18nMode">
                     <option value="Hover">On mouse hover</option>
                     <option value="Load">On page load</option>
                 </select>
             </label>
-            <label>
-                <span class="label-inline">Titles and synopsis</span>
-                <select id="i18nShow">
-                    <option value="Both">Show original & translation</option>
-                    <option value="Replace">Show translation only</option>
+            <div class="row full">
+                <span class="label">Titles</span>
+                <div class="titlesZone">
+                    <div class="title" data-type="world"><input type="checkbox">World-wide title</div>
+                    <div class="title" data-type="original"><input type="checkbox">Original title</div>
+                    <div class="title" data-type="localized"><input type="checkbox">Localized title</div>
+                </div>
+            </div>
+            <label class="row">
+                <span class="label">Localized synopsis</span>
+                <select data-option="i18nSynopsis">
+                    <option value="Both">Show both</option>
+                    <option value="Replace">Replace original</option>
+                    <option value="Disable">Disable</option>
                 </select>
             </label>
-            <label>
-                <span class="label-inline">Localize posters</span>
-                <input id="i18nBack" type="checkbox">
+            <label class="row">
+                <span class="label">Localized posters</span>
+                <select data-option="i18nPosters">
+                    <option value="Replace">Replace original</option>
+                    <option value="HoverOrig">Original on hover</option>
+                    <option value="HoverLoca">Localized on hover</option>
+                    <option value="Disable">Disable</option>
+                </select>
             </label>
-            <label>
-                <span class="label-inline"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
-                <input id="tmdbApiKey" type="text" placeholder="Leave blank for default">
+            <label class="row">
+                <span class="label"><a href="https://www.themoviedb.org/faq/api">Custom TMDb API Key</a></span>
+                <input type="text" placeholder="Leave blank for default" data-option="tmdbApiKey">
             </label>
         </div>
     </div>
 
-    <div class="save">
-        <button id="save">Save</button>
-        <span id="status"></span>
-    </div>
+    <div class="section-title">Other :</div>
+
+    <label class="row">
+        <span class="label">Debug</span>
+        <input type="checkbox" data-option="debug">
+    </label>
 
     <script src="js/options.js"></script>
 </body>

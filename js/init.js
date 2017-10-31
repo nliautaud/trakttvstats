@@ -1,5 +1,4 @@
 options = {}
-VERBOSE = true
 defaultK = '34536d0dee70a9a47b625cd994f302a3'
 
 init = function( items ) {
@@ -54,27 +53,34 @@ init = function( items ) {
 }
 
 chrome.storage.sync.get({
+    debug: false,
     ratingsfilter: '',
     tmdbApiKey: '',
     tmdbConfig: null,
     tmdbConfigDate: null,
     i18nLang: '',
     i18nMode: 'Hover',
-    i18nShow: 'Both',
-    i18nBack: false,
+    i18nPosters: 'Disable',
+    i18nSynopsis: 'Both',
     layoutExternalLinks: '',
     layoutMultilineTitles: false,
+    layoutSynopsisMaxLines: 5,
+    i18nTitlesLines: [
+      {type: 'world', checked: true},
+      {type: 'localized', checked: true},
+      {type: 'original', checked: false}
+    ],
 }, init)
 
 
 
 function log(){
-    if( !VERBOSE ) return
+    if( !options.debug ) return
     var args = Array.prototype.slice.call(arguments)
     console.log.apply(console, args)
 }
 function warn(){
-    if( !VERBOSE ) return
+    if( !options.debug ) return
     var args = Array.prototype.slice.call(arguments)
     console.warn.apply(console, args)
 }

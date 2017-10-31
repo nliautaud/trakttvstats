@@ -56,8 +56,8 @@ For example `fr`, `de`, or `pt-BR`.
 Settings | Description
 --|--
 Translate items | - *On mouse hover* do less calls to the API<br>- *On load* translate every movie of the page at once
-Titles & synopsis | - *Show original & translation* : adds the localized titles or summaries next to the originals.<br>- *Show translation only* : replace the title and summaries by their localized version.
-Localize posters | Enable or disable the replacement of the images by their localized version
+Localized synopsis | - *Show both* : display the localized version under the english one.<br>- *Replace original* : display only the localized version.<br>- *Disable* : just don't.
+Localized posters | - *Replace original* : display only the localized version.<br> - *Original on hover* : display the localized version, and show the original on mouse over. - *Localized on hover* : show the localized version on mouse over.<br>- *Disable* : just don't.
 Custom TMDb API Key | **(optionnal)** if you want to call the API trough your own TMDb account
 
 ## Layout improvements

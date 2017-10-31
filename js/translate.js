@@ -2,8 +2,10 @@ translate = function() {
 
     if( options.i18nMode )
         document.body.classList.add('i18nMode'+options.i18nMode)
-    if( options.i18nShow )
-        document.body.classList.add('i18nShow'+options.i18nShow)
+    if( options.i18nPosters )
+        document.body.classList.add('i18nPosters'+options.i18nPosters)
+    if( options.i18nSynopsis )
+        document.body.classList.add('i18nSynopsis'+options.i18nSynopsis)
 
     if( options.i18nMode == 'Load') {
         log('Trakttvstats : translate all...');
@@ -66,17 +68,18 @@ getItemThumbInfos = function ( el ) {
 
     return infos;
 }
-insertI18nContent = function ( parent, sel, replace, find ) {
-    var el = parent.querySelector( sel );
-    find = find || el.innerHTML;
-    if(find == replace) return;
-    el.innerHTML = el.innerHTML.replace( find,
-        '<span class="i18n_original">' + find + '</span>' +
-        '<span class="i18n">' + replace + '</span>'
-    );
+i18nSynopsis = function ( parent, sel, translated ) {
+    if(options.i18nSynopsis == 'Disable') return;
+    let el_ori = parent.querySelector( sel ),
+        el_loc = el_ori.cloneNode();
+    el_ori.classList.add('synopsis_original');
+    el_loc.classList.add('synopsis_localized');
+    el_loc.textContent = translated;
+    el_ori.parentNode.insertBefore(el_loc, el_ori.nextSibling);
 }
 insertI18nImage = function ( parent, sel, showInfo, callback ) {
-    if (!showInfo) return callback();
+    if (!showInfo || options.i18nPosters == 'Disable')
+        return callback();
 
     var img = parent.querySelector( sel + ' img.real'),
         img_type = img.parentNode.className == 'poster' ? 'poster' : 'backdrop',
@@ -138,6 +141,66 @@ renderReleasesDates = function ( el, releases ) {
             option.selected = true;
     });
 }
+function getTitlesLines (h1, data) {
+    var titles = {
+        'world': {
+            type: 'world',
+            text: h1.childNodes[0].nodeValue.trim(),
+            info: '(world-wide title)'
+        },
+        'original': {
+            type: 'original',
+            text: data.original_title || data.original_name,
+            info: '(original title)'
+        },
+        'localized': {
+            type: 'localized',
+            text: data.title || data.name,
+            info: '(' + countryCodeEmoji(options.i18nLang) + ')'
+        }
+    };
+    var titlesLines = [];
+    options.i18nTitlesLines.forEach(function(el, id) {
+        let title = titles[el.type],
+            exists = titlesLines.find(x => x.text == title.text);
+        if (!title.text || exists || (id && !el.checked)) return;
+        titlesLines.push(title);
+    });
+    return titlesLines;
+}
+function i18nPageTitle (el, data) {
+    var h1 = el.querySelector( 'h1' ),
+        titles = getTitlesLines(h1, data);
+
+    let addSubTitleLine = function(id, cl) {
+        let el = document.createElement( 'h2' );
+        h1.parentNode.appendChild(el);
+        el.className = 'page-title page-title_'+cl;
+        el.innerText = titles[id].text + ' ';
+        let info = document.createElement( 'span' );
+        info.className = 'info';
+        info.innerText = titles[id].info;
+        el.appendChild(info);
+    };
+
+    h1.childNodes[0].nodeValue = titles[0].text + ' ';
+    if (titles[1]) addSubTitleLine(1, 'secondary');
+    if (titles[2]) addSubTitleLine(2, 'third');
+}
+function i18nThumbTitle (el, data) {
+    var ttle = el.querySelector( '.titles h3' ),
+        titles = getTitlesLines(ttle, data);
+
+    let addSubTitleLine = function(id, cl) {
+        let el = document.createElement( 'h3' );
+        ttle.parentNode.insertBefore(el, ttle.nextSibling);
+        el.className = 'thumb-title thumb-title_'+cl;
+        el.innerText = titles[id].text + ' ';
+    };
+
+    ttle.childNodes[0].nodeValue = titles[0].text + ' ';
+    if (titles[1]) addSubTitleLine(1, 'secondary');
+}
 function i18nItemThumb (el) {
     if( isTranslated(el) ) return;
     var infos = getItemThumbInfos( el );
@@ -151,44 +214,12 @@ function i18nItemThumb (el) {
 
     callTMDb( 'search/'+infos.type, args, function(result) {
         var translateContent = function() {
-            if( result )
-                insertI18nContent(el, '.titles h3', result.title || result.name, infos.name );
+            if( result ) i18nThumbTitle(el, result);
             el.classList.remove('translate');
             el.classList.add('translated');
         };
-        if( !options.i18nBack ) translateContent();
-        else insertI18nImage(el, '', result, translateContent);
+        insertI18nImage(el, '', result, translateContent);
     });
-}
-function i18nPageTitle (el, data) {
-    var title1 = el.querySelector( 'h1' );
-    title1.className = 'page-title page-title_main';
-
-    var worldwide_title = title1.childNodes[0].nodeValue.trim();
-
-    var original_title = data.original_title || data.original_name;
-    if (original_title && worldwide_title != original_title) {
-        let title2 = document.createElement( 'h2' );
-        title1.parentNode.appendChild(title2);
-        title2.className = 'page-title page-title_secondary';
-        title2.innerText = original_title;
-        let info = document.createElement( 'span' );
-        info.className = 'info';
-        info.innerText = ' (original title)';
-        title2.appendChild(info);
-    }
-
-    var localized_title = data.title || data.name;
-    if (localized_title && worldwide_title != localized_title && original_title != localized_title) {
-        let title3 = document.createElement( 'h2' );
-        title1.parentNode.appendChild(title3);
-        title3.className = 'page-title page-title_third';
-        title3.innerText = localized_title;
-        let info = document.createElement( 'span' );
-        info.className = 'info';
-        info.innerText = ' (' + countryCodeEmoji(options.i18nLang) + ')';
-        title3.appendChild(info);
-    }
 }
 function i18nItemPage (el, tmdbPath) {
     var args  = {
@@ -199,15 +230,14 @@ function i18nItemPage (el, tmdbPath) {
         var translateContent = function() {
             i18nPageTitle(el, result);
             if (result.overview)
-                insertI18nContent(el, '.info #overview', result.overview);
+                i18nSynopsis(el, '.info #overview', result.overview);
             if (result.biography)
-                insertI18nContent(el, '.info #biography + p', result.biography);
+                i18nSynopsis(el, '.info #biography + p', result.biography);
             if (result.releases)
                 renderReleasesDates(el, result.releases);
             el.classList.add('translated');
         };
-        if( !options.i18nBack ) translateContent();
-        else insertI18nImage(el, '#info-wrapper', result, translateContent);
+        insertI18nImage(el, '#info-wrapper', result, translateContent);
     });
 }
 function callTMDb( path, args, callback) {
