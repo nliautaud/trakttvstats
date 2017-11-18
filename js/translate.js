@@ -178,6 +178,10 @@ function getTitlesLines( h1, data ) {
                 info: '(' + countryCodeEmoji( options.i18nLang ) + ')'
             }
         }
+
+    if ( titles.localized.text == titles.original.text )
+        titles.localized = titles.original
+
     options.i18nTitlesLines.forEach( function addUniqueTitleLine( el, id ) {
         let title = titles[ el.type ],
             exists = titlesLines.find( x => x.text == title.text )
