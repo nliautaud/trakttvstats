@@ -88,24 +88,22 @@ function renderSynopsis( parent, sel, translated ) {
     el_ori.parentNode.insertBefore( el_loc, el_ori.nextSibling )
 }
 function insertI18nImage( parent, sel, showInfo, callback ) {
-    var img,
-        img_type,
-        img_path,
-        img_i18n
 
-    if ( !showInfo || options.i18nPosters == 'Disable' )
-        return callback()
+    if ( !showInfo || options.i18nPosters == 'Disable' ) {
+        if ( callback ) callback()
+        return
+    }
 
-    img = parent.querySelector( sel + ' img.real' )
-    img_type = img.parentNode.classList.contains( 'poster' ) ? 'poster' : 'backdrop'
-    img_path = showInfo[ img_type + '_path' ]
+    var img = parent.querySelector( sel + ' img.real' ),
+        img_type = img.parentNode.classList.contains( 'poster' ) ? 'poster' : 'backdrop',
+        img_path = showInfo[ img_type + '_path' ]
 
     if ( !img_path ) {
         if ( callback ) callback()
         return
     }
 
-    img_i18n = new Image()
+    var img_i18n = new Image()
     img_i18n.className = 'real i18n'
     img_i18n.src = TMDB.imageURL( img_path, img_type )
     img_i18n.onload = function i18nImageLoaded() {
