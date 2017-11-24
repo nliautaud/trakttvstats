@@ -10,18 +10,18 @@ chrome.runtime.onMessage.addListener( function onMessage( request, sender, callb
 chrome.webNavigation.onHistoryStateUpdated.addListener( function onHistoryStateUpdated( details ) {
 
     queueExecution( details.tabId, chrome.tabs.executeScript, [
-        { file: 'lib/chartist.min.js' },
-        { file: 'js/tmdb.js' },
-        { file: 'js/translate.js' },
-        { file: 'js/statify.js' },
-        { file: 'js/layout.js' },
-        { file: 'js/init.js' }
+        { file: '/lib/chartist.min.js' },
+        { file: '/js/tmdb.js' },
+        { file: '/js/translate.js' },
+        { file: '/js/statify.js' },
+        { file: '/js/layout.js' },
+        { file: '/js/init.js' }
     ] )
     queueExecution( details.tabId, chrome.tabs.insertCSS, [
-        { file: 'lib/chartist.min.css' },
-        { file: 'css/translate.css' },
-        { file: 'css/statify.css' },
-        { file: 'css/layout.css' },
+        { file: '/lib/chartist.min.css' },
+        { file: '/css/translate.css' },
+        { file: '/css/statify.css' },
+        { file: '/css/layout.css' },
     ] )
 } )
 
