@@ -64,7 +64,8 @@ function getTitleInfos( el ) {
     if ( year )
         infos.year = year.textContent
     if ( sxe ) {
-        infos.title = el.querySelector( '.main-title' ).textContent
+        let eltitle = el.querySelector( '.main-title' )
+        infos.title = eltitle ? eltitle.textContent : ''
         sxe = sxe.textContent.split( 'x' )
         infos.season = parseInt( sxe[ 0 ] )
         infos.episode = parseInt( sxe[ 1 ] )
