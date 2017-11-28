@@ -10,11 +10,11 @@
     "storage",
     "tabs",
     "webNavigation",
-    "https://trakt.tv/*"
+    "https://trakt.tv/*",
+    "https://api.themoviedb.org/*"
   ],
   "background": {
-      "page": "background.html",
-      "persistent": false
+      "page": "background.html"
   },
   "options_ui": {
     "page": "options.html",
