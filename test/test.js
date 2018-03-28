@@ -2,15 +2,17 @@
 
 const puppeteer = require('puppeteer')
 const assert = require('assert')
+const path = require('path')
 
 const manifest = require('../manifest')
 
+const extensionPath = path.join(__dirname, '..')
 const chromiumOptions = {
   headless: false,
   slowMo: 200,
   args: [
-    '--disable-extensions-except=./',
-    '--load-extension=./'
+    `--disable-extensions-except=${extensionPath}`,
+    `--load-extension=${extensionPath}`
   ]
 }
 
@@ -42,7 +44,7 @@ before('start browser and extension', async function () {
 })
 
 after('detach extension and close browser', async function () {
-  await client.detach()
+  if (client) await client.detach()
   await browser.close()
 })
 
