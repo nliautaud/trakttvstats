@@ -62,7 +62,7 @@ describe('extension loaded', function () {
 
     await chromeStorageSet({ i18nLang: 'pt-br', i18nMode: 'Load' }, client)
 
-    await page.goto('https://trakt.tv/users/gervasiocaj/lists/trakttvstats-tests')
+    await page.goto('https://trakt.tv/users/gervasiocaj/lists/trakttvstats-tests', { waitUntil: 'networkidle2' })
 
     let options = await chromeStorageGet(['i18nLang'], client)
     assert.strictEqual(options.i18nLang, 'pt-br')
@@ -76,6 +76,27 @@ describe('extension loaded', function () {
     let translatedTitle = await page.$eval('.thumb-title_secondary', el => el.textContent)
     assert.strictEqual(translatedTitle.trim(), 'Malévola', 'translatedTitle not in pt-br')
     assert.notStrictEqual(translatedTitle.trim(), 'Maléfica', 'translatedTitle in pt-pt')
+  })
+
+  it('should display the correct flag for specific country code', async function () {
+    this.timeout(25000)
+
+    async function getSecondaryTitleInfo (language, url) {
+      await chromeStorageSet({ i18nLang: language }, client)
+      await page.goto(url, { waitUntil: 'networkidle2' })
+      return page.$eval('.page-title_secondary .info', el => el.textContent)
+    }
+
+    const movieUrl = 'https://trakt.tv/movies/moana-2016'
+
+    let countryInfo = await getSecondaryTitleInfo('pt', movieUrl)
+    assert.strictEqual(countryInfo, '(🇵🇹)', 'the subtitle flag for pt does not match')
+
+    countryInfo = await getSecondaryTitleInfo('pt-br', movieUrl)
+    assert.strictEqual(countryInfo, '(🇧🇷)', 'the subtitle flag for pt-br does not match')
+
+    countryInfo = await getSecondaryTitleInfo('pt-pt', movieUrl)
+    assert.strictEqual(countryInfo, '(🇵🇹)', 'the subtitle flag for pt-pt does not match')
   })
 })
 
