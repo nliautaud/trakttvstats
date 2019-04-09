@@ -23,14 +23,12 @@ chrome.webNavigation.onHistoryStateUpdated.addListener( function onHistoryStateU
         { file: '/css/statify.css' },
         { file: '/css/layout.css' },
     ] )
-} )
+}, { url : [{ hostSuffix : 'trakt.tv' }] } )
 
 
-chrome.tabs.onUpdated.addListener( function onUpdated( tabId, changeInfo, tab ) {
-    if ( tab.url.indexOf( 'https://trakt.tv' ) == 0 )
-        chrome.pageAction.show( tabId )
-
-} )
+chrome.webNavigation.onCompleted.addListener(function onUpdated( details ) {
+    chrome.pageAction.show( details.tabId )
+}, { url : [{ hostSuffix : 'trakt.tv' }] } )
 
 
 function queueExecution( tabId, execMethod, injectDetailsArray ) {
