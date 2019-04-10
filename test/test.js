@@ -60,12 +60,12 @@ describe('extension loaded', function () {
   it('should display the correct translation for specific country code', async function () {
     this.timeout(25000)
 
-    await chromeStorageSet({ i18nLang: 'pt-br', i18nMode: 'Load' }, client)
+    await chromeStorageSet({ i18nLang: 'pt-BR', i18nMode: 'Load' }, client)
 
     await page.goto('https://trakt.tv/users/gervasiocaj/lists/trakttvstats-tests', { waitUntil: 'networkidle2' })
 
     let options = await chromeStorageGet(['i18nLang'], client)
-    assert.strictEqual(options.i18nLang, 'pt-br')
+    assert.strictEqual(options.i18nLang, 'pt-BR')
 
     // FIXME consider multiple items in grid
     // let maleficentMovie = await page.$('div[data-movie-id="73425"]')
@@ -74,8 +74,8 @@ describe('extension loaded', function () {
     assert.strictEqual(englishTitle.trim(), 'Maleficent')
 
     let translatedTitle = await page.$eval('.thumb-title_secondary', el => el.textContent)
-    assert.strictEqual(translatedTitle.trim(), 'Malévola', 'translatedTitle not in pt-br')
-    assert.notStrictEqual(translatedTitle.trim(), 'Maléfica', 'translatedTitle in pt-pt')
+    assert.strictEqual(translatedTitle.trim(), 'Malévola', 'translatedTitle not in pt-BR')
+    assert.notStrictEqual(translatedTitle.trim(), 'Maléfica', 'translatedTitle in pt-PT')
   })
 
   it('should display the correct flag for specific country code', async function () {
@@ -92,11 +92,11 @@ describe('extension loaded', function () {
     let countryInfo = await getSecondaryTitleInfo('pt', movieUrl)
     assert.strictEqual(countryInfo, '(🇵🇹)', 'the subtitle flag for pt does not match')
 
-    countryInfo = await getSecondaryTitleInfo('pt-br', movieUrl)
-    assert.strictEqual(countryInfo, '(🇧🇷)', 'the subtitle flag for pt-br does not match')
+    countryInfo = await getSecondaryTitleInfo('pt-BR', movieUrl)
+    assert.strictEqual(countryInfo, '(🇧🇷)', 'the subtitle flag for pt-BR does not match')
 
-    countryInfo = await getSecondaryTitleInfo('pt-pt', movieUrl)
-    assert.strictEqual(countryInfo, '(🇵🇹)', 'the subtitle flag for pt-pt does not match')
+    countryInfo = await getSecondaryTitleInfo('pt-PT', movieUrl)
+    assert.strictEqual(countryInfo, '(🇵🇹)', 'the subtitle flag for pt-PT does not match')
   })
 })
 
