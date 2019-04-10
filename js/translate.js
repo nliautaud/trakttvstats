@@ -116,6 +116,11 @@ function insertI18nImage( parent, sel, showInfo, callback ) {
 function countryCodeEmoji( countryCode ) {
     if ( typeof countryCode !== 'string' )
         throw new TypeError( 'argument must be a string' )
+    if ( countryCode.includes( '-' ) ) {
+        //If the country code contains a "-", it's probably formatted using ISO-3166-1, like pt-BR
+        //The country code to use for the emoji conversion is then after the dash.
+        countryCode = countryCode.split( '-' )[ 1 ]
+    }
     const cc = countryCode.toUpperCase()
     return ( /^[A-Z]{2}$/.test( cc ) )
         ? String.fromCodePoint( ...[ ...cc ].map( c => c.charCodeAt() + 127397 ) )
