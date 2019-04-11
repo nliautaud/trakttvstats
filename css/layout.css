@@ -1,6 +1,8 @@
 .posters {
 	display: flex;
 	flex-flow: row wrap;
+	width: 100%;
+	width: calc(100% + 10px);
 }
 .layoutMultilineTitles .posters .titles h3,
 .layoutMultilineTitles .posters .titles h3 * {
