@@ -4,8 +4,8 @@
   "name": "Trakt improver DEV",
   "short_name" : "trakttvstats",
   "description": "Add various improvements to Trakt.tv",
-  "version": "0.5.2",
-  "version_name": "0.5 (0.5.2)",
+  "version": "0.5.3",
+  "version_name": "0.5 (0.5.3)",
   "permissions": [
     "storage",
     "tabs",
@@ -14,7 +14,8 @@
     "https://api.themoviedb.org/*"
   ],
   "background": {
-      "page": "background.html"
+      "page": "background.html",
+      "persistent": false
   },
   "options_ui": {
     "page": "options.html",
