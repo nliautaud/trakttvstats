@@ -1,2 +1,3 @@
 *.zip
 *.psd
+node_modules/

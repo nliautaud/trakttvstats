@@ -1,0 +1,15 @@
+{
+  "name": "trakttvstats",
+  "version": "0.5.2",
+  "private": true,
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint ..",
+    "lint:test": "eslint ."
+  },
+  "dependencies": {
+    "eslint": "^5.16.0",
+    "mocha": "^5.0.5",
+    "puppeteer": "^1.14.0"
+  }
+}
