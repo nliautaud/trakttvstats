@@ -13,7 +13,7 @@ function processMovies( parent ) {
             year = el_infos.children[ 1 ].firstChild.nodeValue,
             decade = yearDecade( year ),
             el_job = el_infos.children[ 2 ],
-            job = el_job.firstChild.nodeValue.trim()
+            job = el_job ? el_job.firstChild.nodeValue.trim() : '?'
 
         if ( cat && !categories.includes( cat ) ) categories.push( cat )
         if ( year && !years.includes( year ) ) years.push( year )
