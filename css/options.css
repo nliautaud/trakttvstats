@@ -35,10 +35,9 @@ input,
 select {
     border-radius: 2px;
     border: 1px solid #ccc;
-    padding: .2em .5em;
 }
 select {
-    padding-right: 0;
+    padding: .2em 0 .2em .5em;
 }
 
 .titlesZone {
