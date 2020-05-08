@@ -6,6 +6,8 @@ const path = require( 'path' )
 
 const manifest = require( '../manifest' )
 
+const TIMEOUT=30000
+
 const extensionPath = path.join( __dirname, '..' )
 const chromiumOptions = {
     headless: false,
@@ -109,6 +111,65 @@ describe( 'extension loaded', function() {
         assert.strictEqual( countryInfo, '(🇵🇹)', 'the subtitle flag for pt-PT does not match' )
     } )
 } )
+
+describe('External Links', function () {
+    //https://mochajs.org/#dynamically-generating-tests
+
+    let tests = [
+        {
+            mediaType: "movie",
+            url: "https://trakt.tv/movies/sherlock-holmes-2009",
+            expectedTitleWithoutYear: "Sherlock Holmes",
+            expectedTitleWithYear: "Sherlock Holmes 2009"
+        },
+        {
+            mediaType: "show",
+            url: "https://trakt.tv/shows/sherlock",
+            expectedTitleWithoutYear: "Sherlock",
+            expectedTitleWithYear: "Sherlock 2010"
+        },
+        {
+            mediaType: "season",
+            url: "https://trakt.tv/shows/sherlock/seasons/1",
+            expectedTitleWithoutYear: "Sherlock Season 1",
+            expectedTitleWithYear: "Sherlock Season 1 2010"
+        },
+        {
+            mediaType: "episode",
+            url: "https://trakt.tv/shows/sherlock/seasons/1/episodes/1",
+            expectedTitleWithoutYear: "Sherlock: Season 1 A Study in Pink",
+            expectedTitleWithYear: "Sherlock: Season 1 A Study in Pink"//Trakt does not display year for episodes.
+        },
+    ];
+    tests.forEach(testValues => {
+        it('should use correct media names for a ' + testValues.mediaType, async function () {
+            this.timeout(TIMEOUT)
+            await chromeStorageSet({
+                layoutExternalLinks: 'ExternalLink',
+                layoutSpecifyYearInExternalLinks: false
+            }, client)
+            await page.goto(testValues.url, {waitUntil: 'networkidle2'})
+
+            let obtainedUrl = await page.$eval( '.sidebar .external li', el => el.lastElementChild.href )
+            let expectedUrl = new URL('http://www.google.com/search?btnI&q='
+                + testValues.expectedTitleWithoutYear + ' ExternalLink').href
+            assert.strictEqual(obtainedUrl, expectedUrl, 'the obtained url does not match')
+        })
+        it('should use correct media names for a ' + testValues.mediaType + ' with the year specified', async function () {
+            this.timeout(TIMEOUT)
+            await chromeStorageSet({
+                layoutExternalLinks: 'ExternalLink',
+                layoutSpecifyYearInExternalLinks: true
+            }, client)
+            await page.goto(testValues.url, {waitUntil: 'networkidle2'})
+
+            let obtainedUrl = await page.$eval( '.sidebar .external li', el => el.lastElementChild.href )
+            let expectedUrl = new URL('http://www.google.com/search?btnI&q='
+                + testValues.expectedTitleWithYear + ' ExternalLink').href
+            assert.strictEqual(obtainedUrl, expectedUrl, 'the obtained url does not match')
+        })
+    })
+})
 
 /**
  * See https://developer.chrome.com/extensions/storage#method-StorageArea-get
