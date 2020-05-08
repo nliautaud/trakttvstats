@@ -27,13 +27,13 @@ let browser
 let page
 let client
 
-before( 'start browser and extension', async function() {
+before( 'start browser and extension, and accept Trakt data compliance popup', async function() {
     this.enableTimeouts( false )
 
     browser = await puppeteer.launch( chromiumOptions )
 
     // hack, waits until targets are ready
-    await delay( 2000 )
+    await delay( 5000 )
 
     // see https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-target
     let extensionTarget = browser.targets()
@@ -42,6 +42,15 @@ before( 'start browser and extension', async function() {
     assert.ok( extensionTarget, 'could not find the extension target' )
 
     client = await extensionTarget.createCDPSession()
+    page = await browser.newPage()
+    try {
+        await page.goto('https://trakt.tv/movies/trending', {waitUntil: 'networkidle2'})
+        await page.click('#sncmp-popup-ok-button')
+        console.log("GDPR popup accepted")
+    } catch {
+        console.warn("GDPR popup not detected.")
+    }
+    page.close()
 } )
 
 after( 'detach extension and close browser', async function() {
