@@ -24,7 +24,7 @@ function addExternalLinks() {
         var goourl = 'http://www.google.com/search?btnI&q=',
             firstlink = list.querySelector( 'a' ),
             new_el = firstlink.cloneNode( true )
-        new_el.href = goourl + title + ' ' + domain
+        new_el.href = goourl + encodeURIComponent(title + ' ' + domain)
         new_el.innerHTML = domain
         firstlink.parentElement.appendChild( new_el )
     } )

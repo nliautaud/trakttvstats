@@ -165,7 +165,8 @@ describe('External Links', function () {
 
             let obtainedUrl = await page.$eval( '.sidebar .external li', el => el.lastElementChild.href )
             let expectedUrl = new URL('http://www.google.com/search?btnI&q='
-                + testValues.expectedTitleWithYear + ' ExternalLink').href
+                + encodeURIComponent(testValues.expectedTitleWithYear + ' ExternalLink')
+            ).href
             assert.strictEqual(obtainedUrl, expectedUrl, 'the obtained url does not match')
         })
     })
