@@ -88,7 +88,8 @@ function getMediaFullTitle(includeYear=false) {
     //region Try to append year if requested
     if (includeYear){
         var year=titleContainer.querySelector('span.year')
-        title=(title+" " +year.textContent).trim();//We trim in case the year is empty (not specified)
+        if (year!=null) //Year is null if we are on a people page
+            title=(title+" " +year.textContent).trim();//We trim in case the year is empty (not specified, on media pages)
     }
     //endregion
 
