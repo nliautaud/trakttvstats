@@ -284,8 +284,10 @@ function translatePage( el, tmdbPath ) {
         TMDB.updateCache()
         insertI18nImage( el, '#info-wrapper', result )
         renderPageTitle( el, result )
+        if(result.overview==null)
+            result.overview=result.biography
         renderSynopsis( el, '.info #overview', result.overview )
-        renderSynopsis( el, '.info #biography + p', result.biography )
+        //This apparently worked before a Trakt design change : renderSynopsis( el, '.info #biography + p', result.biography )
         renderReleasesDatesList( el, result.releases )
         el.classList.add( 'translated' )
     } ).catch( error )
