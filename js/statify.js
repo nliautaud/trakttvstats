@@ -8,7 +8,8 @@ function processMovies( parent ) {
     for ( let i = 0; i < e_movies.length; i++ ) {
         let m = e_movies[ i ],
             id = m.dataset.movieId || m.dataset.showId,
-            cat = m.parentNode.previousSibling.id,
+            fullcat = m.parentNode.parentNode.id, //A movie/show is in a div, itself in another div that has an id describing the category.
+            cat = fullcat.split("-")[0]; //Since the id is suffixed with "-credits" (Ex "production-credits" or "actor-credits"), we only keep the first part.
             el_infos = m.querySelector( '.titles' ),
             year = el_infos.children[ 1 ].firstChild.nodeValue,
             decade = yearDecade( year ),
@@ -270,7 +271,8 @@ function updateYearsSelection() {
     if ( filters.decade ) {
         // determine current index and select current label
         var labels = e_yearschart.querySelectorAll( '.ct-labels > *' )
-        for ( let idx = 0; idx < labels.length; idx++ ) {
+        var idx
+        for ( idx = 0; idx < labels.length; idx++ ) {
             var el = labels[ idx ]
             if ( labels[ idx ].firstChild.firstChild.nodeValue == '' + filters.decade ) {
                 labels[ idx ].classList.add( 'selected' )
