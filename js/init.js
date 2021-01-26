@@ -12,6 +12,7 @@ if ( !options ) {
         i18nPosters: 'Disable',
         i18nSynopsis: 'Both',
         layoutExternalLinks: '',
+        layoutSpecifyYearInExternalLinks:false,
         layoutMultilineTitles: false,
         layoutSynopsisMaxLines: 5,
         i18nTitlesLines: [
