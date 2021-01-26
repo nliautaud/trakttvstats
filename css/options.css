@@ -1,16 +1,18 @@
 * { box-sizing: border-box; }
 body {
     min-width: 25em;
-    padding: .5em;
+    max-width: 35em;
+    padding: .5em .5em 2em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 12px;
 }
 .row {
-    display: block;
+    display: flex;
+    align-items: center;
     margin: 1em;
 }
 .row > * {
-    display: inline-block;
-    width: 49%;
-    vertical-align: middle;
+    flex: 1;
 }
 .row.full > * {
     display: block;
@@ -25,18 +27,17 @@ body {
     background: #f5f5f5;
     font-weight: bold;
 }
-.toggle {
-    max-height: 99999px;
-}
-.i18n.disabled .toggle {
-    overflow: hidden;
-    max-height: 0;
+.toggle.disabled {
+    display: none;
 }
 
-input {
-    vertical-align: bottom;
-    position: relative;
-    top: -2px;
+input,
+select {
+    border-radius: 2px;
+    border: 1px solid #ccc;
+}
+select {
+    padding: .2em 0 .2em .5em;
 }
 
 .titlesZone {
@@ -62,4 +63,46 @@ input {
 .titlesZone input {
     margin: 0 .75em;
     cursor: pointer;
+}
+
+.table-row {
+    display: flex;
+    max-height: 20em;
+    opacity: 1;
+    transition: all .5s ease;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-width: 0 1px 1px;
+}
+.table-row:nth-child(odd) {
+    background: #fafafa
+}
+.table-head.disabled ~ .table-row {
+    max-height: 0;
+    opacity: 0;
+}
+.table-row:not(.table-head) {
+    counter-increment: n;
+}
+.table-row:not(.table-head):before {
+    content: counter(n);
+    padding: .5em;
+    display: flex;
+    align-items: center;
+    color: #ccc;
+}
+.table-row > * {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: .5em;
+    word-break: break-all;
+    font: 11px/1.1 monospace;
+}
+.table-head {
+    background: #eee;
+    cursor: pointer;
+    padding: .5em .8em;
+    font: bold 12px/1.2 monospace;
+    border: 1px solid #ddd;
 }

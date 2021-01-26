@@ -240,13 +240,12 @@
     opacity: 0;
 }
 .ttvstats_graph_ratings:hover .ct-point {
-    stroke-width: 3px;
-    transform: scale(4);
+    stroke-width: 12px;
     opacity: 1;
 }
 .ttvstats_graph_ratings .ct-point:hover {
     stroke: #FF7413;
-    transform: scale(5.5);
+    stroke-width: 16px;
 }
 .ttvstats_graph_ratings .ct-series-a .ct-point:hover {
     stroke: #888;
@@ -262,7 +261,7 @@
 .ttvstats_graph_ratings[data-user*="9-"] .ct-series-b .ct-point:nth-of-type(9),
 .ttvstats_graph_ratings[data-user*="10-"] .ct-series-b .ct-point:nth-of-type(10) {
     opacity: 1;
-    transform: scale(6);
+    stroke-width: 18px;
     stroke: #FF7413;
 }
 .ttvstats_graph_ratings[data-user*="1-"] .ct-series-b .ct-point:nth-of-type(1):hover,
@@ -276,7 +275,7 @@
 .ttvstats_graph_ratings[data-user*="9-"] .ct-series-b .ct-point:nth-of-type(9):hover,
 .ttvstats_graph_ratings[data-user*="10-"] .ct-series-b .ct-point:nth-of-type(10):hover,
 .ttvstats_graph_ratings[data-user="1-2-3-4-5-6-7-8-9-10-"] .ct-series-b .ct-line:hover ~ .ct-point {
-    transform: scale(5.5);
+    stroke-width: 16px;
 }
 .ttvstats_graph_ratings[data-trakt*="1-"] .ct-series-a .ct-point:nth-of-type(1),
 .ttvstats_graph_ratings[data-trakt*="2-"] .ct-series-a .ct-point:nth-of-type(2),
@@ -290,7 +289,7 @@
 .ttvstats_graph_ratings[data-trakt*="10-"] .ct-series-a .ct-point:nth-of-type(10) {
     opacity: 1;
     stroke-width: 3px;
-    transform: scale(6);
+    stroke-width: 18px;
     stroke: #888;
 }
 .ttvstats_graph_ratings[data-trakt*="1-"] .ct-series-a .ct-point:nth-of-type(1):hover,
@@ -304,7 +303,7 @@
 .ttvstats_graph_ratings[data-trakt*="9-"] .ct-series-a .ct-point:nth-of-type(9):hover,
 .ttvstats_graph_ratings[data-trakt*="10-"] .ct-series-a .ct-point:nth-of-type(10):hover,
 .ttvstats_graph_ratings[data-trakt="1-2-3-4-5-6-7-8-9-10-"] .ct-series-a .ct-line:hover ~ .ct-point {
-    transform: scale(5.5);
+    stroke-width: 16px;
 }
 
 
@@ -375,6 +374,9 @@
 .ttvposters.filtered ~ h2,
 .ttvposters.filtered ~ .posters {
     display: none;
+}
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+position : unset !important;
 }
 
 /*

@@ -46,16 +46,18 @@ By specifying a language code in the options, you'll enable the following featur
 - Localized titles (show the localized and/or original title in addition to the english one)
 - Localized synopsis and biography
 - Localized posters
-- Localized release dates (list all the releases dates, not only the US one, and show the most relevant one)
+- Localized releases (list all the releases dates, not only the US one, and show the most relevant one)
+- Localized dates (translate every dates on the pages, ex. `30 août 2017 à 21:44`)
 
 Translations and localized data uses the TMDb API. The language code, as [defined in the TMDb API](https://developers.themoviedb.org/3/getting-started/languages) :
 >  is a bare [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code [*and*] you can specify an extra [ISO-3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) tag
 
 For example `fr`, `de`, or `pt-BR`.
 
+Other options :
+
 Settings | Description
 --|--
-Translate items | - *On mouse hover* do less calls to the API<br>- *On load* translate every movie of the page at once
 Localized synopsis | - *Show both* : display the localized version under the english one.<br>- *Replace original* : display only the localized version.<br>- *Disable* : just don't.
 Localized posters | - *Replace original* : display only the localized version.<br> - *Original on hover* : display the localized version, and show the original on mouse over. - *Localized on hover* : show the localized version on mouse over.<br>- *Disable* : just don't.
 Custom TMDb API Key | **(optionnal)** if you want to call the API trough your own TMDb account
